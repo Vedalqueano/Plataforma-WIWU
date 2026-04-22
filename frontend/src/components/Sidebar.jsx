@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, setIsOpen }) {
   const menuItems = [
     { icon: 'dashboard', label: 'Dashboard', path: '/' },
     { icon: 'account_tree', label: 'Processos', path: '/processos' },
@@ -21,16 +21,26 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="fixed left-0 top-0 h-full flex flex-col p-6 space-y-2 overflow-y-auto bg-white/60 dark:bg-black/30 backdrop-blur-2xl border border-white/80 rounded-[3rem] m-4 h-[calc(100vh-2rem)] w-72 shadow-[0_8px_30px_rgb(0,0,0,0.04)] z-50">
-      <div className="flex items-center px-6 py-4 mb-4">
-        <img alt="Logo WIWU" className="h-10 w-10 mr-3 object-contain" src="/logo_wiwu_1000.png" />
-        <div>
-          <h1 className="text-lg font-black text-slate-900 tracking-tighter">WIWU</h1>
-          <p className="text-[10px] uppercase tracking-widest text-on-primary-container font-bold"><br/></p>
+    <aside className={`fixed left-0 top-0 h-full flex flex-col p-6 space-y-2 bg-white/60 dark:bg-black/30 backdrop-blur-2xl border border-white/80 rounded-r-[3rem] md:rounded-[3rem] md:m-4 md:h-[calc(100vh-2rem)] w-72 shadow-[0_8px_30px_rgb(0,0,0,0.04)] z-50 transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
+      
+      <div className="flex items-center justify-between px-2 md:px-6 py-4 mb-4">
+        <div className="flex items-center">
+          <img alt="Logo WIWU" className="h-10 w-10 mr-3 object-contain" src="/logo_wiwu_1000.png" />
+          <div>
+            <h1 className="text-lg font-black text-slate-900 tracking-tighter">WIWU</h1>
+            <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold"><br/></p>
+          </div>
         </div>
+        
+        <button 
+          onClick={() => setIsOpen(false)}
+          className="md:hidden p-2 text-slate-500 hover:bg-white/50 rounded-full flex items-center"
+        >
+          <span className="material-symbols-outlined">close</span>
+        </button>
       </div>
       
-      <button className="bg-primary text-on-primary rounded-full py-4 px-6 mx-2 mb-6 flex items-center justify-center gap-2 font-bold transition-transform active:scale-95 shadow-lg">
+      <button className="bg-slate-900 text-white rounded-full py-4 px-6 mx-2 mb-6 flex items-center justify-center gap-2 font-bold transition-transform active:scale-95 shadow-lg">
         <span className="material-symbols-outlined">add</span>
         <span>Novo Processo</span>
       </button>
@@ -40,21 +50,22 @@ export default function Sidebar() {
           <NavLink
             key={idx}
             to={item.path}
+            onClick={() => setIsOpen(false)}
             className={({ isActive }) =>
               `py-3 px-6 rounded-full flex items-center gap-3 transition-all group ${
                 isActive
-                  ? 'bg-white dark:bg-slate-800 text-black dark:text-white shadow-sm'
+                  ? 'bg-white dark:bg-slate-800 text-black dark:text-white shadow-sm font-bold'
                   : 'text-slate-500 hover:bg-white/50'
               }`
             }
           >
             <span className="material-symbols-outlined">{item.icon}</span>
-            <span className="font-manrope text-sm font-semibold">{item.label}</span>
+            <span className="font-manrope text-sm">{item.label}</span>
           </NavLink>
         ))}
       </nav>
 
-      <div className="pt-4 mt-4 border-t border-slate-200/50">
+      <div className="pt-4 mt-4 border-t border-slate-200/50 pb-8 md:pb-0">
         <a className="text-slate-500 hover:bg-white/50 py-3 px-6 rounded-full flex items-center gap-3 transition-all" href="#">
           <span className="material-symbols-outlined">help_outline</span>
           <span className="font-manrope text-sm font-semibold">Ajuda</span>

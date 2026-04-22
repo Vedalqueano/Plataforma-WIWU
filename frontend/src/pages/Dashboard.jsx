@@ -5,8 +5,8 @@ export default function Dashboard() {
     <>
       {/* Greeting Section */}
       <section className="px-4 mb-8">
-        <h2 className="text-5xl font-extrabold tracking-tight text-slate-800 mb-2">Bom dia, Abbas</h2>
-        <p className="text-slate-500 font-medium text-lg">Você está logado como Admin. Seu resumo executivo para esta terça-feira está pronto.</p>
+        <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-slate-800 mb-2">Bom dia, Abbas</h2>
+        <p className="text-slate-500 font-medium text-sm md:text-lg">Você está logado como Admin. Seu resumo executivo para esta terça-feira está pronto.</p>
       </section>
 
       {/* Bento Box Grid - Liquid Glass */}
