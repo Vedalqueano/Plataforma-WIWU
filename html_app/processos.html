@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Criar Novo Processo</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#410007",
+                        "on-secondary-container": "#626566",
+                        "on-error-container": "#93000a",
+                        "background": "#f8f9fa",
+                        "on-primary-fixed-variant": "#424562",
+                        "on-primary-fixed": "#161934",
+                        "secondary-container": "#e1e3e4",
+                        "on-surface": "#191c1d",
+                        "on-background": "#191c1d",
+                        "tertiary-fixed": "#ffdad8",
+                        "secondary": "#5c5f60",
+                        "on-surface-variant": "#46464d",
+                        "surface-bright": "#f8f9fa",
+                        "error": "#ba1a1a",
+                        "secondary-fixed": "#e1e3e4",
+                        "primary-fixed": "#dfe0ff",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-container": "#f1414d",
+                        "surface-tint": "#595c7b",
+                        "surface-container": "#edeeef",
+                        "outline": "#77767e",
+                        "inverse-primary": "#c2c4e8",
+                        "primary-fixed-dim": "#c2c4e8",
+                        "on-primary-container": "#7f81a2",
+                        "inverse-on-surface": "#f0f1f2",
+                        "inverse-surface": "#2e3132",
+                        "outline-variant": "#c7c5ce",
+                        "surface-container-low": "#f3f4f5",
+                        "on-secondary-fixed-variant": "#454748",
+                        "surface-container-high": "#e7e8e9",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-container": "#161934",
+                        "error-container": "#ffdad6",
+                        "surface-variant": "#e1e3e4",
+                        "surface-dim": "#d9dadb",
+                        "on-secondary-fixed": "#191c1d",
+                        "tertiary-fixed-dim": "#ffb3b1",
+                        "on-secondary": "#ffffff",
+                        "surface": "#f8f9fa",
+                        "on-error": "#ffffff",
+                        "tertiary": "#000000",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed-dim": "#c5c7c8",
+                        "on-tertiary-fixed": "#410007",
+                        "primary": "#000000",
+                        "on-tertiary-fixed-variant": "#92001c"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "display": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
+        h1, h2, h3, h4, h5, h6, .font-headline, .font-display { font-family: 'Manrope', sans-serif; }
+    </style>
+</head>
+<body class="text-on-surface antialiased bg-surface min-h-screen flex">
+
+    <!-- SideNavBar -->
+    <nav class="hidden md:flex fixed left-0 top-0 h-full w-72 flex-col p-6 z-40 bg-[#F8F9FA]/60 dark:bg-slate-900/60 backdrop-blur-3xl rounded-r-[3rem] my-auto ml-4 shadow-[20px_0_40px_rgba(25,28,29,0.03)] font-manrope font-medium text-sm">
+        <div class="mb-10 px-6">
+            <div class="flex items-center gap-3">
+                <img alt="WIWU Logo" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5RGeYTqS9r_CO5-6qRBpj6HWAq_eEJzek-wpeBz_GZo8F4fvM6la_mYNtOugXgt-cW6xUwd-3eg8XeEwywTx6eORnLWVu3g1n1FKJe_LVb_UOYvM7DMrEJCcXSzuN20uGsSp-Wqmaj9R6ZDNLsVPBKWvQQYHewHTtXLiDo68LMflf1hKkrXBCvUWjp8z6Jq9v_0EEVEeF3GO8Zq6DV41SKBfmt1-ybngi6uetaJuGFazD32lRzHVwpIf_JZMPnRqmIeRroqzIvfI">
+                <div>
+                    <h1 class="text-xl font-black text-[#080B26] dark:text-white">ExecManager</h1>
+                    <p class="text-xs text-on-primary-container">Precision Suite</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="flex-1 overflow-y-auto space-y-1 px-2">
+            <a href="index.html" class="flex items-center gap-3 text-slate-500 dark:text-slate-400 py-3 px-6 hover:translate-x-2 transition-transform duration-300 rounded-full">
+                <span class="material-symbols-outlined text-[20px]">dashboard</span>
+                Dashboard
+            </a>
+            <!-- Active Tab -->
+            <a href="processos.html" class="flex items-center gap-3 bg-white dark:bg-slate-800 text-black dark:text-white shadow-sm rounded-full py-3 px-6 hover:translate-x-2 transition-transform duration-300">
+                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">account_tree</span>
+                Processos
+            </a>
+            <a href="#" class="flex items-center gap-3 text-slate-500 dark:text-slate-400 py-3 px-6 hover:translate-x-2 transition-transform duration-300 rounded-full">
+                <span class="material-symbols-outlined text-[20px]">group</span>
+                Equipe
+            </a>
+            <a href="#" class="flex items-center gap-3 text-slate-500 dark:text-slate-400 py-3 px-6 hover:translate-x-2 transition-transform duration-300 rounded-full">
+                <span class="material-symbols-outlined text-[20px]">settings</span>
+                Settings
+            </a>
+        </div>
+        
+        <div class="mt-8 px-6">
+            <button class="w-full bg-primary text-on-primary py-4 px-6 rounded-xl font-bold hover:bg-on-surface transition-colors flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined">add</span>
+                New Process
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content Canvas -->
+    <main class="flex-1 ml-0 md:ml-80 p-8 md:p-12 lg:p-16 max-w-7xl mx-auto w-full">
+        <!-- Header & Breadcrumbs -->
+        <header class="mb-16">
+            <nav class="flex items-center gap-2 text-sm text-on-surface-variant mb-4 font-body">
+                <a href="#" class="hover:text-primary transition-colors">Processos</a>
+                <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                <span class="text-on-surface font-medium">Criar Novo Processo</span>
+            </nav>
+            <div class="flex items-center justify-between">
+                <h1 class="text-5xl font-display font-extrabold tracking-tight text-primary">Criar Novo Processo</h1>
+                <div class="flex gap-4">
+                    <button class="px-6 py-3 rounded-full border border-outline-variant/15 text-primary font-medium hover:bg-surface-variant transition-colors">Cancelar</button>
+                    <button class="px-8 py-3 rounded-full bg-primary text-on-primary font-bold hover:bg-on-surface transition-colors shadow-[0_20px_40px_rgba(25,28,29,0.05)]">Salvar Processo</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <!-- Left Column: Process Details & Steps -->
+            <div class="lg:col-span-2 space-y-12">
+                <!-- Basic Details -->
+                <section class="bg-surface-container-lowest rounded-lg p-10 shadow-[0_20px_40px_rgba(25,28,29,0.05)]">
+                    <h2 class="text-2xl font-display font-bold mb-8">Detalhes do Processo</h2>
+                    <div class="space-y-8">
+                        <div>
+                            <label class="block text-sm font-medium text-on-surface-variant mb-2">Nome do Processo</label>
+                            <input type="text" class="w-full bg-surface-container-highest border-none rounded-[24px] px-6 py-4 text-on-surface focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline" placeholder="Ex: Onboarding de Novos Colaboradores">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-on-surface-variant mb-2">Unidade Responsável</label>
+                            <div class="relative">
+                                <select class="w-full bg-surface-container-highest border-none rounded-[24px] px-6 py-4 text-on-surface focus:ring-2 focus:ring-primary/20 transition-all appearance-none">
+                                    <option value="" disabled selected>Selecione a unidade</option>
+                                    <option value="matriz">Matriz</option>
+                                    <option value="filial-sp">Filial São Paulo</option>
+                                </select>
+                                <span class="material-symbols-outlined absolute right-6 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Steps Builder -->
+                <section class="space-y-6">
+                    <div class="flex items-center justify-between mb-8">
+                        <h2 class="text-2xl font-display font-bold">Etapas do Processo</h2>
+                        <button class="flex items-center gap-2 text-primary font-bold hover:text-on-surface-variant transition-colors">
+                            <span class="material-symbols-outlined">add_circle</span>
+                            Adicionar Etapa
+                        </button>
+                    </div>
+
+                    <!-- Step 1 -->
+                    <div class="bg-surface-container-lowest rounded-lg p-8 shadow-[0_20px_40px_rgba(25,28,29,0.05)] border border-outline-variant/15 relative group">
+                        <div class="absolute -left-4 top-8 w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold font-display shadow-sm">1</div>
+                        <div class="pl-6">
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium text-on-surface-variant mb-2">Título da Ação</label>
+                                <input type="text" class="w-full bg-surface-container-highest border-none rounded-[24px] px-6 py-4 text-on-surface font-medium focus:ring-2 focus:ring-primary/20 transition-all" value="Recepção e Boas-vindas">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-on-surface-variant mb-2">Como Fazer? (Instruções detalhadas)</label>
+                                <textarea rows="4" class="w-full bg-surface-container-low border-none rounded-DEFAULT px-6 py-4 text-on-surface focus:ring-2 focus:ring-primary/20 transition-all resize-none">O colaborador recém-contratado deve ser recebido na recepção principal pelo RH.</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column: Settings & Directives -->
+            <div class="space-y-8">
+                <!-- Sectors Directive -->
+                <aside class="bg-surface-container-lowest rounded-lg p-8 shadow-[0_20px_40px_rgba(25,28,29,0.05)]">
+                    <h3 class="text-xl font-display font-bold mb-6">Direcionamento</h3>
+                    <p class="text-sm text-on-surface-variant mb-6">Quais setores devem executar este processo?</p>
+                    <div class="flex flex-wrap gap-3">
+                        <label class="cursor-pointer relative">
+                            <input type="checkbox" class="peer sr-only" checked>
+                            <div class="px-5 py-2.5 rounded-full border border-outline-variant/30 text-sm font-medium text-on-surface-variant peer-checked:bg-primary-container peer-checked:text-white peer-checked:border-transparent transition-all shadow-sm">
+                                Recursos Humanos
+                            </div>
+                        </label>
+                        <label class="cursor-pointer relative">
+                            <input type="checkbox" class="peer sr-only">
+                            <div class="px-5 py-2.5 rounded-full border border-outline-variant/30 text-sm font-medium text-on-surface-variant peer-checked:bg-primary-container peer-checked:text-white peer-checked:border-transparent transition-all shadow-sm">
+                                TI
+                            </div>
+                        </label>
+                    </div>
+                </aside>
+
+                <!-- Notifications -->
+                <aside class="bg-surface-container-lowest rounded-lg p-8 shadow-[0_20px_40px_rgba(25,28,29,0.05)]">
+                    <h3 class="text-xl font-display font-bold mb-6">Notificações e Controle</h3>
+                    <div class="space-y-6">
+                        <label class="flex items-center justify-between cursor-pointer group">
+                            <div>
+                                <div class="font-medium text-on-surface mb-1">Notificar Gestores</div>
+                                <div class="text-xs text-on-surface-variant">Envia alerta via email e painel</div>
+                            </div>
+                            <div class="relative">
+                                <input type="checkbox" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-surface-container-high rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                            </div>
+                        </label>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>WIWU Corporate Suite</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#c5c7c8",
+                        "on-primary": "#ffffff",
+                        "primary-fixed-dim": "#c2c4e8",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#5c5f60",
+                        "on-tertiary-container": "#f1414d",
+                        "outline-variant": "#c7c5ce",
+                        "surface-variant": "#e1e3e4",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed": "#410007",
+                        "on-surface-variant": "#46464d",
+                        "on-secondary-fixed": "#191c1d",
+                        "tertiary-fixed-dim": "#ffb3b1",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed": "#e1e3e4",
+                        "on-background": "#191c1d",
+                        "surface-container-highest": "#e1e3e4",
+                        "secondary-container": "#e1e3e4",
+                        "on-surface": "#191c1d",
+                        "inverse-surface": "#2e3132",
+                        "surface-tint": "#595c7b",
+                        "tertiary-fixed": "#ffdad8",
+                        "surface-dim": "#d9dadb",
+                        "on-primary-container": "#7f81a2",
+                        "tertiary-container": "#410007",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#f8f9fa",
+                        "outline": "#77767e",
+                        "on-secondary-container": "#626566",
+                        "on-error": "#ffffff",
+                        "surface": "#f8f9fa",
+                        "on-primary-fixed-variant": "#424562",
+                        "on-tertiary-fixed-variant": "#92001c",
+                        "surface-container": "#edeeef",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#454748",
+                        "inverse-primary": "#c2c4e8",
+                        "inverse-on-surface": "#f0f1f2",
+                        "primary-fixed": "#dfe0ff",
+                        "on-primary-fixed": "#161934",
+                        "tertiary": "#000000",
+                        "surface-container-low": "#f3f4f5",
+                        "primary-container": "#161934",
+                        "background": "#f8f9fa",
+                        "primary": "#000000",
+                        "surface-container-high": "#e7e8e9"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F9FA;
+        }
+        h1, h2, h3 {
+            font-family: 'Manrope', sans-serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        .card-expand-content {
+            display: none;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        .card-container:hover .card-expand-content,
+        .card-container.expanded .card-expand-content {
+            display: block;
+            opacity: 1;
+        }
+        .card-container:hover .card-summary,
+        .card-container.expanded .card-summary {
+            margin-bottom: 1.5rem;
+        }
+        .card-container {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .card-container:hover {
+            transform: translateY(-4px);
+            background: white;
+            box-shadow: 0 30px 60px -12px rgba(50, 50, 93, 0.1), 0 18px 36px -18px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="text-on-surface selection:bg-on-primary-container selection:text-white">
+<!-- SideNavBar Anchor -->
+<aside class="fixed left-0 top-0 h-full flex flex-col p-6 space-y-2 overflow-y-auto bg-white/30 dark:bg-black/30 backdrop-blur-2xl rounded-[3rem] m-4 h-[calc(100vh-2rem)] w-72 shadow-[0_20px_40px_rgba(0,0,0,0.04)] z-50">
+<div class="flex items-center px-6 py-4 mb-4">
+<img alt="Logo WIWU" class="h-10 w-10 mr-3 object-contain" src="https://lh3.googleusercontent.com/aida/ADBb0uir8toOBTfxSAmJfYeUxMc5eq-rG6aLQFWSBzhFkASZxOqeTPsgcI1RfoBLYcrkFsP-Q_zMFX4E4QblUZ_rRJ8kQXFQxAUA3LEYMq3wuuT0wlsFWSDf65eoqdzTTNtEwGvbVWPmJ1hGj53c3hypbSE1uV_EH3Uq8VQsf_DurhcBiQ1zaZtMD4wbwpGp2SUBy5Iyf0RN4n-CbfjR2QAJhKUbJz7tEFat19I10K2C6olKt-lQzP-UsRliS1w62pfHa2y4DIyBGr2H9g"/>
+<div>
+<h1 class="text-lg font-black text-slate-900 tracking-tighter">WIWU</h1>
+<p class="text-[10px] uppercase tracking-widest text-on-primary-container font-bold"><br/></p>
+</div>
+</div>
+<button class="bg-primary text-on-primary rounded-full py-4 px-6 mx-2 mb-6 flex items-center justify-center gap-2 font-bold transition-transform active:scale-95 shadow-lg">
+<span class="material-symbols-outlined">add</span>
+<span>Novo Processo</span>
+</button>
+<nav class="flex-1 space-y-1 overflow-y-auto custom-scrollbar">
+<a class="bg-white dark:bg-slate-800 text-black dark:text-white shadow-sm rounded-full py-3 px-6 flex items-center gap-3 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-manrope text-sm font-semibold">Dashboard</span>
+</a>
+<a class="text-slate-500 hover:bg-white/50 py-3 px-6 rounded-full flex items-center gap-3 transition-all group" href="#">
+<span class="material-symbols-outlined" data-icon="account_tree">account_tree</span>
+<span class="font-manrope text-sm font-semibold">Processos</span>
+</a>
+<a class="text-slate-500 hover:bg-white/50 py-3 px-6 rounded-full flex items-center gap-3 transition-all group" href="#">
+<span class="material-symbols-outlined" data-icon="assignment_turned_in">assignment_turned_in</span>
+<span class="font-manrope text-sm font-semibold">Tarefas</span>
+</a>
+<a class="text-slate-500 hover:bg-white/50 py-3 px-6 rounded-full flex items-center gap-3 transition-all group" href="#">
+<span class="material-symbols-outlined" data-icon="location_on">location_on</span>
+<span class="font-manrope text-sm font-semibold">Presença</span>
+</a>
+<a class="text-slate-500 hover:bg-white/50 py-3 px-6 rounded-full flex items-center gap-3 transition-all group" href="#">
+<span class="material-symbols-outlined" data-icon="school">school</span>
+<span class="font-manrope text-sm font-semibold">Treinamentos</span>
+</a>
+<a class="text-slate-500 hover:bg-white/50 py-3 px-6 rounded-full flex items-center gap-3 transition-all group" href="#">
+<span class="material-symbols-outlined" data-icon="event">event</span>
+<span class="font-manrope text-sm font-semibold">Eventos</span>
+</a>
+<a class="text-slate-500 hover:bg-white/50 py-3 px-6 rounded-full flex items-center gap-3 transition-all group" href="#">
+<span class="material-symbols-outlined" data-icon="directions_walk">directions_walk</span>
+<span class="font-manrope text-sm font-semibold">Visitas</span>
+</a>
+<a class="text-slate-500 hover:bg-white/50 py-3 px-6 rounded-full flex items-center gap-3 transition-all group" href="#">
+<span class="material-symbols-outlined" data-icon="meeting_room">meeting_room</span>
+<span class="font-manrope text-sm font-semibold">Sala</span>
+</a>
+<a class="text-slate-500 hover:bg-white/50 py-3 px-6 rounded-full flex items-center gap-3 transition-all group" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-manrope text-sm font-semibold">Equipe</span>
+</a>
+<a class="text-slate-500 hover:bg-white/50 py-3 px-6 rounded-full flex items-center gap-3 transition-all group" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span class="font-manrope text-sm font-semibold">Relatórios</span>
+</a>
+<a class="text-slate-500 hover:bg-white/50 py-3 px-6 rounded-full flex items-center gap-3 transition-all group" href="#">
+<span class="material-symbols-outlined" data-icon="policy">policy</span>
+<span class="font-manrope text-sm font-semibold">Políticas</span>
+</a>
+<a class="text-slate-500 hover:bg-white/50 py-3 px-6 rounded-full flex items-center gap-3 transition-all group" href="#">
+<span class="material-symbols-outlined" data-icon="monetization_on">monetization_on</span>
+<span class="font-manrope text-sm font-semibold">Comercial</span>
+</a>
+<a class="text-slate-500 hover:bg-white/50 py-3 px-6 rounded-full flex items-center gap-3 transition-all group" href="#">
+<span class="material-symbols-outlined" data-icon="flag">flag</span>
+<span class="font-manrope text-sm font-semibold">Metas</span>
+</a>
+<a class="text-slate-500 hover:bg-white/50 py-3 px-6 rounded-full flex items-center gap-3 transition-all group" href="#">
+<span class="material-symbols-outlined" data-icon="settings_suggest">settings_suggest</span>
+<span class="font-manrope text-sm font-semibold">Gestão</span>
+</a>
+<a class="text-slate-500 hover:bg-white/50 py-3 px-6 rounded-full flex items-center gap-3 transition-all group" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-manrope text-sm font-semibold">Cliente</span>
+</a>
+</nav>
+<div class="pt-4 mt-4 border-t border-slate-200/50">
+<a class="text-slate-500 hover:bg-white/50 py-3 px-6 rounded-full flex items-center gap-3 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span class="font-manrope text-sm font-semibold">Ajuda</span>
+</a>
+<a class="text-slate-500 hover:bg-white/50 py-3 px-6 rounded-full flex items-center gap-3 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-manrope text-sm font-semibold">Sair</span>
+</a>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-80 mr-8 pt-8 pb-12 min-h-[1024px]">
+<!-- TopAppBar Anchor -->
+<header class="flex justify-between items-center px-8 py-4 w-full bg-white/40 backdrop-blur-xl sticky top-0 z-40 rounded-full shadow-[0_20px_40px_rgba(25,28,29,0.05)] mb-12">
+<div class="flex items-center gap-4">
+<div class="bg-surface-container-highest p-2 rounded-full px-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-sm" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm font-manrope w-64" placeholder="Procurar processos..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-500 hover:bg-white/60 transition-all rounded-full relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-on-tertiary-container rounded-full"></span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-white/60 transition-all rounded-full">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="h-10 w-10 rounded-full overflow-hidden border-2 border-white shadow-sm">
+<img alt="WIWU User Profile" class="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxeNOHWvOO8tNhht3y7rUFPVLZmj0oRvKhNGNi7I9qkaxK2lvxAPcFjEteCDrNtPZnWxDff-40TqUavt0tF6FogxJ5vLQbDh1cup1S5pKdr0jpwtc0otfdsZE-DvXsjcnE9Xufo7uF6_hBv3dGqGxcwRiMeTrVQ-23U5oqS66sG6_bclSzo8cyC-rK1Jvp7gxjJym2Ry6ZY9zYOmwFlpDbyKo5zgvgkACjhV2rpIriO7hfoyeKnH7Cz1BMbtVMHbIOVtnXWUIT-EU"/>
+</div>
+</div>
+</header>
+<!-- Greeting Section -->
+<section class="px-4 mb-12">
+<h2 class="text-5xl font-extrabold tracking-tight text-primary mb-2">Bom dia, Abbas</h2>
+<p class="text-on-primary-container font-medium text-lg">Você está logado como Admin. Seu resumo executivo para esta terça-feira está pronto.</p>
+</section>
+<!-- Airy Grid of Interactive Cards -->
+<div class="grid grid-cols-12 gap-8 px-4">
+<!-- Quem está presente? Card -->
+<div class="col-span-12 lg:col-span-4 group cursor-pointer card-container bg-surface-container-lowest rounded-xl p-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 overflow-hidden">
+<div class="card-summary flex items-center justify-between">
+<div>
+<span class="text-[10px] font-black uppercase tracking-widest text-on-primary-container opacity-60">Tempo Real</span>
+<h3 class="text-xl font-bold mt-1">Quem está presente?</h3>
+<p class="text-sm text-slate-400 font-medium">142 Colaboradores online</p>
+</div>
+<div class="h-12 w-12 bg-emerald-50 rounded-2xl flex items-center justify-center">
+<span class="material-symbols-outlined text-emerald-500">group</span>
+</div>
+</div>
+<div class="card-expand-content pt-4 border-t border-slate-100 space-y-4">
+<div class="flex items-center justify-between p-3 hover:bg-surface-container-low rounded-xl transition-colors">
+<div class="flex items-center gap-3">
+<img alt="Team member" class="h-10 w-10 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAD2QLvydze0R7iRf1r3lE4XUcUeRAKbUgkmQj170vRWAhAB_k-TZxevaq_zyB6nfX7mj-gA5SZKLRAe4AEf1qLivHM_Ic5HBcwsF46UdKsh1dOIvVYSggwNB0bCglACel-6twFbNC_kB1hTRgWm9Rk30QWC6A_QtWWEyz6lbLGKF8NZWWaI5ia5iwUxYAMFX_nz_elXisbpXJmkV4lJk6y4OOqWvigQ1fC8wJxmfz2ZWaEy4_-QjlAVQSAKCdOLcRafHfk4RRt2so"/>
+<span class="text-sm font-bold">Ana Paula C.</span>
+</div>
+<span class="text-[10px] font-bold py-1 px-3 bg-emerald-100 text-emerald-700 rounded-full">SP</span>
+</div>
+<button class="w-full py-3 rounded-full text-[11px] font-black uppercase tracking-widest text-primary bg-primary/5 hover:bg-primary/10 transition-colors">Visualizar Mapa</button>
+</div>
+</div>
+<!-- Tarefas do Dia Card -->
+<div class="col-span-12 lg:col-span-4 group cursor-pointer card-container bg-surface-container-lowest rounded-xl p-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 overflow-hidden">
+<div class="card-summary flex items-center justify-between">
+<div>
+<span class="text-[10px] font-black uppercase tracking-widest text-on-primary-container opacity-60">O que fazer?</span>
+<h3 class="text-xl font-bold mt-1">Tarefas do Dia</h3>
+<p class="text-sm text-slate-400 font-medium">8 Atividades pendentes</p>
+</div>
+<div class="h-12 w-12 bg-primary/5 rounded-2xl flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">task_alt</span>
+</div>
+</div>
+<div class="card-expand-content pt-4 border-t border-slate-100 space-y-4">
+<div class="p-4 bg-surface-container-low rounded-xl">
+<p class="text-sm font-bold">Aprovar Budget Q4</p>
+<p class="text-[10px] text-on-tertiary-container font-bold uppercase mt-1">Urgente • 2h</p>
+</div>
+<button class="w-full py-3 rounded-full text-[11px] font-black uppercase tracking-widest text-primary bg-primary/5 hover:bg-primary/10 transition-colors">Lista Completa</button>
+</div>
+</div>
+<!-- Próximo Evento Card -->
+<div class="col-span-12 lg:col-span-4 group cursor-pointer card-container bg-surface-container-lowest rounded-xl p-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 overflow-hidden">
+<div class="card-summary flex items-center justify-between">
+<div>
+<span class="text-[10px] font-black uppercase tracking-widest text-on-primary-container opacity-60">Agenda</span>
+<h3 class="text-xl font-bold mt-1">Próximo Evento</h3>
+<p class="text-sm text-slate-400 font-medium">Auditório Principal</p>
+</div>
+<div class="h-12 w-12 bg-tertiary-fixed rounded-2xl flex items-center justify-center">
+<span class="material-symbols-outlined text-on-tertiary-fixed-variant">calendar_today</span>
+</div>
+</div>
+<div class="card-expand-content pt-4 border-t border-slate-100">
+<div class="flex items-center gap-4 bg-tertiary-fixed/30 p-4 rounded-xl">
+<div class="text-center bg-white px-3 py-1 rounded-lg shadow-sm">
+<p class="text-[10px] font-black text-on-tertiary-fixed-variant">OUT</p>
+<p class="text-lg font-black text-on-tertiary-fixed-variant">14</p>
+</div>
+<p class="text-xs font-bold text-on-tertiary-fixed-variant">Workshop IA Generativa</p>
+</div>
+</div>
+</div>
+<!-- Salas Card -->
+<div class="col-span-12 lg:col-span-4 group cursor-pointer card-container bg-surface-container-lowest rounded-xl p-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 overflow-hidden">
+<div class="card-summary flex items-center justify-between">
+<div>
+<span class="text-[10px] font-black uppercase tracking-widest text-on-primary-container opacity-60">Espaços</span>
+<h3 class="text-xl font-bold mt-1">Salas</h3>
+<p class="text-sm text-slate-400 font-medium">4 Disponíveis agora</p>
+</div>
+<div class="h-12 w-12 bg-secondary-fixed rounded-2xl flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary-fixed-variant">meeting_room</span>
+</div>
+</div>
+<div class="card-expand-content pt-4 border-t border-slate-100 space-y-2">
+<div class="flex justify-between items-center text-xs py-1">
+<span class="font-semibold">Sala Alpha</span>
+<span class="text-[10px] font-bold text-on-tertiary-container bg-error-container/20 px-2 py-0.5 rounded-full">Ocupada</span>
+</div>
+<div class="flex justify-between items-center text-xs py-1">
+<span class="font-semibold">Sala Beta</span>
+<span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Livre</span>
+</div>
+<button class="w-full mt-2 py-3 rounded-full text-[11px] font-black uppercase tracking-widest text-primary bg-primary/5 hover:bg-primary/10 transition-colors">Reservar</button>
+</div>
+</div>
+<!-- RH Card -->
+<div class="col-span-12 lg:col-span-4 group cursor-pointer card-container bg-surface-container-lowest rounded-xl p-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 overflow-hidden">
+<div class="card-summary flex items-center justify-between">
+<div>
+<span class="text-[10px] font-black uppercase tracking-widest text-on-primary-container opacity-60">Talentos</span>
+<h3 class="text-xl font-bold mt-1">RH &amp; Recrutamento</h3>
+<p class="text-sm text-slate-400 font-medium">3 Vagas aguardando</p>
+</div>
+<div class="h-12 w-12 bg-primary/5 rounded-2xl flex items-center justify-center relative">
+<span class="material-symbols-outlined text-primary">work</span>
+<span class="absolute -top-1 -right-1 h-5 w-5 bg-on-tertiary-container text-white text-[10px] flex items-center justify-center rounded-full font-bold">3</span>
+</div>
+</div>
+<div class="card-expand-content pt-4 border-t border-slate-100">
+<p class="text-xs text-slate-600 leading-relaxed mb-4">Revisão de perfil técnico necessária para as vagas de Engenharia.</p>
+<button class="w-full py-3 rounded-full text-[11px] font-black uppercase tracking-widest text-primary bg-primary/5 hover:bg-primary/10 transition-colors">Gerenciar Vagas</button>
+</div>
+</div>
+<!-- Treinamentos Card (Minimal) -->
+<div class="col-span-12 lg:col-span-4 group cursor-pointer card-container bg-surface-container-lowest rounded-xl p-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 overflow-hidden">
+<div class="card-summary flex items-center justify-between">
+<div>
+<span class="text-[10px] font-black uppercase tracking-widest text-on-primary-container opacity-60">Capacitação</span>
+<h3 class="text-xl font-bold mt-1">Treinamentos</h3>
+<p class="text-sm text-slate-400 font-medium">12 Módulos pendentes</p>
+</div>
+<div class="h-12 w-12 bg-primary-fixed rounded-2xl flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">school</span>
+</div>
+</div>
+<div class="card-expand-content pt-4 border-t border-slate-100">
+<div class="p-3 bg-primary/5 rounded-xl">
+<p class="text-xs font-bold text-primary">Próximo: Liderança Ágil</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+    // Simple interactive simulation for the "click to expand" feel
+    document.querySelectorAll('.card-container').forEach(card => {
+        card.addEventListener('click', () => {
+            card.classList.toggle('expanded');
+        });
+    });
+</script>
+</body></html>

@@ -1,0 +1,77 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@layer base {
+  body {
+    @apply font-body bg-background text-on-surface;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-headline;
+  }
+}
+
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-slate-200 rounded-[10px];
+  }
+  
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+  }
+  
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+}
+
+.card-expand-wrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.card-container:hover .card-expand-wrapper,
+.card-container.expanded .card-expand-wrapper {
+  grid-template-rows: 1fr;
+}
+
+.card-expand-inner {
+  min-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.card-container:hover .card-expand-inner,
+.card-container.expanded .card-expand-inner {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.05s;
+}
+
+.card-summary {
+  transition: margin-bottom 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  margin-bottom: 0;
+}
+
+.card-container:hover .card-summary,
+.card-container.expanded .card-summary {
+  margin-bottom: 1.5rem;
+}
+
+.card-container {
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.card-container:hover {
+  transform: translateY(-4px) scale(1.02);
+  background: white;
+  box-shadow: 0 30px 60px -12px rgba(50, 50, 93, 0.1), 0 18px 36px -18px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
