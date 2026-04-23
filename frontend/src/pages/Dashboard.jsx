@@ -4,25 +4,23 @@ export default function Dashboard() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Timer to trigger animations after component mounts
     const timer = setTimeout(() => setMounted(true), 100);
     return () => clearTimeout(timer);
   }, []);
 
-  // Helper for circular progress
-  const renderCircularProgress = (percentage, colorClass, label) => {
-    const radius = 36;
+  const renderMiniCircularProgress = (percentage, colorClass, label) => {
+    const radius = 20;
     const circumference = 2 * Math.PI * radius;
     const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
     return (
       <div className="flex flex-col items-center justify-center">
-        <div className="relative w-24 h-24">
-          <svg className="w-full h-full transform -rotate-90 drop-shadow-md">
-            <circle cx="48" cy="48" r={radius} stroke="currentColor" strokeWidth="8" fill="transparent" className="text-slate-200/50" />
+        <div className="relative w-14 h-14">
+          <svg className="w-full h-full transform -rotate-90">
+            <circle cx="28" cy="28" r={radius} stroke="currentColor" strokeWidth="4" fill="transparent" className="text-slate-100" />
             <circle 
-              cx="48" cy="48" r={radius} 
-              stroke="currentColor" strokeWidth="8" fill="transparent" 
+              cx="28" cy="28" r={radius} 
+              stroke="currentColor" strokeWidth="4" fill="transparent" 
               className={`${colorClass} transition-all duration-1500 ease-out`}
               strokeDasharray={circumference}
               strokeDashoffset={mounted ? strokeDashoffset : circumference}
@@ -30,214 +28,287 @@ export default function Dashboard() {
             />
           </svg>
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-xl font-black text-slate-800">{mounted ? percentage : 0}%</span>
+            <span className="text-[11px] font-bold text-slate-800">{mounted ? percentage : 0}%</span>
           </div>
         </div>
-        <span className="mt-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">{label}</span>
+        <span className="mt-1 text-[10px] font-bold text-slate-500 uppercase">{label}</span>
       </div>
     );
   };
 
   return (
-    <>
-      {/* Greeting Section */}
-      <section className="px-4 mb-8">
-        <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-slate-800 mb-2 animate-[fadeIn_0.5s_ease-out]">Bom dia, Abbas</h2>
-        <p className="text-slate-500 font-medium text-sm md:text-lg animate-[fadeIn_0.7s_ease-out]">Você está logado como Admin. Seu resumo executivo para esta terça-feira está pronto.</p>
-      </section>
-
-      {/* Bento Box Grid - Liquid Glass */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-4 pb-12 auto-rows-auto md:auto-rows-[160px]">
+    <div className="px-4 pb-12 font-sans animate-[fadeIn_0.5s_ease-out]">
+      
+      {/* 1. TOP STATS ROW */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         
-        {/* BIG FEATURED: Tarefas do Dia (col-span-2, row-span-2) */}
-        <div className="col-span-1 md:col-span-2 row-span-2 group relative bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] text-slate-800">
-          <div className="absolute -right-10 -top-10 w-40 h-40 bg-blue-400/10 rounded-full blur-3xl animate-pulse"></div>
-          
-          <div className="flex justify-between items-start mb-6 relative z-10">
-            <div>
-              <span className="text-[10px] font-black uppercase tracking-widest text-blue-500 opacity-80">O que fazer?</span>
-              <h3 className="text-2xl font-extrabold mt-1 text-slate-900">Tarefas Urgentes</h3>
-            </div>
-            <div className="h-12 w-12 bg-blue-500/10 rounded-2xl flex items-center justify-center transition-transform group-hover:rotate-12 duration-300">
-              <span className="material-symbols-outlined text-blue-600">task_alt</span>
-            </div>
+        {/* Card 1: Purple */}
+        <div className="bg-[#4f46e5] rounded-[2rem] p-6 shadow-[0_8px_30px_rgba(79,70,229,0.3)] text-white flex items-center justify-between transition-transform hover:-translate-y-1">
+          <div className="h-14 w-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+            <span className="material-symbols-outlined text-2xl">calendar_month</span>
           </div>
-          
-          <div className="space-y-3 relative z-10">
-            <div className="bg-white/40 backdrop-blur-xl p-4 rounded-2xl hover:bg-white/80 transition-all cursor-pointer border border-white/50 shadow-sm hover:scale-[1.02]">
-              <div className="flex justify-between items-start">
-                <p className="text-sm font-bold text-slate-800">Aprovar Budget Q4</p>
-                <span className="text-[10px] font-bold py-1 px-3 bg-red-100 text-red-600 rounded-full animate-pulse">Urgente</span>
-              </div>
-              <p className="text-xs text-slate-500 font-medium mt-2">Vence em 2h</p>
-            </div>
-            <div className="bg-white/40 backdrop-blur-xl p-4 rounded-2xl hover:bg-white/80 transition-all cursor-pointer border border-white/50 shadow-sm hover:scale-[1.02]">
-              <div className="flex justify-between items-start">
-                <p className="text-sm font-bold text-slate-800">Revisar Contratos Alpha</p>
-                <span className="text-[10px] font-bold py-1 px-3 bg-slate-200 text-slate-600 rounded-full">Hoje</span>
-              </div>
-              <p className="text-xs text-slate-500 font-medium mt-2">Designado por Diretoria</p>
-            </div>
-          </div>
-          
-          <button className="mt-6 w-full py-3.5 rounded-full text-[11px] font-black uppercase tracking-widest text-slate-700 bg-white hover:bg-slate-50 border border-white/80 transition-colors shadow-sm relative z-10">Lista Completa (8)</button>
-        </div>
-
-        {/* TALL LIST: Quem está presente (col-span-1, row-span-2) */}
-        <div className="col-span-1 row-span-2 group relative bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)]">
-          <div className="flex justify-between items-start mb-6">
-            <div>
-              <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500 flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
-                Tempo Real
-              </span>
-              <h3 className="text-lg font-extrabold mt-1 text-slate-900">Equipe</h3>
-            </div>
-            <span className="text-[10px] font-bold bg-emerald-500/10 text-emerald-600 py-1 px-3 rounded-full">142 online</span>
-          </div>
-          
-          <div className="flex-1 space-y-3 overflow-y-auto custom-scrollbar pr-2 min-h-[160px]">
-            {[1, 2, 3, 4].map((_, idx) => (
-              <div key={idx} className="flex items-center justify-between p-2 hover:bg-white/50 rounded-xl transition-all hover:pl-3 cursor-pointer">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-slate-200 overflow-hidden border-2 border-white shadow-sm relative">
-                    <img alt="Team member" className="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAD2QLvydze0R7iRf1r3lE4XUcUeRAKbUgkmQj170vRWAhAB_k-TZxevaq_zyB6nfX7mj-gA5SZKLRAe4AEf1qLivHM_Ic5HBcwsF46UdKsh1dOIvVYSggwNB0bCglACel-6twFbNC_kB1hTRgWm9Rk30QWC6A_QtWWEyz6lbLGKF8NZWWaI5ia5iwUxYAMFX_nz_elXisbpXJmkV4lJk6y4OOqWvigQ1fC8wJxmfz2ZWaEy4_-QjlAVQSAKCdOLcRafHfk4RRt2so" />
-                  </div>
-                  <div>
-                    <span className="text-sm font-bold text-slate-800 block">Ana Paula</span>
-                    <span className="text-[10px] text-slate-500 font-medium">Marketing</span>
-                  </div>
-                </div>
-                <div className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                </div>
-              </div>
-            ))}
-          </div>
-          <button className="mt-4 w-full py-3 rounded-full text-[10px] font-black uppercase tracking-widest text-emerald-700 bg-emerald-500/5 hover:bg-emerald-500/10 transition-colors">Ver Mapa Completo</button>
-        </div>
-
-        {/* SMALL SQUARE 1: Financeiro */}
-        <div className="col-span-1 row-span-1 group relative bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col justify-between transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] overflow-hidden">
-          <div className="absolute -right-4 -top-4 w-24 h-24 bg-emerald-400/10 rounded-full blur-2xl animate-pulse"></div>
-          <div className="flex justify-between items-start relative z-10">
-            <div className="h-10 w-10 bg-emerald-500/10 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 duration-300">
-              <span className="material-symbols-outlined text-emerald-600 text-lg">payments</span>
-            </div>
-            <span className="text-[10px] font-bold text-emerald-600 bg-emerald-500/10 px-2 py-1 rounded-full">+5.2%</span>
-          </div>
-          <div className="relative z-10">
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Caixa Geral</p>
-            <h3 className="text-2xl font-extrabold text-slate-900">Estável</h3>
+          <div className="text-right">
+            <p className="text-xs font-semibold text-white/80 uppercase tracking-wider mb-1">Reuniões Agendadas</p>
+            <h3 className="text-4xl font-black">86</h3>
           </div>
         </div>
 
-        {/* SMALL SQUARE 2: Próximo Evento */}
-        <div className="col-span-1 row-span-1 group relative bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col justify-between transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] overflow-hidden">
-          <div className="absolute -right-2 -bottom-4 text-slate-200/50 text-8xl font-black select-none pointer-events-none transition-transform group-hover:translate-x-2 duration-500">14</div>
-          <div className="flex justify-between items-start relative z-10">
-            <div className="h-10 w-10 bg-orange-500/10 rounded-2xl flex items-center justify-center transition-transform group-hover:rotate-[-10deg] duration-300">
-              <span className="material-symbols-outlined text-orange-500 text-lg">calendar_today</span>
-            </div>
+        {/* Card 2: Blue */}
+        <div className="bg-[#3b82f6] rounded-[2rem] p-6 shadow-[0_8px_30px_rgba(59,130,246,0.3)] text-white flex items-center justify-between transition-transform hover:-translate-y-1">
+          <div className="h-14 w-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+            <span className="material-symbols-outlined text-2xl">business_center</span>
           </div>
-          <div className="relative z-10">
-            <p className="text-[10px] font-black uppercase tracking-widest text-orange-500 mb-1">14 Outubro</p>
-            <h3 className="text-sm font-extrabold text-slate-900 leading-tight pr-4">Workshop IA Generativa</h3>
+          <div className="text-right">
+            <p className="text-xs font-semibold text-white/80 uppercase tracking-wider mb-1">Processos Abertos</p>
+            <h3 className="text-4xl font-black">75</h3>
           </div>
         </div>
 
-        {/* WIDE PANORAMIC: Performance (col-span-4, row-span-1) */}
-        <div className="col-span-1 md:col-span-4 row-span-1 group relative bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col md:flex-row items-center justify-between transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] overflow-hidden">
-          <div className="absolute right-0 top-0 h-full w-2/3 md:w-1/2 opacity-30 pointer-events-none">
-            <svg viewBox="0 0 400 100" preserveAspectRatio="none" className="w-full h-full">
-              <path d="M0 100 L0 80 Q 50 20, 100 60 T 200 40 T 300 10 T 400 30 L400 100 Z" fill="url(#grad2)" className="animate-[pulse_4s_ease-in-out_infinite]" />
-              <path d="M0 80 Q 50 20, 100 60 T 200 40 T 300 10 T 400 30" fill="none" stroke="#3B82F6" strokeWidth="4" className="animate-[dash_3s_linear_infinite]" strokeDasharray="10 5" />
-              <defs>
-                <linearGradient id="grad2" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.2" />
-                  <stop offset="100%" stopColor="#3B82F6" stopOpacity="0" />
-                </linearGradient>
-              </defs>
-            </svg>
+        {/* Card 3: Green */}
+        <div className="bg-[#10b981] rounded-[2rem] p-6 shadow-[0_8px_30px_rgba(16,185,129,0.3)] text-white flex items-center justify-between transition-transform hover:-translate-y-1">
+          <div className="h-14 w-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+            <span className="material-symbols-outlined text-2xl">person</span>
           </div>
-          
-          <div className="flex items-center gap-6 relative z-10 w-full md:w-auto mb-4 md:mb-0">
-            <div className="h-16 w-16 bg-blue-500/10 rounded-[1.5rem] flex items-center justify-center transition-transform group-hover:scale-110 duration-300">
-              <span className="material-symbols-outlined text-blue-600 text-3xl">trending_up</span>
-            </div>
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-blue-500">Performance Global</p>
-              <h3 className="text-3xl font-extrabold mt-1 text-slate-900">Metas +12%</h3>
-            </div>
-          </div>
-
-          <div className="flex gap-4 w-full md:w-auto relative z-10">
-            <div className="bg-white/50 backdrop-blur-xl px-6 py-3.5 rounded-2xl border border-white/80 shadow-sm flex-1 md:flex-none transform transition-transform hover:-translate-y-1">
-              <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Vendas Acumuladas</p>
-              <p className="text-xl font-extrabold text-slate-800">R$ 1.2M</p>
-            </div>
-            <div className="bg-white/50 backdrop-blur-xl px-6 py-3.5 rounded-2xl border border-white/80 shadow-sm flex-1 md:flex-none transform transition-transform hover:-translate-y-1">
-              <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Novos Clientes</p>
-              <p className="text-xl font-extrabold text-slate-800">48</p>
-            </div>
+          <div className="text-right">
+            <p className="text-xs font-semibold text-white/80 uppercase tracking-wider mb-1">Visualizações</p>
+            <h3 className="text-4xl font-black">45,673</h3>
           </div>
         </div>
 
-        {/* NEW SECTION: Indicadores Circulares Animados (col-span-2) */}
-        <div className="col-span-1 md:col-span-2 row-span-1 group relative bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col justify-center transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] overflow-hidden">
-          <div className="flex justify-between items-center w-full mb-2">
-             <div>
-               <p className="text-[10px] font-black uppercase tracking-widest text-indigo-500">KPIs Principais</p>
-               <h3 className="text-lg font-extrabold text-slate-900">Saúde do Negócio</h3>
-             </div>
-             <div className="h-10 w-10 bg-indigo-500/10 rounded-2xl flex items-center justify-center animate-[spin_10s_linear_infinite]">
-               <span className="material-symbols-outlined text-indigo-600 text-lg">donut_large</span>
-             </div>
+        {/* Card 4: Light Green */}
+        <div className="bg-[#84cc16] rounded-[2rem] p-6 shadow-[0_8px_30px_rgba(132,204,22,0.3)] text-white flex items-center justify-between transition-transform hover:-translate-y-1">
+          <div className="h-14 w-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+            <span className="material-symbols-outlined text-2xl">mail</span>
           </div>
-          
-          <div className="flex justify-around items-center mt-4">
-            {renderCircularProgress(84, 'text-indigo-500', 'Satisfação')}
-            {renderCircularProgress(62, 'text-pink-500', 'Conversão')}
-            {renderCircularProgress(95, 'text-emerald-500', 'Disponibilidade')}
+          <div className="text-right">
+            <p className="text-xs font-semibold text-white/80 uppercase tracking-wider mb-1">Mensagens Novas</p>
+            <h3 className="text-4xl font-black">93</h3>
           </div>
-        </div>
-
-        {/* MEDIUM RECTANGLE: Vagas (col-span-1) */}
-        <div className="col-span-1 row-span-1 group relative bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col justify-between transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)]">
-          <div className="flex items-center gap-4 mb-4">
-             <div className="h-14 w-14 bg-purple-500/10 rounded-[1.5rem] flex items-center justify-center relative transition-transform group-hover:rotate-12 duration-300">
-               <span className="material-symbols-outlined text-purple-600 text-2xl">work</span>
-             </div>
-             <div>
-               <p className="text-[10px] font-black uppercase tracking-widest text-purple-500">Recrutamento</p>
-               <h3 className="text-lg font-extrabold text-slate-900">3 Vagas Abertas</h3>
-             </div>
-          </div>
-          <button className="px-6 py-3 w-full rounded-full text-[11px] font-black uppercase tracking-widest text-purple-700 bg-purple-500/10 hover:bg-purple-500/20 transition-colors">Gerenciar</button>
-        </div>
-
-        {/* MEDIUM RECTANGLE: Comunicação (col-span-1) */}
-         <div className="col-span-1 row-span-1 group relative bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col justify-between transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] overflow-hidden">
-          <span className="material-symbols-outlined absolute -left-4 -top-4 text-[8rem] text-blue-500/5 pointer-events-none select-none transition-transform group-hover:scale-110 duration-500">forum</span>
-          <div className="flex items-center gap-4 relative z-10 mb-4">
-             <div className="h-14 w-14 bg-blue-500/10 rounded-[1.5rem] flex items-center justify-center transition-transform group-hover:scale-110 duration-300">
-               <span className="material-symbols-outlined text-blue-600 text-2xl animate-pulse">mark_email_unread</span>
-               <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border-2 border-white"></span>
-               </span>
-             </div>
-             <div>
-               <p className="text-[10px] font-black uppercase tracking-widest text-blue-500">Comunicação</p>
-               <h3 className="text-lg font-extrabold text-slate-900">2 Mensagens</h3>
-             </div>
-          </div>
-          <button className="px-6 py-3 w-full rounded-full text-[11px] font-black uppercase tracking-widest text-blue-700 bg-blue-500/10 hover:bg-blue-500/20 transition-colors relative z-10">Abrir Caixa</button>
         </div>
 
       </div>
-    </>
+
+      {/* 2. MAIN GRID (Left Column + Right Column) */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        
+        {/* LEFT COLUMN: Profile & Activities */}
+        <div className="lg:col-span-1 space-y-8">
+          
+          {/* Profile Card */}
+          <div className="bg-white rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col items-center text-center">
+            <div className="relative mb-4">
+              <div className="h-28 w-28 rounded-full border-4 border-indigo-50 p-1">
+                <img src="/profile.png" alt="Profile" className="h-full w-full rounded-full object-cover" />
+              </div>
+              <div className="absolute top-0 left-0 w-full h-full rounded-full border-[3px] border-indigo-600 border-t-transparent border-r-transparent animate-spin-slow"></div>
+            </div>
+            <h2 className="text-xl font-extrabold text-slate-900 mb-1">Julio Admin</h2>
+            <p className="text-sm font-semibold text-slate-500 mb-8">Administrador do Sistema</p>
+            
+            <div className="flex justify-between w-full px-2">
+              {renderMiniCircularProgress(66, 'text-orange-500', 'Gestão')}
+              {renderMiniCircularProgress(31, 'text-emerald-500', 'Vendas')}
+              {renderMiniCircularProgress(7, 'text-blue-500', 'TI')}
+            </div>
+          </div>
+
+          {/* Recent Activities */}
+          <div className="bg-white rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative">
+            <h3 className="text-sm font-bold text-slate-800 mb-6 uppercase tracking-wider">Atividades Recentes</h3>
+            
+            <div className="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-200 before:to-transparent">
+              
+              {[
+                { time: '12h ago', title: 'Aprovação de Orçamento Q4', type: 'accepted' },
+                { time: '12h ago', title: 'Aprovação de Orçamento Q4', type: 'accepted' },
+                { time: '12h ago', title: 'Aprovação de Orçamento Q4', type: 'accepted' },
+              ].map((act, i) => (
+                <div key={i} className="relative flex items-start gap-4 z-10 group cursor-pointer">
+                  <div className="h-10 w-10 bg-[#4f46e5]/10 rounded-xl flex-shrink-0 flex items-center justify-center z-10 group-hover:bg-[#4f46e5]/20 transition-colors">
+                    <span className="material-symbols-outlined text-[#4f46e5] text-xl">extension</span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-slate-700 leading-tight">Sua solicitação foi <span className="text-slate-900 font-bold">aceita</span> no processo de Vendas.</p>
+                    <span className="text-xs text-slate-400 font-medium">{act.time}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex justify-center mt-6">
+              <button className="h-10 w-10 rounded-full bg-white shadow-md border border-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-50 transition-colors z-20">
+                <span className="material-symbols-outlined">arrow_downward</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* RIGHT COLUMN: Chart & Recommended */}
+        <div className="lg:col-span-3 space-y-8">
+          
+          {/* Main Chart Card */}
+          <div className="bg-white rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+              <h2 className="text-xl font-bold text-slate-900">Desempenho da Empresa</h2>
+              <div className="flex items-center gap-4 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <span className="h-3 w-3 rounded-full bg-[#4f46e5]"></span>
+                  <span className="text-sm font-semibold text-slate-600">Abertos</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="h-3 w-3 rounded-full bg-[#10b981]"></span>
+                  <span className="text-sm font-semibold text-slate-600">Fechados</span>
+                </div>
+                <select className="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block px-3 py-2 outline-none font-medium appearance-none cursor-pointer pr-8 relative">
+                  <option>Este Mês</option>
+                  <option>Mês Passado</option>
+                </select>
+              </div>
+            </div>
+
+            {/* SVG Chart Mockup */}
+            <div className="relative h-64 w-full mt-4">
+              <svg viewBox="0 0 800 200" preserveAspectRatio="none" className="w-full h-full overflow-visible">
+                {/* Grid Lines */}
+                <path d="M 0 0 L 800 0" stroke="#f1f5f9" strokeWidth="1" fill="none" />
+                <path d="M 0 50 L 800 50" stroke="#f1f5f9" strokeWidth="1" fill="none" />
+                <path d="M 0 100 L 800 100" stroke="#f1f5f9" strokeWidth="1" fill="none" />
+                <path d="M 0 150 L 800 150" stroke="#f1f5f9" strokeWidth="1" fill="none" />
+                <path d="M 0 200 L 800 200" stroke="#f1f5f9" strokeWidth="1" fill="none" />
+                
+                {/* Y Axis Labels (HTML Overlay is better, but doing simple text here) */}
+                <text x="-20" y="5" className="text-[10px] fill-slate-400 font-medium">80</text>
+                <text x="-20" y="55" className="text-[10px] fill-slate-400 font-medium">60</text>
+                <text x="-20" y="105" className="text-[10px] fill-slate-400 font-medium">40</text>
+                <text x="-20" y="155" className="text-[10px] fill-slate-400 font-medium">20</text>
+                <text x="-15" y="205" className="text-[10px] fill-slate-400 font-medium">0</text>
+
+                {/* Smooth Line 1 (Purple) */}
+                <path 
+                  d="M 0 80 C 100 20, 150 150, 250 120 S 350 40, 450 70 S 550 150, 650 120 S 750 30, 800 50" 
+                  stroke="#4f46e5" strokeWidth="4" fill="none" 
+                  className="drop-shadow-[0_4px_6px_rgba(79,70,229,0.3)] animate-[dash_3s_ease-out_forwards]"
+                  strokeDasharray="2000" strokeDashoffset={mounted ? 0 : 2000}
+                />
+                
+                {/* Smooth Line 2 (Green) */}
+                <path 
+                  d="M 0 140 C 100 100, 150 180, 250 160 S 350 90, 450 130 S 550 180, 650 140 S 750 100, 800 110" 
+                  stroke="#10b981" strokeWidth="4" fill="none" 
+                  className="drop-shadow-[0_4px_6px_rgba(16,185,129,0.3)] animate-[dash_3s_ease-out_forwards]"
+                  strokeDasharray="2000" strokeDashoffset={mounted ? 0 : 2000}
+                />
+
+                {/* Tooltip Point */}
+                <circle cx="650" cy="120" r="6" fill="#4f46e5" stroke="white" strokeWidth="3" className="shadow-lg" />
+              </svg>
+
+              {/* Tooltip HTML */}
+              <div className="absolute top-[30%] right-[10%] bg-white rounded-xl shadow-[0_10px_25px_rgba(0,0,0,0.1)] p-3 border border-slate-100 transform -translate-y-1/2">
+                <p className="text-[10px] text-slate-500 font-semibold mb-2">Jul 23, 2026</p>
+                <div className="flex gap-4">
+                  <div className="flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-[#4f46e5]"></span>
+                    <span className="font-bold text-slate-800 text-sm">37</span>
+                    <span className="text-xs text-slate-500">Abertos</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-[#10b981]"></span>
+                    <span className="font-bold text-slate-800 text-sm">2</span>
+                    <span className="text-xs text-slate-500">Fechados</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* X Axis Labels */}
+              <div className="flex justify-between mt-4 text-[11px] text-slate-400 font-semibold px-2">
+                <span>Semana 01</span><span>Semana 02</span><span>Semana 03</span><span>Semana 04</span>
+                <span>Semana 05</span><span>Semana 06</span><span>Semana 07</span><span>Semana 08</span>
+                <span>Semana 09</span><span>Semana 10</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Recommended Jobs / Processos */}
+          <div>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold text-slate-900">Processos Recomendados</h2>
+              <div className="flex gap-1">
+                <span className="h-2 w-2 rounded-full bg-[#4f46e5]"></span>
+                <span className="h-2 w-2 rounded-full bg-slate-300"></span>
+                <span className="h-2 w-2 rounded-full bg-slate-300"></span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              
+              {/* Card 1 */}
+              <div className="bg-white rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50 hover:shadow-[0_15px_40px_rgb(0,0,0,0.08)] transition-shadow">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <p className="text-xs font-semibold text-slate-500 mb-1">Equipe Vendas</p>
+                    <h3 className="text-lg font-bold text-slate-900 leading-tight">Analista de Vendas B2B</h3>
+                  </div>
+                  <div className="h-10 w-10 bg-[#3b82f6]/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <span className="material-symbols-outlined text-[#3b82f6]">point_of_sale</span>
+                  </div>
+                </div>
+                <p className="text-sm font-extrabold text-slate-800 mb-4">R$ 14,000 - R$ 25,000</p>
+                <p className="text-xs text-slate-500 line-clamp-3 mb-6">Responsável por identificar, prospectar e fechar negócios com clientes corporativos. Acompanhamento de metas agressivas e KPIs de conversão mensal.</p>
+                
+                <div className="flex justify-between items-center">
+                  <span className="px-4 py-1.5 bg-purple-50 text-purple-600 text-xs font-bold rounded-lg">REMOTO</span>
+                  <span className="text-xs font-bold text-slate-600">São Paulo, BR</span>
+                </div>
+              </div>
+
+              {/* Card 2 */}
+              <div className="bg-white rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50 hover:shadow-[0_15px_40px_rgb(0,0,0,0.08)] transition-shadow">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <p className="text-xs font-semibold text-slate-500 mb-1">Equipe TI</p>
+                    <h3 className="text-lg font-bold text-slate-900 leading-tight">Desenvolvedor Sênior</h3>
+                  </div>
+                  <div className="h-10 w-10 bg-[#f97316]/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <span className="material-symbols-outlined text-[#f97316]">terminal</span>
+                  </div>
+                </div>
+                <p className="text-sm font-extrabold text-slate-800 mb-4">R$ 18,000 - R$ 22,000</p>
+                <p className="text-xs text-slate-500 line-clamp-3 mb-6">Arquitetura de sistemas em nuvem, liderança técnica de esquadrões ágeis e code review das entregas principais de infraestrutura.</p>
+                
+                <div className="flex justify-between items-center">
+                  <span className="px-4 py-1.5 bg-blue-50 text-blue-600 text-xs font-bold rounded-lg">HÍBRIDO</span>
+                  <span className="text-xs font-bold text-slate-600">Florianópolis, BR</span>
+                </div>
+              </div>
+
+              {/* Card 3 */}
+              <div className="bg-white rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50 hover:shadow-[0_15px_40px_rgb(0,0,0,0.08)] transition-shadow">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <p className="text-xs font-semibold text-slate-500 mb-1">Equipe Design</p>
+                    <h3 className="text-lg font-bold text-slate-900 leading-tight">Product Designer Pleno</h3>
+                  </div>
+                  <div className="h-10 w-10 bg-[#8b5cf6]/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <span className="material-symbols-outlined text-[#8b5cf6]">design_services</span>
+                  </div>
+                </div>
+                <p className="text-sm font-extrabold text-slate-800 mb-4">R$ 9,000 - R$ 12,000</p>
+                <p className="text-xs text-slate-500 line-clamp-3 mb-6">Pesquisa com usuários, prototipação em alta fidelidade e manutenção do Design System corporativo da plataforma principal.</p>
+                
+                <div className="flex justify-between items-center">
+                  <span className="px-4 py-1.5 bg-emerald-50 text-emerald-600 text-xs font-bold rounded-lg">PRESENCIAL</span>
+                  <span className="text-xs font-bold text-slate-600">Rio de Janeiro, BR</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
   );
 }
-
