@@ -25,9 +25,14 @@ export default function Header({ toggleSidebar }) {
         <button className="p-2 text-slate-500 hover:bg-white/60 transition-all rounded-full hidden sm:flex">
           <span className="material-symbols-outlined">settings</span>
         </button>
-        <div className="h-10 w-10 min-w-[40px] rounded-full overflow-hidden border-2 border-white shadow-sm">
+        <div className="h-12 w-12 min-w-[48px] rounded-full overflow-hidden border-2 border-white shadow-sm ring-2 ring-white/50">
           {/* Avatar Profile */}
-          <img alt="User Profile" className="h-full w-full object-cover" src="/profile.png" />
+          <img 
+            alt="User Profile" 
+            className="h-full w-full object-cover object-center" 
+            style={{ imageRendering: 'high-quality', transform: 'translateZ(0)' }} 
+            src="/profile.png" 
+          />
         </div>
       </div>
     </header>
