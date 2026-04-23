@@ -27,8 +27,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
         <div className="flex items-center">
           <img alt="Logo WIWU" className="h-10 w-10 mr-3 object-contain" src="/logo_wiwu_1000.png" />
           <div>
-            <h1 className="text-lg font-black text-slate-900 tracking-tighter">WIWU</h1>
-            <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold"><br/></p>
+            <h1 className="text-lg font-black text-slate-900 tracking-tighter leading-tight">WIWU<br/>Corporate Suite</h1>
           </div>
         </div>
         
