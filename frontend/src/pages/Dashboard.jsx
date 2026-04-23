@@ -9,18 +9,18 @@ export default function Dashboard() {
   }, []);
 
   const renderMiniCircularProgress = (percentage, colorClass, label) => {
-    const radius = 20;
+    const radius = 24;
     const circumference = 2 * Math.PI * radius;
     const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
     return (
       <div className="flex flex-col items-center justify-center">
-        <div className="relative w-14 h-14">
+        <div className="relative w-16 h-16">
           <svg className="w-full h-full transform -rotate-90">
-            <circle cx="28" cy="28" r={radius} stroke="currentColor" strokeWidth="4" fill="transparent" className="text-slate-100" />
+            <circle cx="32" cy="32" r={radius} stroke="currentColor" strokeWidth="5" fill="transparent" className="text-slate-100" />
             <circle 
-              cx="28" cy="28" r={radius} 
-              stroke="currentColor" strokeWidth="4" fill="transparent" 
+              cx="32" cy="32" r={radius} 
+              stroke="currentColor" strokeWidth="5" fill="transparent" 
               className={`${colorClass} transition-all duration-1500 ease-out`}
               strokeDasharray={circumference}
               strokeDashoffset={mounted ? strokeDashoffset : circumference}
@@ -28,10 +28,10 @@ export default function Dashboard() {
             />
           </svg>
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-[11px] font-bold text-slate-800">{mounted ? percentage : 0}%</span>
+            <span className="text-xs font-black text-slate-800">{mounted ? percentage : 0}%</span>
           </div>
         </div>
-        <span className="mt-1 text-[10px] font-bold text-slate-500 uppercase">{label}</span>
+        <span className="mt-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">{label}</span>
       </div>
     );
   };
