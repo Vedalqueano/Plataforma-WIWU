@@ -29,23 +29,27 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4 relative overflow-hidden font-sans">
-      {/* Background Effects (Liquid Glass Aesthetic) */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/20 blur-[120px] pointer-events-none"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-purple-600/20 blur-[120px] pointer-events-none"></div>
+    <div className="min-h-screen bg-[#F2F2F7] flex items-center justify-center p-4 relative overflow-hidden font-sans">
+      {/* Background Effects (Liquid Glass Aesthetic - Light Theme) */}
+      <div className="fixed inset-0 z-[0] overflow-hidden pointer-events-none">
+         <div className="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] bg-blue-300/30 rounded-full mix-blend-multiply filter blur-[100px]"></div>
+         <div className="absolute top-[20%] right-[-10%] w-[35vw] h-[35vw] bg-purple-300/30 rounded-full mix-blend-multiply filter blur-[100px]"></div>
+         <div className="absolute bottom-[-10%] left-[20%] w-[40vw] h-[40vw] bg-emerald-300/20 rounded-full mix-blend-multiply filter blur-[100px]"></div>
+      </div>
       
       {/* Login Card */}
       <div className="relative z-10 w-full max-w-md">
-        <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
+        <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
           
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2">Acesso Restrito</h1>
-            <p className="text-gray-400">Plataforma WIWU Corporate</p>
+          <div className="text-center mb-8 flex flex-col items-center">
+            <img alt="Logo WIWU" className="h-20 w-20 mb-4 object-contain drop-shadow-md" src="/logo_wiwu_1000.png" />
+            <h1 className="text-3xl font-black text-slate-900 tracking-tighter leading-tight mb-2">Plataforma WiWU Conect</h1>
+            <p className="text-slate-500 font-medium">Acesso Restrito ao Administrador</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2" htmlFor="username">
+              <label className="block text-sm font-bold text-slate-700 mb-2" htmlFor="username">
                 Usuário do Administrador
               </label>
               <div className="relative">
@@ -54,7 +58,7 @@ const Login = () => {
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
+                  className="w-full bg-white/80 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all shadow-sm"
                   placeholder="admin"
                   required
                 />
@@ -62,7 +66,7 @@ const Login = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2" htmlFor="password">
+              <label className="block text-sm font-bold text-slate-700 mb-2" htmlFor="password">
                 Senha
               </label>
               <div className="relative">
@@ -71,7 +75,7 @@ const Login = () => {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
+                  className="w-full bg-white/80 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all shadow-sm"
                   placeholder="••••••••"
                   required
                 />
@@ -79,7 +83,7 @@ const Login = () => {
             </div>
 
             {error && (
-              <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-xl text-sm text-center">
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm text-center font-medium shadow-sm">
                 {error}
               </div>
             )}
@@ -87,7 +91,7 @@ const Login = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full relative overflow-hidden group bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium py-3 rounded-xl transition-all duration-300 hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] ${isLoading ? 'opacity-80 cursor-not-allowed' : ''}`}
+              className={`w-full relative overflow-hidden group bg-slate-900 text-white font-bold py-3.5 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-slate-900/20 active:scale-[0.98] ${isLoading ? 'opacity-80 cursor-not-allowed' : ''}`}
             >
               <span className={`relative z-10 flex items-center justify-center ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
                 Entrar na Plataforma
@@ -104,16 +108,15 @@ const Login = () => {
               )}
 
               {/* Hover effect highlight */}
-              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-0"></div>
+              <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-0"></div>
             </button>
           </form>
           
         </div>
         
         {/* Helper Note */}
-        <p className="text-center text-gray-500 text-xs mt-6">
-          Área de acesso exclusivo para administradores.<br/>
-          (Dica: use admin/admin para testar)
+        <p className="text-center text-slate-500 text-xs mt-6 font-medium">
+          Dica de acesso seguro: use <span className="font-bold text-slate-700">admin / admin</span>
         </p>
       </div>
     </div>
