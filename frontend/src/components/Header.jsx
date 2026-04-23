@@ -26,8 +26,8 @@ export default function Header({ toggleSidebar }) {
           <span className="material-symbols-outlined">settings</span>
         </button>
         <div className="h-10 w-10 min-w-[40px] rounded-full overflow-hidden border-2 border-white shadow-sm">
-          {/* Avatar Placeholder */}
-          <img alt="WIWU User Profile" className="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxeNOHWvOO8tNhht3y7rUFPVLZmj0oRvKhNGNi7I9qkaxK2lvxAPcFjEteCDrNtPZnWxDff-40TqUavt0tF6FogxJ5vLQbDh1cup1S5pKdr0jpwtc0otfdsZE-DvXsjcnE9Xufo7uF6_hBv3dGqGxcwRiMeTrVQ-23U5oqS66sG6_bclSzo8cyC-rK1Jvp7gxjJym2Ry6ZY9zYOmwFlpDbyKo5zgvgkACjhV2rpIriO7hfoyeKnH7Cz1BMbtVMHbIOVtnXWUIT-EU" />
+          {/* Avatar Profile */}
+          <img alt="User Profile" className="h-full w-full object-cover" src="/profile.png" />
         </div>
       </div>
     </header>
