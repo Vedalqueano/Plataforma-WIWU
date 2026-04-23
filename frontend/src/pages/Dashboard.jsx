@@ -42,47 +42,47 @@ export default function Dashboard() {
       {/* 1. TOP STATS ROW */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         
-        {/* Card 1: Purple */}
-        <div className="bg-[#4f46e5] rounded-[2rem] p-6 shadow-[0_8px_30px_rgba(79,70,229,0.3)] text-white flex items-center justify-between transition-transform hover:-translate-y-1">
-          <div className="h-14 w-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-            <span className="material-symbols-outlined text-2xl">calendar_month</span>
+        {/* Card 1 */}
+        <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-transform hover:-translate-y-1 group">
+          <div className="h-14 w-14 bg-[#4f46e5]/10 rounded-2xl flex items-center justify-center transition-transform group-hover:rotate-12">
+            <span className="material-symbols-outlined text-2xl text-[#4f46e5]">calendar_month</span>
           </div>
           <div className="text-right">
-            <p className="text-xs font-semibold text-white/80 uppercase tracking-wider mb-1">Reuniões Agendadas</p>
-            <h3 className="text-4xl font-black">86</h3>
+            <p className="text-[10px] font-black uppercase tracking-widest text-[#4f46e5] mb-1">Reuniões Agendadas</p>
+            <h3 className="text-3xl font-extrabold text-slate-900">86</h3>
           </div>
         </div>
 
-        {/* Card 2: Blue */}
-        <div className="bg-[#3b82f6] rounded-[2rem] p-6 shadow-[0_8px_30px_rgba(59,130,246,0.3)] text-white flex items-center justify-between transition-transform hover:-translate-y-1">
-          <div className="h-14 w-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-            <span className="material-symbols-outlined text-2xl">business_center</span>
+        {/* Card 2 */}
+        <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-transform hover:-translate-y-1 group">
+          <div className="h-14 w-14 bg-[#3b82f6]/10 rounded-2xl flex items-center justify-center transition-transform group-hover:rotate-12">
+            <span className="material-symbols-outlined text-2xl text-[#3b82f6]">business_center</span>
           </div>
           <div className="text-right">
-            <p className="text-xs font-semibold text-white/80 uppercase tracking-wider mb-1">Processos Abertos</p>
-            <h3 className="text-4xl font-black">75</h3>
+            <p className="text-[10px] font-black uppercase tracking-widest text-[#3b82f6] mb-1">Processos Abertos</p>
+            <h3 className="text-3xl font-extrabold text-slate-900">75</h3>
           </div>
         </div>
 
-        {/* Card 3: Green */}
-        <div className="bg-[#10b981] rounded-[2rem] p-6 shadow-[0_8px_30px_rgba(16,185,129,0.3)] text-white flex items-center justify-between transition-transform hover:-translate-y-1">
-          <div className="h-14 w-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-            <span className="material-symbols-outlined text-2xl">person</span>
+        {/* Card 3 */}
+        <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-transform hover:-translate-y-1 group">
+          <div className="h-14 w-14 bg-[#10b981]/10 rounded-2xl flex items-center justify-center transition-transform group-hover:rotate-12">
+            <span className="material-symbols-outlined text-2xl text-[#10b981]">person</span>
           </div>
           <div className="text-right">
-            <p className="text-xs font-semibold text-white/80 uppercase tracking-wider mb-1">Visualizações</p>
-            <h3 className="text-4xl font-black">45,673</h3>
+            <p className="text-[10px] font-black uppercase tracking-widest text-[#10b981] mb-1">Visualizações</p>
+            <h3 className="text-3xl font-extrabold text-slate-900">45,673</h3>
           </div>
         </div>
 
-        {/* Card 4: Light Green */}
-        <div className="bg-[#84cc16] rounded-[2rem] p-6 shadow-[0_8px_30px_rgba(132,204,22,0.3)] text-white flex items-center justify-between transition-transform hover:-translate-y-1">
-          <div className="h-14 w-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-            <span className="material-symbols-outlined text-2xl">mail</span>
+        {/* Card 4 */}
+        <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-transform hover:-translate-y-1 group">
+          <div className="h-14 w-14 bg-[#84cc16]/10 rounded-2xl flex items-center justify-center transition-transform group-hover:rotate-12">
+            <span className="material-symbols-outlined text-2xl text-[#84cc16]">mail</span>
           </div>
           <div className="text-right">
-            <p className="text-xs font-semibold text-white/80 uppercase tracking-wider mb-1">Mensagens Novas</p>
-            <h3 className="text-4xl font-black">93</h3>
+            <p className="text-[10px] font-black uppercase tracking-widest text-[#84cc16] mb-1">Mensagens Novas</p>
+            <h3 className="text-3xl font-extrabold text-slate-900">93</h3>
           </div>
         </div>
 
@@ -102,7 +102,7 @@ export default function Dashboard() {
               </div>
               <div className="absolute top-0 left-0 w-full h-full rounded-full border-[3px] border-indigo-600 border-t-transparent border-r-transparent animate-spin-slow"></div>
             </div>
-            <h2 className="text-xl font-extrabold text-slate-900 mb-1">Julio Admin</h2>
+            <h2 className="text-xl font-extrabold text-slate-900 mb-1">Abbas Admin</h2>
             <p className="text-sm font-semibold text-slate-500 mb-8">Administrador do Sistema</p>
             
             <div className="flex justify-between w-full px-2">
