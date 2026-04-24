@@ -27,7 +27,7 @@ export default function Layout() {
 
       <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
       
-      <main className="flex-1 w-full md:ml-80 mr-0 md:mr-8 pt-4 md:pt-8 pb-12 min-h-screen relative z-10 overflow-x-hidden">
+      <main className="flex-1 w-full md:ml-80 mr-0 md:mr-8 pt-4 md:pt-8 pb-24 md:pb-12 min-h-screen relative z-10 overflow-x-hidden">
         <Header toggleSidebar={toggleSidebar} />
         <Outlet />
       </main>

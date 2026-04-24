@@ -12,16 +12,21 @@ export default function Header({ toggleSidebar }) {
   };
   return (
     <header className="flex justify-between items-center px-4 md:px-8 py-4 w-full bg-white/60 backdrop-blur-2xl border border-white/80 sticky top-0 z-40 md:rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.04)] mb-8 md:mb-12">
-      <div className="flex items-center gap-2 md:gap-4 flex-1">
+      <div className="flex items-center gap-3 md:gap-4 flex-1">
         <button 
           onClick={toggleSidebar}
-          className="md:hidden p-2 text-slate-600 hover:bg-white/60 transition-all rounded-full flex items-center justify-center"
+          className="md:hidden p-2.5 bg-white/50 text-slate-700 hover:bg-white/80 transition-all rounded-full flex items-center justify-center shadow-sm border border-white/60"
         >
           <span className="material-symbols-outlined">menu</span>
         </button>
+
+        {/* Logo Mobile Only */}
+        <div className="md:hidden flex items-center justify-center mx-auto absolute left-1/2 transform -translate-x-1/2 pointer-events-none">
+           <img alt="Logo WIWU" className="h-8 w-8 object-contain" src="/logo_wiwu_1000.png" />
+        </div>
         
-        <div className="bg-white/50 backdrop-blur-xl border border-white/60 p-2 rounded-full px-4 flex items-center gap-2 shadow-sm flex-1 md:flex-none">
-          <span className="material-symbols-outlined text-slate-500 text-sm hidden md:block">search</span>
+        <div className="hidden md:flex bg-white/50 backdrop-blur-xl border border-white/60 p-2 rounded-full px-4 items-center gap-2 shadow-sm flex-1 md:flex-none">
+          <span className="material-symbols-outlined text-slate-500 text-sm">search</span>
           <input className="bg-transparent border-none focus:ring-0 text-sm font-manrope w-full md:w-64 outline-none text-slate-800 placeholder-slate-400" placeholder="Buscar..." type="text" />
         </div>
       </div>

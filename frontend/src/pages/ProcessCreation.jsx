@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 // --- COMPONENTE DETALHE DO PROCESSO ---
 function ProcessDetail({ onBack }) {
   return (
-    <div className="max-w-7xl mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="max-w-7xl mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-500 px-4 md:px-0">
       {/* Header & Breadcrumbs */}
       <header className="mb-10">
         <nav className="flex items-center gap-2 text-sm text-slate-500 mb-4 font-medium">
@@ -17,7 +17,7 @@ function ProcessDetail({ onBack }) {
           <span className="text-slate-800 font-bold">Operador de Caixa</span>
         </nav>
         
-        <div className="flex items-center justify-between flex-wrap gap-4 bg-white/60 backdrop-blur-2xl border border-white/80 p-8 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden">
+        <div className="flex items-center justify-between flex-wrap gap-6 bg-white/60 backdrop-blur-2xl border border-white/80 p-6 md:p-8 rounded-3xl md:rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden">
           {/* Background decoration */}
           <div className="absolute right-0 top-0 h-full w-1/2 opacity-30 pointer-events-none">
             <svg viewBox="0 0 400 100" preserveAspectRatio="none" className="w-full h-full">
@@ -32,7 +32,7 @@ function ProcessDetail({ onBack }) {
             </svg>
           </div>
 
-          <div className="relative z-10 flex items-center gap-6">
+          <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 w-full lg:w-auto">
             <div className="h-20 w-20 bg-blue-500/10 rounded-[2rem] flex items-center justify-center border border-white">
               <span className="material-symbols-outlined text-blue-600 text-4xl">point_of_sale</span>
             </div>
@@ -42,12 +42,12 @@ function ProcessDetail({ onBack }) {
               <p className="text-slate-500 font-medium mt-1">Procedimentos padrões para abertura, atendimento e fechamento de caixa.</p>
             </div>
           </div>
-          <div className="flex gap-3 relative z-10">
-            <button className="px-6 py-3 rounded-full text-sm font-bold bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 transition-colors shadow-sm flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row gap-3 relative z-10 w-full lg:w-auto mt-4 lg:mt-0">
+            <button className="w-full sm:w-auto justify-center px-6 py-3.5 md:py-3 rounded-full text-sm font-bold bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 transition-colors shadow-sm flex items-center gap-2">
               <span className="material-symbols-outlined text-[18px]">picture_as_pdf</span>
               Baixar PDF
             </button>
-            <button className="px-6 py-3 rounded-full text-sm font-bold bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-md shadow-blue-500/20 flex items-center gap-2">
+            <button className="w-full sm:w-auto justify-center px-6 py-3.5 md:py-3 rounded-full text-sm font-bold bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-md shadow-blue-500/20 flex items-center gap-2">
               <span className="material-symbols-outlined text-[18px]">edit</span>
               Editar Processo
             </button>
@@ -64,9 +64,9 @@ function ProcessDetail({ onBack }) {
           </div>
 
           {/* Fase 1 */}
-          <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative">
-             <div className="absolute -left-3 top-8 h-10 w-10 bg-blue-600 text-white rounded-xl flex items-center justify-center font-black text-lg shadow-lg shadow-blue-500/30 border-2 border-white">1</div>
-             <div className="pl-6">
+          <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-3xl md:rounded-[2rem] p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative mt-8 md:mt-0">
+             <div className="absolute -top-5 left-6 md:-left-3 md:top-8 h-12 w-12 md:h-10 md:w-10 bg-blue-600 text-white rounded-xl md:rounded-xl flex items-center justify-center font-black text-xl md:text-lg shadow-lg shadow-blue-500/30 border-[3px] border-white">1</div>
+             <div className="pt-4 md:pt-0 md:pl-6">
                 <h3 className="text-xl font-extrabold text-slate-900 mb-4">Preparação e Abertura do Caixa</h3>
                 <div className="space-y-4">
                   <label className="flex items-start gap-3 cursor-pointer group">
@@ -95,9 +95,9 @@ function ProcessDetail({ onBack }) {
           </div>
 
           {/* Fase 2 */}
-          <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative">
-             <div className="absolute -left-3 top-8 h-10 w-10 bg-slate-200 text-slate-600 rounded-xl flex items-center justify-center font-black text-lg border-2 border-white">2</div>
-             <div className="pl-6">
+          <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-3xl md:rounded-[2rem] p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative mt-8 md:mt-0">
+             <div className="absolute -top-5 left-6 md:-left-3 md:top-8 h-12 w-12 md:h-10 md:w-10 bg-slate-200 text-slate-600 rounded-xl flex items-center justify-center font-black text-xl md:text-lg border-[3px] border-white shadow-sm">2</div>
+             <div className="pt-4 md:pt-0 md:pl-6">
                 <h3 className="text-xl font-extrabold text-slate-900 mb-4">Atendimento ao Cliente e Registros</h3>
                 <div className="space-y-4">
                   <label className="flex items-start gap-3 cursor-pointer group">
@@ -126,9 +126,9 @@ function ProcessDetail({ onBack }) {
           </div>
 
           {/* Fase 3 */}
-          <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative">
-             <div className="absolute -left-3 top-8 h-10 w-10 bg-slate-200 text-slate-600 rounded-xl flex items-center justify-center font-black text-lg border-2 border-white">3</div>
-             <div className="pl-6">
+          <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-3xl md:rounded-[2rem] p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative mt-8 md:mt-0">
+             <div className="absolute -top-5 left-6 md:-left-3 md:top-8 h-12 w-12 md:h-10 md:w-10 bg-slate-200 text-slate-600 rounded-xl flex items-center justify-center font-black text-xl md:text-lg border-[3px] border-white shadow-sm">3</div>
+             <div className="pt-4 md:pt-0 md:pl-6">
                 <h3 className="text-xl font-extrabold text-slate-900 mb-4">Fechamento e Sangria</h3>
                 <div className="space-y-4">
                   <label className="flex items-start gap-3 cursor-pointer group">
@@ -159,7 +159,7 @@ function ProcessDetail({ onBack }) {
 
         {/* Right Column: Informações e KPIs */}
         <div className="space-y-6">
-          <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+          <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-3xl md:rounded-[2rem] p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
             <h3 className="text-lg font-extrabold text-slate-900 mb-6">Métricas de Sucesso</h3>
             <div className="space-y-4">
               <div className="flex items-center gap-4">
@@ -195,7 +195,7 @@ function ProcessDetail({ onBack }) {
             </div>
           </div>
 
-          <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+          <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-3xl md:rounded-[2rem] p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
             <h3 className="text-lg font-extrabold text-slate-900 mb-4">Treinamentos Recomendados</h3>
             <div className="space-y-3">
               <div className="p-3 bg-white/50 rounded-xl border border-slate-100 flex items-center gap-3 cursor-pointer hover:bg-white transition-colors">
@@ -233,15 +233,15 @@ export default function ProcessCreation() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto w-full animate-in fade-in duration-500">
+    <div className="max-w-7xl mx-auto w-full animate-in fade-in duration-500 px-4 md:px-0">
       {/* Header Hub */}
-      <header className="mb-12 flex justify-between items-end">
+      <header className="mb-8 md:mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-4 px-4 md:px-0">
         <div>
           <span className="text-[12px] font-black uppercase tracking-widest text-blue-500 mb-1 block">Procedimentos Operacionais Padrão</span>
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900">Processos</h1>
-          <p className="text-slate-500 font-medium mt-2 text-sm md:text-lg">Gerencie e acesse as rotinas padronizadas de cada setor da empresa.</p>
+          <p className="text-slate-500 font-medium mt-2 text-sm md:text-lg leading-relaxed">Gerencie e acesse as rotinas padronizadas de cada setor da empresa.</p>
         </div>
-        <button className="px-6 py-3 rounded-full text-sm font-bold bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-md shadow-blue-500/20 flex items-center gap-2">
+        <button className="w-full md:w-auto px-6 py-3 rounded-full text-sm font-bold bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-md shadow-blue-500/20 flex items-center justify-center gap-2">
           <span className="material-symbols-outlined text-[18px]">add</span>
           Novo Processo
         </button>
@@ -263,7 +263,7 @@ export default function ProcessCreation() {
             {/* Card: Operador de Caixa */}
             <div 
               onClick={() => setActiveProcess('operador-caixa')}
-              className="group cursor-pointer bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)]"
+              className="group cursor-pointer bg-white/60 backdrop-blur-2xl border border-white/80 rounded-3xl md:rounded-[2rem] p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)]"
             >
               <div className="flex items-center gap-4">
                 <div className="h-14 w-14 bg-indigo-500/10 rounded-[1.5rem] flex items-center justify-center transition-colors group-hover:bg-indigo-500 group-hover:text-white text-indigo-600">
@@ -278,7 +278,7 @@ export default function ProcessCreation() {
             </div>
 
             {/* Card: Estoque */}
-            <div className="group cursor-pointer bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)]">
+            <div className="group cursor-pointer bg-white/60 backdrop-blur-2xl border border-white/80 rounded-3xl md:rounded-[2rem] p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)]">
               <div className="flex items-center gap-4">
                 <div className="h-14 w-14 bg-slate-100 rounded-[1.5rem] flex items-center justify-center text-slate-500 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
                   <span className="material-symbols-outlined text-2xl">inventory_2</span>

@@ -37,13 +37,13 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="px-4 pb-12 font-sans animate-[fadeIn_0.5s_ease-out]">
+    <div className="px-4 md:px-6 pb-20 md:pb-12 font-sans animate-[fadeIn_0.5s_ease-out] w-full max-w-full overflow-hidden">
       
       {/* 1. TOP STATS ROW */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         
         {/* Card 1 */}
-        <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-transform hover:-translate-y-1 group">
+        <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-3xl md:rounded-[2rem] p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-transform hover:-translate-y-1 group">
           <div className="h-14 w-14 bg-[#4f46e5]/10 rounded-2xl flex items-center justify-center transition-transform group-hover:rotate-12">
             <span className="material-symbols-outlined text-2xl text-[#4f46e5]">calendar_month</span>
           </div>
@@ -54,7 +54,7 @@ export default function Dashboard() {
         </div>
 
         {/* Card 2 */}
-        <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-transform hover:-translate-y-1 group">
+        <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-3xl md:rounded-[2rem] p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-transform hover:-translate-y-1 group">
           <div className="h-14 w-14 bg-[#3b82f6]/10 rounded-2xl flex items-center justify-center transition-transform group-hover:rotate-12">
             <span className="material-symbols-outlined text-2xl text-[#3b82f6]">business_center</span>
           </div>
@@ -65,7 +65,7 @@ export default function Dashboard() {
         </div>
 
         {/* Card 3 */}
-        <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-transform hover:-translate-y-1 group">
+        <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-3xl md:rounded-[2rem] p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-transform hover:-translate-y-1 group">
           <div className="h-14 w-14 bg-[#10b981]/10 rounded-2xl flex items-center justify-center transition-transform group-hover:rotate-12">
             <span className="material-symbols-outlined text-2xl text-[#10b981]">person</span>
           </div>
@@ -76,7 +76,7 @@ export default function Dashboard() {
         </div>
 
         {/* Card 4 */}
-        <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-transform hover:-translate-y-1 group">
+        <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-3xl md:rounded-[2rem] p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-transform hover:-translate-y-1 group">
           <div className="h-14 w-14 bg-[#84cc16]/10 rounded-2xl flex items-center justify-center transition-transform group-hover:rotate-12">
             <span className="material-symbols-outlined text-2xl text-[#84cc16]">mail</span>
           </div>
@@ -95,7 +95,7 @@ export default function Dashboard() {
         <div className="lg:col-span-1 space-y-8">
           
           {/* Profile Card */}
-          <div className="bg-white rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col items-center text-center">
+          <div className="bg-white rounded-3xl md:rounded-[2rem] p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col items-center text-center">
             <div className="relative mb-4">
               <div className="h-28 w-28 rounded-full border-4 border-indigo-50 p-1">
                 <img src="/profile.png" alt="Profile" className="h-full w-full rounded-full object-cover" />
@@ -113,7 +113,7 @@ export default function Dashboard() {
           </div>
 
           {/* Recent Activities */}
-          <div className="bg-white rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative">
+          <div className="bg-white rounded-3xl md:rounded-[2rem] p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative">
             <h3 className="text-sm font-bold text-slate-800 mb-6 uppercase tracking-wider">Atividades Recentes</h3>
             
             <div className="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-200 before:to-transparent">
@@ -147,7 +147,7 @@ export default function Dashboard() {
         <div className="lg:col-span-3 space-y-8">
           
           {/* Main Chart Card */}
-          <div className="bg-white rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+          <div className="bg-white rounded-3xl md:rounded-[2rem] p-5 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
               <h2 className="text-xl font-bold text-slate-900">Desempenho da Empresa</h2>
               <div className="flex items-center gap-4 flex-wrap">
@@ -243,7 +243,7 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               
               {/* Card 1 */}
-              <div className="bg-white rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50 hover:shadow-[0_15px_40px_rgb(0,0,0,0.08)] transition-shadow">
+              <div className="bg-white rounded-3xl md:rounded-[2rem] p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50 hover:shadow-[0_15px_40px_rgb(0,0,0,0.08)] transition-shadow">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <p className="text-xs font-semibold text-slate-500 mb-1">Equipe Vendas</p>
@@ -263,7 +263,7 @@ export default function Dashboard() {
               </div>
 
               {/* Card 2 */}
-              <div className="bg-white rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50 hover:shadow-[0_15px_40px_rgb(0,0,0,0.08)] transition-shadow">
+              <div className="bg-white rounded-3xl md:rounded-[2rem] p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50 hover:shadow-[0_15px_40px_rgb(0,0,0,0.08)] transition-shadow">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <p className="text-xs font-semibold text-slate-500 mb-1">Equipe TI</p>
@@ -283,7 +283,7 @@ export default function Dashboard() {
               </div>
 
               {/* Card 3 */}
-              <div className="bg-white rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50 hover:shadow-[0_15px_40px_rgb(0,0,0,0.08)] transition-shadow">
+              <div className="bg-white rounded-3xl md:rounded-[2rem] p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50 hover:shadow-[0_15px_40px_rgb(0,0,0,0.08)] transition-shadow">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <p className="text-xs font-semibold text-slate-500 mb-1">Equipe Design</p>

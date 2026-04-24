@@ -206,17 +206,17 @@ export default function Departamentos() {
   return (
     <div className="max-w-full mx-auto w-full h-full flex flex-col animate-in fade-in duration-500 overflow-hidden">
       {/* Header */}
-      <header className="mb-8 flex-shrink-0">
+      <header className="mb-8 flex-shrink-0 px-4 md:px-0">
         <span className="text-[12px] font-black uppercase tracking-widest text-blue-500 mb-1 block">Estrutura Organizacional</span>
         <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900">Departamentos</h1>
         <p className="text-slate-500 font-medium mt-2 text-sm md:text-lg">Gerencie unidades, setores, cargos e aloque seus funcionários.</p>
       </header>
 
       {/* Miller Columns Container */}
-      <div className="flex-1 flex gap-6 overflow-x-auto pb-4 custom-scrollbar snap-x">
+      <div className="flex-1 flex gap-6 overflow-x-auto pb-4 custom-scrollbar snap-x px-4 md:px-0">
         
         {/* COLUNA 1: UNIDADES */}
-        <div className="w-80 flex-shrink-0 flex flex-col snap-start">
+        <div className="w-[85vw] max-w-[320px] md:w-80 flex-shrink-0 flex flex-col snap-start">
           <div className="flex items-center justify-between mb-4 px-1">
             <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
               Unidades 
@@ -263,7 +263,7 @@ export default function Departamentos() {
 
         {/* COLUNA 2: DEPARTAMENTOS */}
         {activeUnit && (
-          <div className="w-80 flex-shrink-0 flex flex-col snap-start animate-in slide-in-from-left-4 fade-in duration-300">
+          <div className="w-[85vw] max-w-[320px] md:w-80 flex-shrink-0 flex flex-col snap-start animate-in slide-in-from-left-4 fade-in duration-300">
             <div className="flex items-center justify-between mb-4 px-1">
               <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
                 Departamentos
@@ -306,7 +306,7 @@ export default function Departamentos() {
 
         {/* COLUNA 3: CARGOS */}
         {activeDept && (
-          <div className="w-80 flex-shrink-0 flex flex-col snap-start animate-in slide-in-from-left-4 fade-in duration-300">
+          <div className="w-[85vw] max-w-[320px] md:w-80 flex-shrink-0 flex flex-col snap-start animate-in slide-in-from-left-4 fade-in duration-300">
             <div className="flex items-center justify-between mb-4 px-1">
               <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
                 Cargos
@@ -349,7 +349,7 @@ export default function Departamentos() {
 
         {/* COLUNA 4: FUNCIONÁRIOS */}
         {activeCargo && (
-          <div className="w-80 flex-shrink-0 flex flex-col snap-start animate-in slide-in-from-left-4 fade-in duration-300">
+          <div className="w-[85vw] max-w-[320px] md:w-80 flex-shrink-0 flex flex-col snap-start animate-in slide-in-from-left-4 fade-in duration-300">
             <div className="flex items-center justify-between mb-4 px-1">
               <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
                 Funcionários
@@ -401,7 +401,7 @@ export default function Departamentos() {
               </button>
             </div>
             
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Option: Loja */}
               <button 
                 onClick={() => confirmCreateUnit('1')}
