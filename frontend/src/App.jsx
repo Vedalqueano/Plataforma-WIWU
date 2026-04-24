@@ -18,6 +18,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<Layout />}>
               <Route index element={<Dashboard />} />
+              <Route path="departamentos" element={<PlaceholderPage title="Departamentos" />} />
               <Route path="processos" element={<ProcessCreation />} />
               <Route path="tarefas" element={<PlaceholderPage title="Tarefas" />} />
               <Route path="presenca" element={<PlaceholderPage title="Presença" />} />
