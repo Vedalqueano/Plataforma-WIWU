@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import ProcessCreation from './pages/ProcessCreation';
+import Departamentos from './pages/Departamentos';
 import PlaceholderPage from './pages/PlaceholderPage';
 import Login from './pages/Login';
 import { AuthProvider } from './context/AuthContext';
@@ -18,7 +19,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<Layout />}>
               <Route index element={<Dashboard />} />
-              <Route path="departamentos" element={<PlaceholderPage title="Departamentos" />} />
+              <Route path="departamentos" element={<Departamentos />} />
               <Route path="processos" element={<ProcessCreation />} />
               <Route path="tarefas" element={<PlaceholderPage title="Tarefas" />} />
               <Route path="presenca" element={<PlaceholderPage title="Presença" />} />
