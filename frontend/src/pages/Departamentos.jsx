@@ -79,16 +79,30 @@ export default function Departamentos() {
 
   // Funções de Criação
   const handleCreateUnit = () => {
-    const name = window.prompt('Nome da nova unidade:');
-    if (!name) return;
+    const type = window.prompt('Tipo da nova unidade:\nDigite "1" para Loja\nDigite "2" para Escritório');
+    if (!type || (type !== '1' && type !== '2')) return;
+
+    const isLoja = type === '1';
+    const baseName = isLoja ? 'Loja' : 'Escritório';
+    
+    // Contar quantas unidades desse tipo já existem para a numeração
+    const count = data.filter(u => u.name.startsWith(baseName)).length;
+    const suffix = count > 0 ? ` ${count + 1}` : '';
+    const newName = `${baseName}${suffix}`;
+
+    const icon = isLoja ? 'storefront' : 'business_center';
+    const colorClass = isLoja ? 'text-indigo-600' : 'text-teal-600';
+    const bgClass = isLoja ? 'bg-indigo-500/10' : 'bg-teal-500/10';
+    const hoverClass = isLoja ? 'group-hover:text-indigo-600' : 'group-hover:text-teal-600';
+
     const newData = [...data];
     newData.push({
       id: `u${Date.now()}`,
-      name,
-      icon: 'business',
-      colorClass: 'text-blue-600',
-      bgClass: 'bg-blue-500/10',
-      hoverClass: 'group-hover:text-blue-600',
+      name: newName,
+      icon,
+      colorClass,
+      bgClass,
+      hoverClass,
       departamentos: []
     });
     setData(newData);
