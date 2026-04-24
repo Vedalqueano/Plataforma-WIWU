@@ -4,6 +4,7 @@ import { NavLink } from 'react-router-dom';
 export default function Sidebar({ isOpen, setIsOpen }) {
   const menuItems = [
     { icon: 'dashboard', label: 'Dashboard', path: '/' },
+    { icon: 'domain', label: 'Departamentos', path: '/departamentos' },
     { icon: 'account_tree', label: 'Processos', path: '/processos' },
     { icon: 'assignment_turned_in', label: 'Tarefas', path: '/tarefas' },
     { icon: 'location_on', label: 'Presença', path: '/presenca' },
