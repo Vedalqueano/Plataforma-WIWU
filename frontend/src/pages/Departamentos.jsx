@@ -55,6 +55,7 @@ export default function Departamentos() {
   const [activeUnitId, setActiveUnitId] = useState(null);
   const [activeDeptId, setActiveDeptId] = useState(null);
   const [activeCargoId, setActiveCargoId] = useState(null);
+  const [isUnitModalOpen, setIsUnitModalOpen] = useState(false);
 
   // Derivando estado atual para as colunas
   const activeUnit = data.find(u => u.id === activeUnitId);
@@ -79,9 +80,10 @@ export default function Departamentos() {
 
   // Funções de Criação
   const handleCreateUnit = () => {
-    const type = window.prompt('Tipo da nova unidade:\nDigite "1" para Loja\nDigite "2" para Escritório');
-    if (!type || (type !== '1' && type !== '2')) return;
+    setIsUnitModalOpen(true);
+  };
 
+  const confirmCreateUnit = (type) => {
     const isLoja = type === '1';
     const baseName = isLoja ? 'Loja' : 'Escritório';
     
@@ -106,6 +108,7 @@ export default function Departamentos() {
       departamentos: []
     });
     setData(newData);
+    setIsUnitModalOpen(false);
   };
 
   const handleCreateDept = () => {
@@ -386,6 +389,44 @@ export default function Departamentos() {
         )}
 
       </div>
+
+      {/* MODAL DE CRIAÇÃO DE UNIDADE */}
+      {isUnitModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white rounded-3xl p-8 shadow-2xl max-w-md w-full mx-4 border border-slate-100 animate-in zoom-in-95 duration-300">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-extrabold text-slate-900">Selecione o tipo de Unidade</h3>
+              <button onClick={() => setIsUnitModalOpen(false)} className="text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100 transition-colors">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              {/* Option: Loja */}
+              <button 
+                onClick={() => confirmCreateUnit('1')}
+                className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl border-2 border-indigo-100 bg-indigo-50 hover:border-indigo-500 hover:bg-indigo-500 hover:text-white text-indigo-900 transition-all group"
+              >
+                <div className="h-14 w-14 bg-white/60 group-hover:bg-white/20 rounded-xl flex items-center justify-center transition-colors shadow-sm">
+                  <span className="material-symbols-outlined text-3xl">storefront</span>
+                </div>
+                <span className="font-bold">Loja</span>
+              </button>
+              
+              {/* Option: Escritório */}
+              <button 
+                onClick={() => confirmCreateUnit('2')}
+                className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl border-2 border-teal-100 bg-teal-50 hover:border-teal-500 hover:bg-teal-500 hover:text-white text-teal-900 transition-all group"
+              >
+                <div className="h-14 w-14 bg-white/60 group-hover:bg-white/20 rounded-xl flex items-center justify-center transition-colors shadow-sm">
+                  <span className="material-symbols-outlined text-3xl">business_center</span>
+                </div>
+                <span className="font-bold">Escritório</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
