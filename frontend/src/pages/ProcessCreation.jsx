@@ -24,8 +24,8 @@ const AVAILABLE_ICONS = [
   { name: 'event_note', color: 'text-pink-500', bg: 'bg-pink-50' }
 ];
 
-// Mock de dados para a destinação
-const MOCK_DATA = {
+// Mock de dados para a destinação (Fallback)
+const FALLBACK_DATA = {
   unidade: [
     { id: 'u1', name: 'Matriz (São Paulo)', icon: 'domain' },
     { id: 'u2', name: 'Filial (Rio de Janeiro)', icon: 'store' },
@@ -74,9 +74,60 @@ function ProcessEditor({ onBack, onSave, onDelete, initialData, isNew = false })
   ] : (initialData?.stages || []));
 
   const [trainings, setTrainings] = useState(isNew ? [] : (initialData?.trainings || []));
+  const [dynamicData, setDynamicData] = useState(FALLBACK_DATA);
 
   const descRef = useRef(null);
   
+  useEffect(() => {
+    const savedDepts = localStorage.getItem('wiwu_departamentos_data');
+    if (savedDepts) {
+      try {
+        const parsedDepts = JSON.parse(savedDepts);
+        
+        const unidades = parsedDepts.map(u => ({
+          id: u.id,
+          name: u.name,
+          icon: u.isCustomIcon ? 'domain' : (u.icon || 'domain') // Simplify icon since custom text might break formatting
+        }));
+
+        const departamentos = [];
+        const cargos = new Set();
+        
+        parsedDepts.forEach(u => {
+          if (u.departamentos) {
+            u.departamentos.forEach(d => {
+              departamentos.push({
+                id: d.id,
+                name: d.name,
+                unitName: u.name,
+                icon: 'folder_open'
+              });
+              if (d.funcionarios) {
+                d.funcionarios.forEach(f => {
+                  if (f.cargo) cargos.add(f.cargo);
+                });
+              }
+            });
+          }
+        });
+        
+        const cargosArray = Array.from(cargos).map((c, idx) => ({
+          id: `c${idx}`,
+          name: c,
+          icon: 'badge'
+        }));
+
+        setDynamicData({
+          unidade: unidades.length > 0 ? unidades : FALLBACK_DATA.unidade,
+          departamento: departamentos.length > 0 ? departamentos : FALLBACK_DATA.departamento,
+          funcionario: cargosArray.length > 0 ? cargosArray : FALLBACK_DATA.funcionario
+        });
+      } catch (e) {
+        setDynamicData(FALLBACK_DATA);
+      }
+    }
+  }, []);
+
   useEffect(() => {
     if (descRef.current) {
       descRef.current.style.height = "auto";
@@ -392,7 +443,7 @@ function ProcessEditor({ onBack, onSave, onDelete, initialData, isNew = false })
                   </div>
                   {destinationType === 'unidade' && (
                     <div className="mt-4 grid grid-cols-1 gap-2 pl-8 animate-in fade-in slide-in-from-top-2">
-                      {MOCK_DATA.unidade.map(item => (
+                      {dynamicData.unidade.map(item => (
                         <div 
                           key={item.id} 
                           onClick={(e) => { e.stopPropagation(); setDestinationValue(item.name); }}
@@ -421,7 +472,7 @@ function ProcessEditor({ onBack, onSave, onDelete, initialData, isNew = false })
                   </div>
                   {destinationType === 'departamento' && (
                     <div className="mt-4 grid grid-cols-2 gap-2 pl-8 animate-in fade-in slide-in-from-top-2">
-                      {MOCK_DATA.departamento.map(item => (
+                      {dynamicData.departamento.map(item => (
                         <div 
                           key={item.id} 
                           onClick={(e) => { e.stopPropagation(); setDestinationValue(item.name); }}
@@ -429,6 +480,7 @@ function ProcessEditor({ onBack, onSave, onDelete, initialData, isNew = false })
                         >
                           <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
                           {item.name}
+                          {item.unitName && <span className="text-[8px] font-normal opacity-70 block">{item.unitName}</span>}
                         </div>
                       ))}
                     </div>
@@ -450,7 +502,7 @@ function ProcessEditor({ onBack, onSave, onDelete, initialData, isNew = false })
                   </div>
                   {destinationType === 'funcionario' && (
                     <div className="mt-4 flex flex-wrap gap-2 pl-8 animate-in fade-in slide-in-from-top-2">
-                      {MOCK_DATA.funcionario.map(item => (
+                      {dynamicData.funcionario.map(item => (
                         <div 
                           key={item.id} 
                           onClick={(e) => { e.stopPropagation(); setDestinationValue(item.name); }}
