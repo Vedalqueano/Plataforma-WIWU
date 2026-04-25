@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 
 // Mock Data
 const initialData = [
@@ -76,6 +77,11 @@ export default function Departamentos() {
   const [editingUnitId, setEditingUnitId] = useState(null);
   const [unitFormData, setUnitFormData] = useState({ name: '', selectedOption: 0 });
 
+  // Dept Modal states
+  const [isDeptModalOpen, setIsDeptModalOpen] = useState(false);
+  const [editingDeptId, setEditingDeptId] = useState(null);
+  const [deptFormData, setDeptFormData] = useState({ name: '' });
+
   // Derivando estado
   const activeUnit = data.find(u => u.id === activeUnitId);
   const activeDept = activeUnit?.departamentos.find(d => d.id === activeDeptId);
@@ -141,29 +147,46 @@ export default function Departamentos() {
     openUnitModal(unit);
   };
 
-  const handleCreateDept = () => {
-    const name = window.prompt('Nome do novo departamento:');
-    if (!name || name.trim() === '' || !activeUnit) return;
+  const openDeptModal = (dept = null) => {
+    if (dept) {
+      setEditingDeptId(dept.id);
+      setDeptFormData({ name: dept.name });
+    } else {
+      setEditingDeptId(null);
+      setDeptFormData({ name: '' });
+    }
+    setIsDeptModalOpen(true);
+  };
+
+  const handleSaveDept = (e) => {
+    e.preventDefault();
+    if (!deptFormData.name || deptFormData.name.trim() === '' || !activeUnit) return;
+    
     const newData = [...data];
     const unitIndex = newData.findIndex(u => u.id === activeUnitId);
-    newData[unitIndex].departamentos.push({
-      id: `d${Date.now()}`,
-      name: name.trim(),
-      funcionarios: []
-    });
+
+    if (editingDeptId) {
+      const deptIndex = newData[unitIndex].departamentos.findIndex(d => d.id === editingDeptId);
+      if (deptIndex !== -1) {
+        newData[unitIndex].departamentos[deptIndex].name = deptFormData.name.trim();
+      }
+    } else {
+      newData[unitIndex].departamentos.push({
+        id: `d${Date.now()}`,
+        name: deptFormData.name.trim(),
+        funcionarios: []
+      });
+    }
+
     setData(newData);
+    setIsDeptModalOpen(false);
   };
+
+  const handleCreateDept = () => openDeptModal();
 
   const handleEditDept = (e, dept) => {
     e.stopPropagation();
-    const newName = window.prompt('Editar nome do departamento:', dept.name);
-    if (newName && newName.trim() !== '') {
-      const newData = [...data];
-      const unitIndex = newData.findIndex(u => u.id === activeUnitId);
-      const deptIndex = newData[unitIndex].departamentos.findIndex(d => d.id === dept.id);
-      newData[unitIndex].departamentos[deptIndex].name = newName.trim();
-      setData(newData);
-    }
+    openDeptModal(dept);
   };
 
   // Funcionários Modal Handlers
@@ -437,8 +460,8 @@ export default function Departamentos() {
       </div>
 
       {/* MODAL DE CRIAÇÃO/EDIÇÃO DE UNIDADE */}
-      {isUnitModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300">
+      {isUnitModalOpen && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300">
           <div className="bg-white rounded-3xl p-8 shadow-2xl max-w-md w-full mx-4 border border-slate-100 animate-in zoom-in-95 duration-300">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-extrabold text-slate-900">{editingUnitId ? 'Editar Unidade' : 'Nova Unidade'}</h3>
@@ -488,12 +511,51 @@ export default function Departamentos() {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
+      )}
+
+      {/* MODAL DE CRIAÇÃO/EDIÇÃO DE DEPARTAMENTO */}
+      {isDeptModalOpen && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white rounded-3xl p-8 shadow-2xl max-w-md w-full mx-4 border border-slate-100 animate-in zoom-in-95 duration-300">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-extrabold text-slate-900">{editingDeptId ? 'Editar Departamento' : 'Novo Departamento'}</h3>
+              <button onClick={() => setIsDeptModalOpen(false)} className="text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100 transition-colors">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            
+            <form onSubmit={handleSaveDept} className="space-y-4">
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1">Nome do Departamento</label>
+                <input 
+                  type="text" 
+                  required
+                  value={deptFormData.name}
+                  onChange={e => setDeptFormData({...deptFormData, name: e.target.value})}
+                  className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                  placeholder="Ex: Recursos Humanos, Financeiro..."
+                />
+              </div>
+
+              <div className="mt-6 flex justify-end gap-3 pt-4 border-t border-slate-100">
+                <button type="button" onClick={() => setIsDeptModalOpen(false)} className="px-5 py-2 rounded-xl text-slate-600 font-bold hover:bg-slate-100 transition-colors">
+                  Cancelar
+                </button>
+                <button type="submit" className="px-5 py-2 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-lg shadow-blue-500/30 transition-all">
+                  Salvar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>,
+        document.body
       )}
 
       {/* MODAL DE CRIAÇÃO/EDIÇÃO DE FUNCIONÁRIO */}
-      {isFuncModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300">
+      {isFuncModalOpen && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300">
           <div className="bg-white rounded-3xl p-8 shadow-2xl max-w-md w-full mx-4 border border-slate-100 animate-in zoom-in-95 duration-300">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-extrabold text-slate-900">{editingFunc ? 'Editar Funcionário' : 'Novo Funcionário'}</h3>
@@ -559,7 +621,8 @@ export default function Departamentos() {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
