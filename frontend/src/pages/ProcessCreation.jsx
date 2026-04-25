@@ -90,8 +90,9 @@ function ProcessEditor({ onBack, onSave, onDelete, initialData, isNew = false })
           icon: u.isCustomIcon ? 'domain' : (u.icon || 'domain') // Simplify icon since custom text might break formatting
         }));
 
+        // Departamentos e Funcionários
         const departamentos = [];
-        const cargos = new Set();
+        const funcionariosArray = [];
         
         parsedDepts.forEach(u => {
           if (u.departamentos) {
@@ -104,23 +105,23 @@ function ProcessEditor({ onBack, onSave, onDelete, initialData, isNew = false })
               });
               if (d.funcionarios) {
                 d.funcionarios.forEach(f => {
-                  if (f.cargo) cargos.add(f.cargo);
+                  funcionariosArray.push({
+                    id: f.id,
+                    name: f.name,
+                    cargo: f.cargo,
+                    deptName: d.name,
+                    icon: 'person'
+                  });
                 });
               }
             });
           }
         });
-        
-        const cargosArray = Array.from(cargos).map((c, idx) => ({
-          id: `c${idx}`,
-          name: c,
-          icon: 'badge'
-        }));
 
         setDynamicData({
           unidade: unidades.length > 0 ? unidades : FALLBACK_DATA.unidade,
           departamento: departamentos.length > 0 ? departamentos : FALLBACK_DATA.departamento,
-          funcionario: cargosArray.length > 0 ? cargosArray : FALLBACK_DATA.funcionario
+          funcionario: funcionariosArray.length > 0 ? funcionariosArray : FALLBACK_DATA.funcionario
         });
       } catch (e) {
         setDynamicData(FALLBACK_DATA);
@@ -501,15 +502,20 @@ function ProcessEditor({ onBack, onSave, onDelete, initialData, isNew = false })
                     </div>
                   </div>
                   {destinationType === 'funcionario' && (
-                    <div className="mt-4 flex flex-wrap gap-2 pl-8 animate-in fade-in slide-in-from-top-2">
+                    <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 pl-8 animate-in fade-in slide-in-from-top-2">
                       {dynamicData.funcionario.map(item => (
                         <div 
                           key={item.id} 
                           onClick={(e) => { e.stopPropagation(); setDestinationValue(item.name); }}
-                          className={`flex items-center gap-1 px-3 py-2 rounded-full text-xs font-bold transition-colors ${destinationValue === item.name ? 'bg-blue-600 text-white shadow-md' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+                          className={`flex items-center gap-3 p-3 rounded-2xl border-2 transition-colors cursor-pointer ${destinationValue === item.name ? 'border-blue-500 bg-blue-50/50 shadow-sm' : 'border-slate-100 bg-white hover:border-slate-200'}`}
                         >
-                          <span className="material-symbols-outlined text-[14px]">{item.icon}</span>
-                          {item.name}
+                          <div className={`h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 ${destinationValue === item.name ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-500'}`}>
+                             <span className="material-symbols-outlined text-[20px]">{item.icon || 'person'}</span>
+                          </div>
+                          <div className="flex flex-col">
+                             <span className={`text-sm font-bold ${destinationValue === item.name ? 'text-blue-900' : 'text-slate-800'}`}>{item.name}</span>
+                             {item.cargo && <span className="text-[10px] font-medium text-slate-500">{item.cargo}</span>}
+                          </div>
                         </div>
                       ))}
                     </div>
