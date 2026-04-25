@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 // --- COMPONENTE EDITOR DE PROCESSO ---
-function ProcessEditor({ onBack, initialData, isNew = false }) {
-  const [processName, setProcessName] = useState(isNew ? "" : (initialData?.name || "Operador de Caixa"));
-  const [processDesc, setProcessDesc] = useState(isNew ? "" : (initialData?.desc || "Procedimentos padrões para abertura, atendimento e fechamento de caixa."));
-  const [processCategory, setProcessCategory] = useState("Rotina de Setor");
+function ProcessEditor({ onBack, onSave, onDelete, initialData, isNew = false }) {
+  const [processName, setProcessName] = useState(isNew ? "" : (initialData?.name || ""));
+  const [processDesc, setProcessDesc] = useState(isNew ? "" : (initialData?.desc || ""));
+  const [processCategory, setProcessCategory] = useState(isNew ? "Rotina de Setor" : (initialData?.category || "Rotina de Setor"));
+  const [processType, setProcessType] = useState(isNew ? "loja" : (initialData?.type || "loja")); // loja ou escritorio
   
   const [stages, setStages] = useState(isNew ? [
     {
@@ -14,40 +15,9 @@ function ProcessEditor({ onBack, initialData, isNew = false }) {
         { id: Date.now() + 1, title: "", desc: "" }
       ]
     }
-  ] : (initialData?.stages || [
-    {
-      id: 1,
-      title: "Preparação e Abertura do Caixa",
-      tasks: [
-        { id: 1, title: "Verificar Suprimentos", desc: "Garantir que há bobinas de papel suficientes, canetas, e itens de embalagem no checkout." },
-        { id: 2, title: "Conferência do Fundo de Troco", desc: "Contar e confirmar o valor inicial repassado pela tesouraria antes de abrir o PDV." },
-        { id: 3, title: "Login no Sistema PDV", desc: "Acessar o sistema com as próprias credenciais. Nunca usar login de outro colaborador." }
-      ]
-    },
-    {
-      id: 2,
-      title: "Atendimento ao Cliente e Registros",
-      tasks: [
-        { id: 4, title: "Cordialidade no Atendimento", desc: "Cumprimentar o cliente (\"Bom dia/Boa tarde\"), perguntar se encontrou tudo o que procurava." },
-        { id: 5, title: "Registro de Produtos", desc: "Escanear códigos de barras com atenção. Conferir peso de mercadorias pesáveis." },
-        { id: 6, title: "Recebimento e Emissão de Cupom", desc: "Anunciar o valor total. Conferir notas para evitar fraudes (dinheiro). Emitir e entregar a nota fiscal." }
-      ]
-    },
-    {
-      id: 3,
-      title: "Fechamento e Sangria",
-      tasks: [
-        { id: 7, title: "Realizar Sangria de Valores Altos", desc: "Durante o turno, se o valor em dinheiro exceder o limite seguro, solicitar sangria ao gerente." },
-        { id: 8, title: "Fechamento Final no PDV", desc: "Encerrar o caixa no sistema. Imprimir relatório de fechamento (Leitura X/Z)." },
-        { id: 9, title: "Entrega do Malote", desc: "Acondicionar dinheiro, comprovantes de cartão e vales. Entregar ao financeiro/cofre com protocolo." }
-      ]
-    }
-  ]));
+  ] : (initialData?.stages || []));
 
-  const [trainings, setTrainings] = useState(isNew ? [] : (initialData?.trainings || [
-    { id: 1, title: "Prevenção a Fraudes", duration: "Videoaula • 15 min" },
-    { id: 2, title: "Atendimento de Excelência", duration: "Videoaula • 20 min" }
-  ]));
+  const [trainings, setTrainings] = useState(isNew ? [] : (initialData?.trainings || []));
 
   const descRef = useRef(null);
   
@@ -112,6 +82,19 @@ function ProcessEditor({ onBack, initialData, isNew = false }) {
     setTrainings(trainings.map(t => t.id === id ? { ...t, [field]: value } : t));
   };
 
+  const handleSave = () => {
+    onSave({
+      id: isNew ? Date.now().toString() : initialData.id,
+      name: processName || "Novo Processo",
+      desc: processDesc,
+      category: processCategory,
+      type: processType,
+      icon: initialData?.icon || 'edit_document',
+      stages,
+      trainings
+    });
+  };
+
   return (
     <div className="max-w-7xl mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-500 px-4 md:px-0 pb-20">
       {/* Header & Breadcrumbs */}
@@ -122,7 +105,7 @@ function ProcessEditor({ onBack, initialData, isNew = false }) {
             Processos
           </button>
           <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-          <span>{isNew ? "Novo Processo" : "Loja"}</span>
+          <span>{isNew ? "Novo Processo" : (processType === 'loja' ? 'Loja' : 'Escritório')}</span>
           {!isNew && (
             <>
               <span className="material-symbols-outlined text-[16px]">chevron_right</span>
@@ -148,16 +131,26 @@ function ProcessEditor({ onBack, initialData, isNew = false }) {
 
           <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 w-full lg:w-3/4">
             <div className="h-20 w-20 bg-blue-500/10 rounded-[2rem] flex items-center justify-center border border-white cursor-pointer hover:bg-blue-500/20 transition-colors flex-shrink-0">
-              <span className="material-symbols-outlined text-blue-600 text-4xl">edit_document</span>
+              <span className="material-symbols-outlined text-blue-600 text-4xl">{initialData?.icon || 'edit_document'}</span>
             </div>
             <div className="w-full">
-              <input
-                 type="text"
-                 value={processCategory}
-                 onChange={(e) => setProcessCategory(e.target.value)}
-                 className="text-[12px] font-black uppercase tracking-widest text-blue-500 mb-1 block bg-transparent border-none outline-none placeholder:text-blue-300 w-full"
-                 placeholder="CATEGORIA (Ex: Rotina de Setor)"
-              />
+              <div className="flex items-center gap-2 mb-1">
+                <input
+                   type="text"
+                   value={processCategory}
+                   onChange={(e) => setProcessCategory(e.target.value)}
+                   className="text-[12px] font-black uppercase tracking-widest text-blue-500 bg-transparent border-none outline-none placeholder:text-blue-300 w-48"
+                   placeholder="CATEGORIA"
+                />
+                <select 
+                  value={processType}
+                  onChange={(e) => setProcessType(e.target.value)}
+                  className="text-[10px] font-bold text-slate-500 bg-white border border-slate-200 rounded-lg px-2 py-0.5 outline-none"
+                >
+                  <option value="loja">Setor: Loja</option>
+                  <option value="escritorio">Setor: Escritório</option>
+                </select>
+              </div>
               <input
                  type="text"
                  value={processName}
@@ -176,7 +169,12 @@ function ProcessEditor({ onBack, initialData, isNew = false }) {
             </div>
           </div>
           <div className="flex flex-col sm:flex-row gap-3 relative z-10 w-full lg:w-auto mt-4 lg:mt-0">
-            <button className="w-full sm:w-auto justify-center px-6 py-3.5 md:py-3 rounded-full text-sm font-bold bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-md shadow-blue-500/20 flex items-center gap-2">
+            {!isNew && (
+              <button onClick={() => onDelete(initialData.id)} className="w-full sm:w-auto justify-center px-4 py-3.5 md:py-3 rounded-full text-sm font-bold bg-white text-red-500 hover:bg-red-50 border border-red-100 transition-colors shadow-sm flex items-center gap-2">
+                <span className="material-symbols-outlined text-[18px]">delete</span>
+              </button>
+            )}
+            <button onClick={handleSave} className="w-full sm:w-auto justify-center px-6 py-3.5 md:py-3 rounded-full text-sm font-bold bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-md shadow-blue-500/20 flex items-center gap-2">
               <span className="material-symbols-outlined text-[18px]">save</span>
               Salvar Processo
             </button>
@@ -323,18 +321,139 @@ function ProcessEditor({ onBack, initialData, isNew = false }) {
   );
 }
 
+// --- DADOS INICIAIS ---
+const initialProcesses = [
+  {
+    id: 'operador-caixa',
+    category: 'Rotina de Setor',
+    type: 'loja',
+    name: 'Operador de Caixa',
+    desc: 'Procedimentos padrões para abertura, atendimento e fechamento de caixa.',
+    icon: 'point_of_sale',
+    stages: [
+      {
+        id: 1,
+        title: "Preparação e Abertura do Caixa",
+        tasks: [
+          { id: 1, title: "Verificar Suprimentos", desc: "Garantir que há bobinas de papel suficientes, canetas, e itens de embalagem no checkout." },
+          { id: 2, title: "Conferência do Fundo de Troco", desc: "Contar e confirmar o valor inicial repassado pela tesouraria antes de abrir o PDV." },
+          { id: 3, title: "Login no Sistema PDV", desc: "Acessar o sistema com as próprias credenciais. Nunca usar login de outro colaborador." }
+        ]
+      },
+      {
+        id: 2,
+        title: "Atendimento ao Cliente e Registros",
+        tasks: [
+          { id: 4, title: "Cordialidade no Atendimento", desc: "Cumprimentar o cliente (\"Bom dia/Boa tarde\"), perguntar se encontrou tudo o que procurava." },
+          { id: 5, title: "Registro de Produtos", desc: "Escanear códigos de barras com atenção. Conferir peso de mercadorias pesáveis." },
+          { id: 6, title: "Recebimento e Emissão de Cupom", desc: "Anunciar o valor total. Conferir notas para evitar fraudes (dinheiro). Emitir e entregar a nota fiscal." }
+        ]
+      },
+      {
+        id: 3,
+        title: "Fechamento e Sangria",
+        tasks: [
+          { id: 7, title: "Realizar Sangria de Valores Altos", desc: "Durante o turno, se o valor em dinheiro exceder o limite seguro, solicitar sangria ao gerente." },
+          { id: 8, title: "Fechamento Final no PDV", desc: "Encerrar o caixa no sistema. Imprimir relatório de fechamento (Leitura X/Z)." },
+          { id: 9, title: "Entrega do Malote", desc: "Acondicionar dinheiro, comprovantes de cartão e vales. Entregar ao financeiro/cofre com protocolo." }
+        ]
+      }
+    ],
+    trainings: [
+      { id: 1, title: "Prevenção a Fraudes", duration: "Videoaula • 15 min" },
+      { id: 2, title: "Atendimento de Excelência", duration: "Videoaula • 20 min" }
+    ]
+  },
+  {
+    id: 'estoque',
+    category: 'Rotina de Setor',
+    type: 'loja',
+    name: 'Estoque e Reposição',
+    desc: 'Recebimento, organização e vitrine',
+    icon: 'inventory_2',
+    stages: [],
+    trainings: []
+  },
+  {
+    id: 'vendas',
+    category: 'Rotina de Setor',
+    type: 'loja',
+    name: 'Vendas e Consultoria',
+    desc: 'Abordagem, negociação e fechamento',
+    icon: 'local_mall',
+    stages: [],
+    trainings: []
+  },
+  {
+    id: 'rh',
+    category: 'Rotina de Setor',
+    type: 'escritorio',
+    name: 'Recursos Humanos',
+    desc: 'Recrutamento, admissão e folha',
+    icon: 'groups',
+    stages: [],
+    trainings: []
+  },
+  {
+    id: 'financeiro',
+    category: 'Rotina de Setor',
+    type: 'escritorio',
+    name: 'Financeiro',
+    desc: 'Contas a pagar, receber e conciliação',
+    icon: 'account_balance_wallet',
+    stages: [],
+    trainings: []
+  },
+  {
+    id: 'compras',
+    category: 'Rotina de Setor',
+    type: 'escritorio',
+    name: 'Compras e Suprimentos',
+    desc: 'Cotação, pedidos e negociação',
+    icon: 'shopping_cart',
+    stages: [],
+    trainings: []
+  }
+];
+
 // --- COMPONENTE PRINCIPAL (HUB) ---
 export default function ProcessCreation() {
-  const [activeProcess, setActiveProcess] = useState(null);
+  const [processes, setProcesses] = useState(initialProcesses);
+  const [activeProcessId, setActiveProcessId] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
 
+  const handleSaveProcess = (processData) => {
+    if (isCreating) {
+      setProcesses([...processes, processData]);
+    } else {
+      setProcesses(processes.map(p => p.id === processData.id ? processData : p));
+    }
+    setActiveProcessId(null);
+    setIsCreating(false);
+  };
+
+  const handleDeleteProcess = (id) => {
+    // Confirmação simples opcional
+    if (window.confirm("Tem certeza que deseja excluir este processo?")) {
+      setProcesses(processes.filter(p => p.id !== id));
+      setActiveProcessId(null);
+      setIsCreating(false);
+    }
+  };
+
   if (isCreating) {
-    return <ProcessEditor onBack={() => setIsCreating(false)} isNew={true} />;
+    return <ProcessEditor onBack={() => setIsCreating(false)} onSave={handleSaveProcess} isNew={true} />;
   }
 
-  if (activeProcess === 'operador-caixa') {
-    return <ProcessEditor onBack={() => setActiveProcess(null)} isNew={false} />;
+  if (activeProcessId) {
+    const processToEdit = processes.find(p => p.id === activeProcessId);
+    if (processToEdit) {
+      return <ProcessEditor onBack={() => setActiveProcessId(null)} onSave={handleSaveProcess} onDelete={handleDeleteProcess} initialData={processToEdit} isNew={false} />;
+    }
   }
+
+  const lojaProcesses = processes.filter(p => p.type === 'loja');
+  const escritorioProcesses = processes.filter(p => p.type === 'escritorio');
 
   return (
     <div className="max-w-7xl mx-auto w-full animate-in fade-in duration-500 px-4 md:px-0">
@@ -367,50 +486,27 @@ export default function ProcessCreation() {
           </div>
 
           <div className="space-y-4">
-            {/* Card: Operador de Caixa */}
-            <div 
-              onClick={() => setActiveProcess('operador-caixa')}
-              className="group cursor-pointer bg-white/60 backdrop-blur-2xl border border-white/80 rounded-3xl md:rounded-[2rem] p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)]"
-            >
-              <div className="flex items-center gap-4">
-                <div className="h-14 w-14 bg-indigo-500/10 rounded-[1.5rem] flex items-center justify-center transition-colors group-hover:bg-indigo-500 group-hover:text-white text-indigo-600">
-                  <span className="material-symbols-outlined text-2xl">point_of_sale</span>
+            {lojaProcesses.map(process => (
+              <div 
+                key={process.id}
+                onClick={() => setActiveProcessId(process.id)}
+                className="group cursor-pointer bg-white/60 backdrop-blur-2xl border border-white/80 rounded-3xl md:rounded-[2rem] p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)]"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="h-14 w-14 bg-indigo-500/10 rounded-[1.5rem] flex items-center justify-center transition-colors group-hover:bg-indigo-500 group-hover:text-white text-indigo-600">
+                    <span className="material-symbols-outlined text-2xl">{process.icon || 'edit_document'}</span>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-extrabold text-slate-900 group-hover:text-indigo-600 transition-colors">{process.name}</h3>
+                    <p className="text-xs text-slate-500 font-medium truncate max-w-[200px] md:max-w-[250px]">{process.desc || 'Sem descrição'}</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-lg font-extrabold text-slate-900 group-hover:text-indigo-600 transition-colors">Operador de Caixa</h3>
-                  <p className="text-xs text-slate-500 font-medium">Abertura, atendimento e fechamento</p>
-                </div>
+                <span className="material-symbols-outlined text-slate-300 group-hover:text-indigo-500 transition-colors">chevron_right</span>
               </div>
-              <span className="material-symbols-outlined text-slate-300 group-hover:text-indigo-500 transition-colors">chevron_right</span>
-            </div>
-
-            {/* Card: Estoque */}
-            <div className="group cursor-pointer bg-white/60 backdrop-blur-2xl border border-white/80 rounded-3xl md:rounded-[2rem] p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)]">
-              <div className="flex items-center gap-4">
-                <div className="h-14 w-14 bg-slate-100 rounded-[1.5rem] flex items-center justify-center text-slate-500 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
-                  <span className="material-symbols-outlined text-2xl">inventory_2</span>
-                </div>
-                <div>
-                  <h3 className="text-lg font-extrabold text-slate-900 group-hover:text-indigo-600 transition-colors">Estoque e Reposição</h3>
-                  <p className="text-xs text-slate-500 font-medium">Recebimento, organização e vitrine</p>
-                </div>
-              </div>
-              <span className="material-symbols-outlined text-slate-300 group-hover:text-indigo-500 transition-colors">chevron_right</span>
-            </div>
-
-            {/* Card: Vendas */}
-            <div className="group cursor-pointer bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)]">
-              <div className="flex items-center gap-4">
-                <div className="h-14 w-14 bg-slate-100 rounded-[1.5rem] flex items-center justify-center text-slate-500 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
-                  <span className="material-symbols-outlined text-2xl">local_mall</span>
-                </div>
-                <div>
-                  <h3 className="text-lg font-extrabold text-slate-900 group-hover:text-indigo-600 transition-colors">Vendas e Consultoria</h3>
-                  <p className="text-xs text-slate-500 font-medium">Abordagem, negociação e fechamento</p>
-                </div>
-              </div>
-              <span className="material-symbols-outlined text-slate-300 group-hover:text-indigo-500 transition-colors">chevron_right</span>
-            </div>
+            ))}
+            {lojaProcesses.length === 0 && (
+              <p className="text-sm text-slate-400 font-medium text-center py-6 border-2 border-dashed border-slate-200 rounded-[2rem]">Nenhum processo criado para a loja.</p>
+            )}
           </div>
         </section>
 
@@ -424,47 +520,27 @@ export default function ProcessCreation() {
           </div>
 
           <div className="space-y-4">
-            {/* Card: RH */}
-            <div className="group cursor-pointer bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)]">
-              <div className="flex items-center gap-4">
-                <div className="h-14 w-14 bg-slate-100 rounded-[1.5rem] flex items-center justify-center text-slate-500 group-hover:bg-teal-500 group-hover:text-white transition-colors">
-                  <span className="material-symbols-outlined text-2xl">groups</span>
+            {escritorioProcesses.map(process => (
+              <div 
+                key={process.id}
+                onClick={() => setActiveProcessId(process.id)}
+                className="group cursor-pointer bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)]"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="h-14 w-14 bg-slate-100 rounded-[1.5rem] flex items-center justify-center text-slate-500 group-hover:bg-teal-500 group-hover:text-white transition-colors">
+                    <span className="material-symbols-outlined text-2xl">{process.icon || 'edit_document'}</span>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-extrabold text-slate-900 group-hover:text-teal-600 transition-colors">{process.name}</h3>
+                    <p className="text-xs text-slate-500 font-medium truncate max-w-[200px] md:max-w-[250px]">{process.desc || 'Sem descrição'}</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-lg font-extrabold text-slate-900 group-hover:text-teal-600 transition-colors">Recursos Humanos</h3>
-                  <p className="text-xs text-slate-500 font-medium">Recrutamento, admissão e folha</p>
-                </div>
+                <span className="material-symbols-outlined text-slate-300 group-hover:text-teal-500 transition-colors">chevron_right</span>
               </div>
-              <span className="material-symbols-outlined text-slate-300 group-hover:text-teal-500 transition-colors">chevron_right</span>
-            </div>
-
-            {/* Card: Financeiro */}
-            <div className="group cursor-pointer bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)]">
-              <div className="flex items-center gap-4">
-                <div className="h-14 w-14 bg-slate-100 rounded-[1.5rem] flex items-center justify-center text-slate-500 group-hover:bg-teal-500 group-hover:text-white transition-colors">
-                  <span className="material-symbols-outlined text-2xl">account_balance_wallet</span>
-                </div>
-                <div>
-                  <h3 className="text-lg font-extrabold text-slate-900 group-hover:text-teal-600 transition-colors">Financeiro</h3>
-                  <p className="text-xs text-slate-500 font-medium">Contas a pagar, receber e conciliação</p>
-                </div>
-              </div>
-              <span className="material-symbols-outlined text-slate-300 group-hover:text-teal-500 transition-colors">chevron_right</span>
-            </div>
-
-            {/* Card: Compras */}
-            <div className="group cursor-pointer bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)]">
-              <div className="flex items-center gap-4">
-                <div className="h-14 w-14 bg-slate-100 rounded-[1.5rem] flex items-center justify-center text-slate-500 group-hover:bg-teal-500 group-hover:text-white transition-colors">
-                  <span className="material-symbols-outlined text-2xl">shopping_cart</span>
-                </div>
-                <div>
-                  <h3 className="text-lg font-extrabold text-slate-900 group-hover:text-teal-600 transition-colors">Compras e Suprimentos</h3>
-                  <p className="text-xs text-slate-500 font-medium">Cotação, pedidos e negociação</p>
-                </div>
-              </div>
-              <span className="material-symbols-outlined text-slate-300 group-hover:text-teal-500 transition-colors">chevron_right</span>
-            </div>
+            ))}
+            {escritorioProcesses.length === 0 && (
+              <p className="text-sm text-slate-400 font-medium text-center py-6 border-2 border-dashed border-slate-200 rounded-[2rem]">Nenhum processo criado para o escritório.</p>
+            )}
           </div>
         </section>
 
