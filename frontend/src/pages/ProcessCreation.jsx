@@ -611,7 +611,22 @@ const initialProcesses = [
 
 // --- COMPONENTE PRINCIPAL (HUB) ---
 export default function ProcessCreation() {
-  const [processes, setProcesses] = useState(initialProcesses);
+  const [processes, setProcesses] = useState(() => {
+    const saved = localStorage.getItem('wiwu_processos_data');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        return initialProcesses;
+      }
+    }
+    return initialProcesses;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('wiwu_processos_data', JSON.stringify(processes));
+  }, [processes]);
+
   const [activeProcessId, setActiveProcessId] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
 
