@@ -50,6 +50,17 @@ const initialData = [
   }
 ];
 
+const unitOptions = [
+  { icon: 'domain', colorClass: 'text-blue-600', bgClass: 'bg-blue-500/10', hoverClass: 'group-hover:text-blue-600' },
+  { icon: 'storefront', colorClass: 'text-indigo-600', bgClass: 'bg-indigo-500/10', hoverClass: 'group-hover:text-indigo-600' },
+  { icon: 'business_center', colorClass: 'text-teal-600', bgClass: 'bg-teal-500/10', hoverClass: 'group-hover:text-teal-600' },
+  { icon: 'factory', colorClass: 'text-orange-600', bgClass: 'bg-orange-500/10', hoverClass: 'group-hover:text-orange-600' },
+  { icon: 'warehouse', colorClass: 'text-amber-600', bgClass: 'bg-amber-500/10', hoverClass: 'group-hover:text-amber-600' },
+  { icon: 'local_hospital', colorClass: 'text-rose-600', bgClass: 'bg-rose-500/10', hoverClass: 'group-hover:text-rose-600' },
+  { icon: 'school', colorClass: 'text-emerald-600', bgClass: 'bg-emerald-500/10', hoverClass: 'group-hover:text-emerald-600' },
+  { icon: 'account_balance', colorClass: 'text-purple-600', bgClass: 'bg-purple-500/10', hoverClass: 'group-hover:text-purple-600' },
+];
+
 export default function Departamentos() {
   const [data, setData] = useState(initialData);
   const [activeUnitId, setActiveUnitId] = useState(null);
@@ -59,6 +70,11 @@ export default function Departamentos() {
   const [isFuncModalOpen, setIsFuncModalOpen] = useState(false);
   const [editingFunc, setEditingFunc] = useState(null);
   const [funcFormData, setFuncFormData] = useState({ name: '', birthDate: '', cargo: '', isManager: false });
+
+  // Unit Modal states
+  const [isUnitModalOpen, setIsUnitModalOpen] = useState(false);
+  const [editingUnitId, setEditingUnitId] = useState(null);
+  const [unitFormData, setUnitFormData] = useState({ name: '', selectedOption: 0 });
 
   // Derivando estado
   const activeUnit = data.find(u => u.id === activeUnitId);
@@ -75,30 +91,54 @@ export default function Departamentos() {
   };
 
   // Funções de Criação e Edição
-  const handleCreateUnit = () => {
-    const name = window.prompt('Nome da nova unidade:');
-    if (!name || name.trim() === '') return;
-    
-    const newData = [...data];
-    newData.push({
-      id: `u${Date.now()}`,
-      name: name.trim(),
-      icon: 'domain',
-      colorClass: 'text-blue-600',
-      bgClass: 'bg-blue-500/10',
-      hoverClass: 'group-hover:text-blue-600',
-      departamentos: []
-    });
-    setData(newData);
+  const openUnitModal = (unit = null) => {
+    if (unit) {
+      setEditingUnitId(unit.id);
+      const optionIndex = unitOptions.findIndex(o => o.icon === unit.icon) !== -1 
+        ? unitOptions.findIndex(o => o.icon === unit.icon) 
+        : 0;
+      setUnitFormData({ name: unit.name, selectedOption: optionIndex });
+    } else {
+      setEditingUnitId(null);
+      setUnitFormData({ name: '', selectedOption: 0 });
+    }
+    setIsUnitModalOpen(true);
   };
+
+  const handleSaveUnit = (e) => {
+    e.preventDefault();
+    if (!unitFormData.name || unitFormData.name.trim() === '') return;
+    
+    const selectedStyle = unitOptions[unitFormData.selectedOption];
+    const newData = [...data];
+
+    if (editingUnitId) {
+      const unitIndex = newData.findIndex(u => u.id === editingUnitId);
+      if (unitIndex !== -1) {
+        newData[unitIndex] = {
+          ...newData[unitIndex],
+          name: unitFormData.name.trim(),
+          ...selectedStyle
+        };
+      }
+    } else {
+      newData.push({
+        id: `u${Date.now()}`,
+        name: unitFormData.name.trim(),
+        ...selectedStyle,
+        departamentos: []
+      });
+    }
+
+    setData(newData);
+    setIsUnitModalOpen(false);
+  };
+
+  const handleCreateUnit = () => openUnitModal();
 
   const handleEditUnit = (e, unit) => {
     e.stopPropagation();
-    const newName = window.prompt('Editar nome da unidade:', unit.name);
-    if (newName && newName.trim() !== '') {
-      const newData = data.map(u => u.id === unit.id ? { ...u, name: newName.trim() } : u);
-      setData(newData);
-    }
+    openUnitModal(unit);
   };
 
   const handleCreateDept = () => {
@@ -395,6 +435,61 @@ export default function Departamentos() {
         )}
 
       </div>
+
+      {/* MODAL DE CRIAÇÃO/EDIÇÃO DE UNIDADE */}
+      {isUnitModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white rounded-3xl p-8 shadow-2xl max-w-md w-full mx-4 border border-slate-100 animate-in zoom-in-95 duration-300">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-extrabold text-slate-900">{editingUnitId ? 'Editar Unidade' : 'Nova Unidade'}</h3>
+              <button onClick={() => setIsUnitModalOpen(false)} className="text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100 transition-colors">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            
+            <form onSubmit={handleSaveUnit} className="space-y-6">
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1">Nome da Unidade</label>
+                <input 
+                  type="text" 
+                  required
+                  value={unitFormData.name}
+                  onChange={e => setUnitFormData({...unitFormData, name: e.target.value})}
+                  className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                  placeholder="Ex: Loja Centro, Matriz..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-3">Ícone e Cor</label>
+                <div className="grid grid-cols-4 gap-3">
+                  {unitOptions.map((opt, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setUnitFormData({...unitFormData, selectedOption: idx})}
+                      className={`flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition-all duration-200 ${unitFormData.selectedOption === idx ? 'border-blue-500 bg-blue-50 scale-105 shadow-sm' : 'border-slate-100 bg-slate-50 hover:bg-slate-100 hover:border-slate-200'}`}
+                    >
+                      <div className={`h-10 w-10 rounded-xl flex items-center justify-center mb-1 ${opt.bgClass} ${opt.colorClass}`}>
+                        <span className="material-symbols-outlined text-[20px]">{opt.icon}</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end gap-3 pt-4 border-t border-slate-100">
+                <button type="button" onClick={() => setIsUnitModalOpen(false)} className="px-5 py-2 rounded-xl text-slate-600 font-bold hover:bg-slate-100 transition-colors">
+                  Cancelar
+                </button>
+                <button type="submit" className="px-5 py-2 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-lg shadow-blue-500/30 transition-all">
+                  Salvar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* MODAL DE CRIAÇÃO/EDIÇÃO DE FUNCIONÁRIO */}
       {isFuncModalOpen && (
