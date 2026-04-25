@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
 // Mock Data
@@ -63,7 +63,22 @@ const unitOptions = [
 ];
 
 export default function Departamentos() {
-  const [data, setData] = useState(initialData);
+  const [data, setData] = useState(() => {
+    const saved = localStorage.getItem('wiwu_departamentos_data');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        return initialData;
+      }
+    }
+    return initialData;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('wiwu_departamentos_data', JSON.stringify(data));
+  }, [data]);
+
   const [activeUnitId, setActiveUnitId] = useState(null);
   const [activeDeptId, setActiveDeptId] = useState(null);
   
