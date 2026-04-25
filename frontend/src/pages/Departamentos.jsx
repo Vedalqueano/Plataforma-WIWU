@@ -12,21 +12,21 @@ const initialData = [
     departamentos: [
       {
         id: 'd1', name: 'Vendas',
-        cargos: [
+        funcionarios: [
           { 
-            id: 'c1', name: 'Gerente de Vendas', 
-            funcionarios: [{ id: 'f1', name: 'Ana Silva', role: 'Gerente' }] 
+            id: 'f1', name: 'Ana Silva', 
+            birthDate: '1985-04-12', cargo: 'Gerente de Vendas', managerId: '' 
           },
           { 
-            id: 'c2', name: 'Vendedor', 
-            funcionarios: [{ id: 'f2', name: 'Carlos Dias', role: 'Vendedor' }] 
+            id: 'f2', name: 'Carlos Dias', 
+            birthDate: '1992-08-23', cargo: 'Vendedor', managerId: 'f1' 
           }
         ]
       },
       {
         id: 'd2', name: 'Estoque',
-        cargos: [
-          { id: 'c3', name: 'Estoquista', funcionarios: [] }
+        funcionarios: [
+          { id: 'f3', name: 'João Santos', birthDate: '1988-11-30', cargo: 'Estoquista', managerId: '' }
         ]
       }
     ]
@@ -41,11 +41,11 @@ const initialData = [
     departamentos: [
       { 
         id: 'd3', name: 'Recursos Humanos', 
-        cargos: [
-          { id: 'c4', name: 'Analista de RH', funcionarios: [] }
+        funcionarios: [
+          { id: 'f4', name: 'Mariana Costa', birthDate: '1990-01-15', cargo: 'Analista de RH', managerId: '' }
         ] 
       },
-      { id: 'd4', name: 'Financeiro', cargos: [] }
+      { id: 'd4', name: 'Financeiro', funcionarios: [] }
     ]
   }
 ];
@@ -54,103 +54,122 @@ export default function Departamentos() {
   const [data, setData] = useState(initialData);
   const [activeUnitId, setActiveUnitId] = useState(null);
   const [activeDeptId, setActiveDeptId] = useState(null);
-  const [activeCargoId, setActiveCargoId] = useState(null);
-  const [isUnitModalOpen, setIsUnitModalOpen] = useState(false);
+  
+  // Modal states
+  const [isFuncModalOpen, setIsFuncModalOpen] = useState(false);
+  const [editingFunc, setEditingFunc] = useState(null);
+  const [funcFormData, setFuncFormData] = useState({ name: '', birthDate: '', cargo: '', managerId: '' });
 
-  // Derivando estado atual para as colunas
+  // Derivando estado
   const activeUnit = data.find(u => u.id === activeUnitId);
   const activeDept = activeUnit?.departamentos.find(d => d.id === activeDeptId);
-  const activeCargo = activeDept?.cargos.find(c => c.id === activeCargoId);
 
-  // Handlers
+  // Handlers de seleção
   const handleSelectUnit = (id) => {
     setActiveUnitId(id);
     setActiveDeptId(null);
-    setActiveCargoId(null);
   };
 
   const handleSelectDept = (id) => {
     setActiveDeptId(id);
-    setActiveCargoId(null);
   };
 
-  const handleSelectCargo = (id) => {
-    setActiveCargoId(id);
-  };
-
-  // Funções de Criação
+  // Funções de Criação e Edição
   const handleCreateUnit = () => {
-    setIsUnitModalOpen(true);
-  };
-
-  const confirmCreateUnit = (type) => {
-    const isLoja = type === '1';
-    const baseName = isLoja ? 'Loja' : 'Escritório';
+    const name = window.prompt('Nome da nova unidade:');
+    if (!name || name.trim() === '') return;
     
-    // Contar quantas unidades desse tipo já existem para a numeração
-    const count = data.filter(u => u.name.startsWith(baseName)).length;
-    const suffix = count > 0 ? ` ${count + 1}` : '';
-    const newName = `${baseName}${suffix}`;
-
-    const icon = isLoja ? 'storefront' : 'business_center';
-    const colorClass = isLoja ? 'text-indigo-600' : 'text-teal-600';
-    const bgClass = isLoja ? 'bg-indigo-500/10' : 'bg-teal-500/10';
-    const hoverClass = isLoja ? 'group-hover:text-indigo-600' : 'group-hover:text-teal-600';
-
     const newData = [...data];
     newData.push({
       id: `u${Date.now()}`,
-      name: newName,
-      icon,
-      colorClass,
-      bgClass,
-      hoverClass,
+      name: name.trim(),
+      icon: 'domain',
+      colorClass: 'text-blue-600',
+      bgClass: 'bg-blue-500/10',
+      hoverClass: 'group-hover:text-blue-600',
       departamentos: []
     });
     setData(newData);
-    setIsUnitModalOpen(false);
+  };
+
+  const handleEditUnit = (e, unit) => {
+    e.stopPropagation();
+    const newName = window.prompt('Editar nome da unidade:', unit.name);
+    if (newName && newName.trim() !== '') {
+      const newData = data.map(u => u.id === unit.id ? { ...u, name: newName.trim() } : u);
+      setData(newData);
+    }
   };
 
   const handleCreateDept = () => {
     const name = window.prompt('Nome do novo departamento:');
-    if (!name || !activeUnit) return;
+    if (!name || name.trim() === '' || !activeUnit) return;
     const newData = [...data];
     const unitIndex = newData.findIndex(u => u.id === activeUnitId);
     newData[unitIndex].departamentos.push({
       id: `d${Date.now()}`,
-      name,
-      cargos: []
-    });
-    setData(newData);
-  };
-
-  const handleCreateCargo = () => {
-    const name = window.prompt('Nome do novo cargo:');
-    if (!name || !activeDept) return;
-    const newData = [...data];
-    const unitIndex = newData.findIndex(u => u.id === activeUnitId);
-    const deptIndex = newData[unitIndex].departamentos.findIndex(d => d.id === activeDeptId);
-    newData[unitIndex].departamentos[deptIndex].cargos.push({
-      id: `c${Date.now()}`,
-      name,
+      name: name.trim(),
       funcionarios: []
     });
     setData(newData);
   };
 
-  const handleCreateFuncionario = () => {
-    const name = window.prompt('Nome do novo funcionário:');
-    if (!name || !activeCargo) return;
+  const handleEditDept = (e, dept) => {
+    e.stopPropagation();
+    const newName = window.prompt('Editar nome do departamento:', dept.name);
+    if (newName && newName.trim() !== '') {
+      const newData = [...data];
+      const unitIndex = newData.findIndex(u => u.id === activeUnitId);
+      const deptIndex = newData[unitIndex].departamentos.findIndex(d => d.id === dept.id);
+      newData[unitIndex].departamentos[deptIndex].name = newName.trim();
+      setData(newData);
+    }
+  };
+
+  // Funcionários Modal Handlers
+  const openFuncModal = (func = null) => {
+    if (func) {
+      setEditingFunc(func.id);
+      setFuncFormData({ 
+        name: func.name, 
+        birthDate: func.birthDate || '', 
+        cargo: func.cargo, 
+        managerId: func.managerId || '' 
+      });
+    } else {
+      setEditingFunc(null);
+      setFuncFormData({ name: '', birthDate: '', cargo: '', managerId: '' });
+    }
+    setIsFuncModalOpen(true);
+  };
+
+  const handleSaveFuncionario = (e) => {
+    e.preventDefault();
+    if (!activeDept) return;
+    
     const newData = [...data];
     const unitIndex = newData.findIndex(u => u.id === activeUnitId);
     const deptIndex = newData[unitIndex].departamentos.findIndex(d => d.id === activeDeptId);
-    const cargoIndex = newData[unitIndex].departamentos[deptIndex].cargos.findIndex(c => c.id === activeCargoId);
-    newData[unitIndex].departamentos[deptIndex].cargos[cargoIndex].funcionarios.push({
-      id: `f${Date.now()}`,
-      name,
-      role: activeCargo.name
-    });
+    
+    if (editingFunc) {
+      // Editar
+      const funcIndex = newData[unitIndex].departamentos[deptIndex].funcionarios.findIndex(f => f.id === editingFunc);
+      if (funcIndex !== -1) {
+        newData[unitIndex].departamentos[deptIndex].funcionarios[funcIndex] = { 
+          ...newData[unitIndex].departamentos[deptIndex].funcionarios[funcIndex],
+          ...funcFormData 
+        };
+      }
+    } else {
+      // Criar
+      newData[unitIndex].departamentos[deptIndex].funcionarios.push({
+        id: `f${Date.now()}`,
+        ...funcFormData
+      });
+    }
+    
     setData(newData);
+    setIsFuncModalOpen(false);
   };
 
   // Funções de Exclusão
@@ -162,33 +181,18 @@ export default function Departamentos() {
     if (activeUnitId === id) {
       setActiveUnitId(null);
       setActiveDeptId(null);
-      setActiveCargoId(null);
     }
   };
 
   const handleDeleteDept = (e, id) => {
     e.stopPropagation();
-    if (!window.confirm('Tem certeza que deseja excluir este departamento? Todos os cargos dentro dele serão apagados.')) return;
+    if (!window.confirm('Tem certeza que deseja excluir este departamento? Todos os funcionários dentro dele serão apagados.')) return;
     const newData = [...data];
     const unitIndex = newData.findIndex(u => u.id === activeUnitId);
     newData[unitIndex].departamentos = newData[unitIndex].departamentos.filter(d => d.id !== id);
     setData(newData);
     if (activeDeptId === id) {
       setActiveDeptId(null);
-      setActiveCargoId(null);
-    }
-  };
-
-  const handleDeleteCargo = (e, id) => {
-    e.stopPropagation();
-    if (!window.confirm('Tem certeza que deseja excluir este cargo? Todos os funcionários dentro dele serão apagados.')) return;
-    const newData = [...data];
-    const unitIndex = newData.findIndex(u => u.id === activeUnitId);
-    const deptIndex = newData[unitIndex].departamentos.findIndex(d => d.id === activeDeptId);
-    newData[unitIndex].departamentos[deptIndex].cargos = newData[unitIndex].departamentos[deptIndex].cargos.filter(c => c.id !== id);
-    setData(newData);
-    if (activeCargoId === id) {
-      setActiveCargoId(null);
     }
   };
 
@@ -198,10 +202,12 @@ export default function Departamentos() {
     const newData = [...data];
     const unitIndex = newData.findIndex(u => u.id === activeUnitId);
     const deptIndex = newData[unitIndex].departamentos.findIndex(d => d.id === activeDeptId);
-    const cargoIndex = newData[unitIndex].departamentos[deptIndex].cargos.findIndex(c => c.id === activeCargoId);
-    newData[unitIndex].departamentos[deptIndex].cargos[cargoIndex].funcionarios = newData[unitIndex].departamentos[deptIndex].cargos[cargoIndex].funcionarios.filter(f => f.id !== id);
+    newData[unitIndex].departamentos[deptIndex].funcionarios = newData[unitIndex].departamentos[deptIndex].funcionarios.filter(f => f.id !== id);
     setData(newData);
   };
+
+  // Coletar funcionários do mesmo departamento para seleção de hierarquia
+  const currentDeptFuncionarios = activeDept ? activeDept.funcionarios.filter(f => f.id !== editingFunc) : [];
 
   return (
     <div className="max-w-full mx-auto w-full h-full flex flex-col animate-in fade-in duration-500 overflow-hidden">
@@ -209,7 +215,7 @@ export default function Departamentos() {
       <header className="mb-8 flex-shrink-0 px-4 md:px-0">
         <span className="text-[12px] font-black uppercase tracking-widest text-blue-500 mb-1 block">Estrutura Organizacional</span>
         <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900">Departamentos</h1>
-        <p className="text-slate-500 font-medium mt-2 text-sm md:text-lg">Gerencie unidades, setores, cargos e aloque seus funcionários.</p>
+        <p className="text-slate-500 font-medium mt-2 text-sm md:text-lg">Gerencie unidades, setores e aloque seus funcionários.</p>
       </header>
 
       {/* Miller Columns Container */}
@@ -250,6 +256,9 @@ export default function Departamentos() {
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
+                    <button onClick={(e) => handleEditUnit(e, unit)} className="opacity-0 group-hover:opacity-100 p-1 text-slate-300 hover:text-blue-500 transition-all rounded-full hover:bg-blue-50" title="Editar Unidade">
+                      <span className="material-symbols-outlined text-[18px]">edit</span>
+                    </button>
                     <button onClick={(e) => handleDeleteUnit(e, unit.id)} className="opacity-0 group-hover:opacity-100 p-1 text-slate-300 hover:text-red-500 transition-all rounded-full hover:bg-red-50" title="Excluir Unidade">
                       <span className="material-symbols-outlined text-[18px]">delete</span>
                     </button>
@@ -289,9 +298,12 @@ export default function Departamentos() {
                   >
                     <div>
                       <h3 className={`text-sm font-extrabold transition-colors ${activeDeptId === dept.id ? 'text-blue-600' : 'text-slate-800 group-hover:text-blue-500'}`}>{dept.name}</h3>
-                      <p className="text-xs text-slate-500 font-medium">{dept.cargos.length} cargos</p>
+                      <p className="text-xs text-slate-500 font-medium">{dept.funcionarios.length} funcionários</p>
                     </div>
                     <div className="flex items-center gap-1">
+                      <button onClick={(e) => handleEditDept(e, dept)} className="opacity-0 group-hover:opacity-100 p-1 text-slate-300 hover:text-blue-500 transition-all rounded-full hover:bg-blue-50" title="Editar Departamento">
+                        <span className="material-symbols-outlined text-[18px]">edit</span>
+                      </button>
                       <button onClick={(e) => handleDeleteDept(e, dept.id)} className="opacity-0 group-hover:opacity-100 p-1 text-slate-300 hover:text-red-500 transition-all rounded-full hover:bg-red-50" title="Excluir Departamento">
                         <span className="material-symbols-outlined text-[18px]">delete</span>
                       </button>
@@ -304,85 +316,54 @@ export default function Departamentos() {
           </div>
         )}
 
-        {/* COLUNA 3: CARGOS */}
+        {/* COLUNA 3: FUNCIONÁRIOS */}
         {activeDept && (
           <div className="w-[85vw] max-w-[320px] md:w-80 flex-shrink-0 flex flex-col snap-start animate-in slide-in-from-left-4 fade-in duration-300">
             <div className="flex items-center justify-between mb-4 px-1">
               <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
-                Cargos
-                <span className="text-xs font-bold bg-slate-100 text-slate-500 py-1 px-3 rounded-full">{activeDept.cargos.length}</span>
+                Funcionários
+                <span className="text-xs font-bold bg-slate-100 text-slate-500 py-1 px-3 rounded-full">{activeDept.funcionarios.length}</span>
               </h2>
-              <button onClick={handleCreateCargo} className="text-xs font-bold bg-blue-100 hover:bg-blue-200 text-blue-600 py-1 px-3 rounded-full transition-colors flex items-center gap-1">
+              <button onClick={() => openFuncModal()} className="text-xs font-bold bg-blue-100 hover:bg-blue-200 text-blue-600 py-1 px-3 rounded-full transition-colors flex items-center gap-1">
                 <span className="material-symbols-outlined text-[14px]">add</span> Novo
               </button>
             </div>
             
-            <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-4 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex-1 overflow-y-auto space-y-2">
-              {activeDept.cargos.length === 0 ? (
+            <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-4 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex-1 overflow-y-auto space-y-2 relative">
+              {activeDept.funcionarios.length === 0 ? (
                 <div className="text-center p-6 opacity-50">
                   <span className="material-symbols-outlined text-4xl mb-2">badge</span>
-                  <p className="text-sm font-medium">Nenhum cargo cadastrado.</p>
+                  <p className="text-sm font-medium">Nenhum funcionário cadastrado.</p>
                 </div>
               ) : (
-                activeDept.cargos.map(cargo => (
-                  <div 
-                    key={cargo.id}
-                    onClick={() => handleSelectCargo(cargo.id)}
-                    className={`group cursor-pointer rounded-2xl p-4 flex items-center justify-between transition-all duration-300 border ${activeCargoId === cargo.id ? 'bg-white border-blue-200 shadow-md scale-[1.02]' : 'bg-transparent border-transparent hover:bg-white/50'}`}
-                  >
-                    <div>
-                      <h3 className={`text-sm font-extrabold transition-colors ${activeCargoId === cargo.id ? 'text-blue-600' : 'text-slate-800 group-hover:text-blue-500'}`}>{cargo.name}</h3>
-                      <p className="text-xs text-slate-500 font-medium">{cargo.funcionarios.length} funcionários</p>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <button onClick={(e) => handleDeleteCargo(e, cargo.id)} className="opacity-0 group-hover:opacity-100 p-1 text-slate-300 hover:text-red-500 transition-all rounded-full hover:bg-red-50" title="Excluir Cargo">
-                        <span className="material-symbols-outlined text-[18px]">delete</span>
-                      </button>
-                      <span className={`material-symbols-outlined text-sm transition-colors ${activeCargoId === cargo.id ? 'text-blue-500' : 'text-slate-300 group-hover:text-blue-400'}`}>chevron_right</span>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* COLUNA 4: FUNCIONÁRIOS */}
-        {activeCargo && (
-          <div className="w-[85vw] max-w-[320px] md:w-80 flex-shrink-0 flex flex-col snap-start animate-in slide-in-from-left-4 fade-in duration-300">
-            <div className="flex items-center justify-between mb-4 px-1">
-              <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
-                Funcionários
-                <span className="text-xs font-bold bg-slate-100 text-slate-500 py-1 px-3 rounded-full">{activeCargo.funcionarios.length}</span>
-              </h2>
-              <button onClick={handleCreateFuncionario} className="text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20 py-1 px-3 rounded-full transition-colors flex items-center gap-1">
-                <span className="material-symbols-outlined text-[14px]">person_add</span> Alocar
-              </button>
-            </div>
-            
-            <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-4 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex-1 overflow-y-auto space-y-2 relative">
-              {activeCargo.funcionarios.length === 0 ? (
-                <div className="text-center p-6 opacity-50">
-                  <span className="material-symbols-outlined text-4xl mb-2">person_off</span>
-                  <p className="text-sm font-medium">Nenhum funcionário alocado.</p>
-                </div>
-              ) : (
-                activeCargo.funcionarios.map(func => (
-                  <div key={func.id} className="group bg-white border border-slate-100 rounded-2xl p-3 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 bg-slate-200 rounded-full flex items-center justify-center overflow-hidden border-2 border-white shadow-sm">
-                        <span className="material-symbols-outlined text-slate-400">person</span>
+                activeDept.funcionarios.map(func => {
+                  const manager = activeDept.funcionarios.find(f => f.id === func.managerId);
+                  return (
+                    <div 
+                      key={func.id}
+                      className={`group rounded-2xl p-4 flex items-center justify-between transition-all duration-300 border bg-transparent border-transparent hover:bg-white/50 hover:shadow-sm`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 bg-slate-200 rounded-full flex items-center justify-center overflow-hidden border-2 border-white shadow-sm flex-shrink-0">
+                          <span className="material-symbols-outlined text-slate-400">person</span>
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-extrabold text-slate-800">{func.name}</h3>
+                          <p className="text-[11px] text-slate-500 font-medium">{func.cargo}</p>
+                          {manager && <p className="text-[10px] text-slate-400 mt-0.5">Resp: {manager.name}</p>}
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="text-sm font-bold text-slate-800">{func.name}</h3>
-                        <p className="text-[10px] text-slate-500 uppercase tracking-wider">{func.role}</p>
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        <button onClick={(e) => { e.stopPropagation(); openFuncModal(func); }} className="opacity-0 group-hover:opacity-100 p-1 text-slate-300 hover:text-blue-500 transition-all rounded-full hover:bg-blue-50" title="Editar Funcionário">
+                          <span className="material-symbols-outlined text-[18px]">edit</span>
+                        </button>
+                        <button onClick={(e) => handleDeleteFuncionario(e, func.id)} className="opacity-0 group-hover:opacity-100 p-1 text-slate-300 hover:text-red-500 transition-all rounded-full hover:bg-red-50" title="Excluir Funcionário">
+                          <span className="material-symbols-outlined text-[18px]">delete</span>
+                        </button>
                       </div>
                     </div>
-                    <button onClick={(e) => handleDeleteFuncionario(e, func.id)} className="opacity-0 group-hover:opacity-100 p-1.5 text-slate-300 hover:text-red-500 transition-all rounded-full hover:bg-red-50" title="Desalocar Funcionário">
-                      <span className="material-symbols-outlined text-[18px]">delete</span>
-                    </button>
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
           </div>
@@ -390,43 +371,79 @@ export default function Departamentos() {
 
       </div>
 
-      {/* MODAL DE CRIAÇÃO DE UNIDADE */}
-      {isUnitModalOpen && (
+      {/* MODAL DE CRIAÇÃO/EDIÇÃO DE FUNCIONÁRIO */}
+      {isFuncModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300">
           <div className="bg-white rounded-3xl p-8 shadow-2xl max-w-md w-full mx-4 border border-slate-100 animate-in zoom-in-95 duration-300">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-extrabold text-slate-900">Selecione o tipo de Unidade</h3>
-              <button onClick={() => setIsUnitModalOpen(false)} className="text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100 transition-colors">
+              <h3 className="text-xl font-extrabold text-slate-900">{editingFunc ? 'Editar Funcionário' : 'Novo Funcionário'}</h3>
+              <button onClick={() => setIsFuncModalOpen(false)} className="text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100 transition-colors">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Option: Loja */}
-              <button 
-                onClick={() => confirmCreateUnit('1')}
-                className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl border-2 border-indigo-100 bg-indigo-50 hover:border-indigo-500 hover:bg-indigo-500 hover:text-white text-indigo-900 transition-all group"
-              >
-                <div className="h-14 w-14 bg-white/60 group-hover:bg-white/20 rounded-xl flex items-center justify-center transition-colors shadow-sm">
-                  <span className="material-symbols-outlined text-3xl">storefront</span>
-                </div>
-                <span className="font-bold">Loja</span>
-              </button>
+            <form onSubmit={handleSaveFuncionario} className="space-y-4">
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1">Nome</label>
+                <input 
+                  type="text" 
+                  required
+                  value={funcFormData.name}
+                  onChange={e => setFuncFormData({...funcFormData, name: e.target.value})}
+                  className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                  placeholder="Ex: João da Silva"
+                />
+              </div>
               
-              {/* Option: Escritório */}
-              <button 
-                onClick={() => confirmCreateUnit('2')}
-                className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl border-2 border-teal-100 bg-teal-50 hover:border-teal-500 hover:bg-teal-500 hover:text-white text-teal-900 transition-all group"
-              >
-                <div className="h-14 w-14 bg-white/60 group-hover:bg-white/20 rounded-xl flex items-center justify-center transition-colors shadow-sm">
-                  <span className="material-symbols-outlined text-3xl">business_center</span>
-                </div>
-                <span className="font-bold">Escritório</span>
-              </button>
-            </div>
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1">Data de Nascimento</label>
+                <input 
+                  type="date" 
+                  value={funcFormData.birthDate}
+                  onChange={e => setFuncFormData({...funcFormData, birthDate: e.target.value})}
+                  className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-slate-700"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1">Cargo</label>
+                <input 
+                  type="text" 
+                  required
+                  value={funcFormData.cargo}
+                  onChange={e => setFuncFormData({...funcFormData, cargo: e.target.value})}
+                  className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                  placeholder="Ex: Gerente, Vendedor..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1">Responsável (Hierarquia)</label>
+                <select
+                  value={funcFormData.managerId}
+                  onChange={e => setFuncFormData({...funcFormData, managerId: e.target.value})}
+                  className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all bg-white text-slate-700"
+                >
+                  <option value="">Nenhum (Líder/Gerente Geral)</option>
+                  {currentDeptFuncionarios.map(f => (
+                    <option key={f.id} value={f.id}>{f.name} - {f.cargo}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="mt-6 flex justify-end gap-3 pt-4 border-t border-slate-100">
+                <button type="button" onClick={() => setIsFuncModalOpen(false)} className="px-5 py-2 rounded-xl text-slate-600 font-bold hover:bg-slate-100 transition-colors">
+                  Cancelar
+                </button>
+                <button type="submit" className="px-5 py-2 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-lg shadow-blue-500/30 transition-all">
+                  Salvar
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
     </div>
   );
 }
+
