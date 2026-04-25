@@ -15,18 +15,18 @@ const initialData = [
         funcionarios: [
           { 
             id: 'f1', name: 'Ana Silva', 
-            birthDate: '1985-04-12', cargo: 'Gerente de Vendas', managerId: '' 
+            birthDate: '1985-04-12', cargo: 'Gerente de Vendas', isManager: true 
           },
           { 
             id: 'f2', name: 'Carlos Dias', 
-            birthDate: '1992-08-23', cargo: 'Vendedor', managerId: 'f1' 
+            birthDate: '1992-08-23', cargo: 'Vendedor', isManager: false 
           }
         ]
       },
       {
         id: 'd2', name: 'Estoque',
         funcionarios: [
-          { id: 'f3', name: 'João Santos', birthDate: '1988-11-30', cargo: 'Estoquista', managerId: '' }
+          { id: 'f3', name: 'João Santos', birthDate: '1988-11-30', cargo: 'Estoquista', isManager: false }
         ]
       }
     ]
@@ -42,7 +42,7 @@ const initialData = [
       { 
         id: 'd3', name: 'Recursos Humanos', 
         funcionarios: [
-          { id: 'f4', name: 'Mariana Costa', birthDate: '1990-01-15', cargo: 'Analista de RH', managerId: '' }
+          { id: 'f4', name: 'Mariana Costa', birthDate: '1990-01-15', cargo: 'Analista de RH', isManager: false }
         ] 
       },
       { id: 'd4', name: 'Financeiro', funcionarios: [] }
@@ -58,7 +58,7 @@ export default function Departamentos() {
   // Modal states
   const [isFuncModalOpen, setIsFuncModalOpen] = useState(false);
   const [editingFunc, setEditingFunc] = useState(null);
-  const [funcFormData, setFuncFormData] = useState({ name: '', birthDate: '', cargo: '', managerId: '' });
+  const [funcFormData, setFuncFormData] = useState({ name: '', birthDate: '', cargo: '', isManager: false });
 
   // Derivando estado
   const activeUnit = data.find(u => u.id === activeUnitId);
@@ -134,11 +134,11 @@ export default function Departamentos() {
         name: func.name, 
         birthDate: func.birthDate || '', 
         cargo: func.cargo, 
-        managerId: func.managerId || '' 
+        isManager: func.isManager || false 
       });
     } else {
       setEditingFunc(null);
-      setFuncFormData({ name: '', birthDate: '', cargo: '', managerId: '' });
+      setFuncFormData({ name: '', birthDate: '', cargo: '', isManager: false });
     }
     setIsFuncModalOpen(true);
   };
@@ -205,9 +205,6 @@ export default function Departamentos() {
     newData[unitIndex].departamentos[deptIndex].funcionarios = newData[unitIndex].departamentos[deptIndex].funcionarios.filter(f => f.id !== id);
     setData(newData);
   };
-
-  // Coletar funcionários do mesmo departamento para seleção de hierarquia
-  const currentDeptFuncionarios = activeDept ? activeDept.funcionarios.filter(f => f.id !== editingFunc) : [];
 
   return (
     <div className="max-w-full mx-auto w-full h-full flex flex-col animate-in fade-in duration-500 overflow-hidden">
@@ -336,9 +333,38 @@ export default function Departamentos() {
                   <p className="text-sm font-medium">Nenhum funcionário cadastrado.</p>
                 </div>
               ) : (
-                activeDept.funcionarios.map(func => {
-                  const manager = activeDept.funcionarios.find(f => f.id === func.managerId);
-                  return (
+                <>
+                  {/* Destacar Responsável */}
+                  {activeDept.funcionarios.filter(f => f.isManager).map(func => (
+                    <div 
+                      key={func.id}
+                      className="group rounded-2xl p-4 flex items-center justify-between transition-all duration-300 border bg-blue-50 border-blue-200 shadow-sm relative overflow-hidden"
+                    >
+                      <div className="absolute top-0 right-0 bg-blue-500 text-white text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-bl-lg">
+                        Responsável
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center overflow-hidden border-2 border-white shadow-sm flex-shrink-0 text-blue-600">
+                          <span className="material-symbols-outlined">star</span>
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-extrabold text-blue-900">{func.name}</h3>
+                          <p className="text-[11px] text-blue-600 font-medium">{func.cargo}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 flex-shrink-0 relative z-10">
+                        <button onClick={(e) => { e.stopPropagation(); openFuncModal(func); }} className="opacity-0 group-hover:opacity-100 p-1 text-blue-400 hover:text-blue-600 transition-all rounded-full hover:bg-blue-100" title="Editar Funcionário">
+                          <span className="material-symbols-outlined text-[18px]">edit</span>
+                        </button>
+                        <button onClick={(e) => handleDeleteFuncionario(e, func.id)} className="opacity-0 group-hover:opacity-100 p-1 text-blue-400 hover:text-red-500 transition-all rounded-full hover:bg-blue-100" title="Excluir Funcionário">
+                          <span className="material-symbols-outlined text-[18px]">delete</span>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Restante dos Funcionários */}
+                  {activeDept.funcionarios.filter(f => !f.isManager).map(func => (
                     <div 
                       key={func.id}
                       className={`group rounded-2xl p-4 flex items-center justify-between transition-all duration-300 border bg-transparent border-transparent hover:bg-white/50 hover:shadow-sm`}
@@ -350,7 +376,6 @@ export default function Departamentos() {
                         <div>
                           <h3 className="text-sm font-extrabold text-slate-800">{func.name}</h3>
                           <p className="text-[11px] text-slate-500 font-medium">{func.cargo}</p>
-                          {manager && <p className="text-[10px] text-slate-400 mt-0.5">Resp: {manager.name}</p>}
                         </div>
                       </div>
                       <div className="flex items-center gap-1 flex-shrink-0">
@@ -362,8 +387,8 @@ export default function Departamentos() {
                         </button>
                       </div>
                     </div>
-                  );
-                })
+                  ))}
+                </>
               )}
             </div>
           </div>
@@ -418,17 +443,15 @@ export default function Departamentos() {
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1">Responsável (Hierarquia)</label>
-                <select
-                  value={funcFormData.managerId}
-                  onChange={e => setFuncFormData({...funcFormData, managerId: e.target.value})}
-                  className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all bg-white text-slate-700"
-                >
-                  <option value="">Nenhum (Líder/Gerente Geral)</option>
-                  {currentDeptFuncionarios.map(f => (
-                    <option key={f.id} value={f.id}>{f.name} - {f.cargo}</option>
-                  ))}
-                </select>
+                <label className="flex items-center gap-2 cursor-pointer mt-4 mb-2">
+                  <input
+                    type="checkbox"
+                    checked={funcFormData.isManager}
+                    onChange={e => setFuncFormData({...funcFormData, isManager: e.target.checked})}
+                    className="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 transition-all"
+                  />
+                  <span className="text-sm font-bold text-slate-700">É o responsável/gerente deste setor?</span>
+                </label>
               </div>
 
               <div className="mt-6 flex justify-end gap-3 pt-4 border-t border-slate-100">
