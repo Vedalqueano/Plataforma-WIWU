@@ -1,12 +1,26 @@
 import React, { useState, useRef, useEffect } from 'react';
 
+// Lista de ícones disponíveis para escolha
+const AVAILABLE_ICONS = [
+  'edit_document', 'point_of_sale', 'inventory_2', 'local_mall', 
+  'groups', 'account_balance_wallet', 'shopping_cart', 'precision_manufacturing',
+  'support_agent', 'campaign', 'construction', 'local_shipping',
+  'storefront', 'business_center', 'star', 'rocket_launch',
+  'laptop_mac', 'assignment', 'build', 'event_note'
+];
+
 // --- COMPONENTE EDITOR DE PROCESSO ---
 function ProcessEditor({ onBack, onSave, onDelete, initialData, isNew = false }) {
   const [processName, setProcessName] = useState(isNew ? "" : (initialData?.name || ""));
   const [processDesc, setProcessDesc] = useState(isNew ? "" : (initialData?.desc || ""));
   const [processCategory, setProcessCategory] = useState(isNew ? "Rotina de Setor" : (initialData?.category || "Rotina de Setor"));
-  const [processType, setProcessType] = useState(isNew ? "loja" : (initialData?.type || "loja")); // loja ou escritorio
+  const [icon, setIcon] = useState(initialData?.icon || 'edit_document');
+  const [showIconPicker, setShowIconPicker] = useState(false);
   
+  // Destinação
+  const [destinationType, setDestinationType] = useState(initialData?.destination?.type || 'todos');
+  const [destinationValue, setDestinationValue] = useState(initialData?.destination?.value || '');
+
   const [stages, setStages] = useState(isNew ? [
     {
       id: Date.now(),
@@ -88,8 +102,11 @@ function ProcessEditor({ onBack, onSave, onDelete, initialData, isNew = false })
       name: processName || "Novo Processo",
       desc: processDesc,
       category: processCategory,
-      type: processType,
-      icon: initialData?.icon || 'edit_document',
+      icon: icon,
+      destination: {
+        type: destinationType,
+        value: destinationValue
+      },
       stages,
       trainings
     });
@@ -105,7 +122,7 @@ function ProcessEditor({ onBack, onSave, onDelete, initialData, isNew = false })
             Processos
           </button>
           <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-          <span>{isNew ? "Novo Processo" : (processType === 'loja' ? 'Loja' : 'Escritório')}</span>
+          <span>{isNew ? "Novo Processo" : "Edição de Processo"}</span>
           {!isNew && (
             <>
               <span className="material-symbols-outlined text-[16px]">chevron_right</span>
@@ -130,26 +147,48 @@ function ProcessEditor({ onBack, onSave, onDelete, initialData, isNew = false })
           </div>
 
           <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 w-full lg:w-3/4">
-            <div className="h-20 w-20 bg-blue-500/10 rounded-[2rem] flex items-center justify-center border border-white cursor-pointer hover:bg-blue-500/20 transition-colors flex-shrink-0">
-              <span className="material-symbols-outlined text-blue-600 text-4xl">{initialData?.icon || 'edit_document'}</span>
+            
+            {/* Ícone com Selector */}
+            <div className="relative">
+              <div 
+                onClick={() => setShowIconPicker(!showIconPicker)}
+                className="h-20 w-20 bg-blue-500/10 rounded-[2rem] flex items-center justify-center border border-white cursor-pointer hover:bg-blue-500/20 transition-colors flex-shrink-0 group/icon"
+                title="Alterar Ícone"
+              >
+                <span className="material-symbols-outlined text-blue-600 text-4xl group-hover/icon:scale-110 transition-transform">{icon}</span>
+                <div className="absolute -bottom-2 -right-2 bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center border-2 border-white shadow-sm opacity-0 group-hover/icon:opacity-100 transition-opacity">
+                   <span className="material-symbols-outlined text-[14px]">edit</span>
+                </div>
+              </div>
+
+              {/* Popover de Ícones */}
+              {showIconPicker && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setShowIconPicker(false)}></div>
+                  <div className="absolute top-24 left-0 bg-white border border-slate-100 shadow-[0_20px_40px_rgb(0,0,0,0.1)] rounded-2xl p-4 w-64 z-50 grid grid-cols-5 gap-2 animate-in fade-in zoom-in-95 duration-200">
+                     {AVAILABLE_ICONS.map(ic => (
+                       <button
+                         key={ic}
+                         onClick={() => { setIcon(ic); setShowIconPicker(false); }}
+                         className={`h-10 w-10 flex items-center justify-center rounded-xl transition-colors ${icon === ic ? 'bg-blue-600 text-white' : 'text-slate-500 hover:bg-slate-100'}`}
+                       >
+                         <span className="material-symbols-outlined text-xl">{ic}</span>
+                       </button>
+                     ))}
+                  </div>
+                </>
+              )}
             </div>
+
             <div className="w-full">
               <div className="flex items-center gap-2 mb-1">
                 <input
                    type="text"
                    value={processCategory}
                    onChange={(e) => setProcessCategory(e.target.value)}
-                   className="text-[12px] font-black uppercase tracking-widest text-blue-500 bg-transparent border-none outline-none placeholder:text-blue-300 w-48"
-                   placeholder="CATEGORIA"
+                   className="text-[12px] font-black uppercase tracking-widest text-blue-500 bg-transparent border-none outline-none placeholder:text-blue-300 w-full"
+                   placeholder="CATEGORIA (Ex: Rotina de Setor)"
                 />
-                <select 
-                  value={processType}
-                  onChange={(e) => setProcessType(e.target.value)}
-                  className="text-[10px] font-bold text-slate-500 bg-white border border-slate-200 rounded-lg px-2 py-0.5 outline-none"
-                >
-                  <option value="loja">Setor: Loja</option>
-                  <option value="escritorio">Setor: Escritório</option>
-                </select>
               </div>
               <input
                  type="text"
@@ -261,8 +300,106 @@ function ProcessEditor({ onBack, onSave, onDelete, initialData, isNew = false })
           </button>
         </div>
 
-        {/* Right Column: Treinamentos */}
+        {/* Right Column: Destinação & Treinamentos */}
         <div className="space-y-6">
+          
+          {/* Card: Destinação do Processo */}
+          <div className="bg-white/80 backdrop-blur-2xl border border-blue-100/50 rounded-3xl md:rounded-[2rem] p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+             <div className="flex flex-col mb-4">
+                <h3 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-blue-500">share</span>
+                  Destinação
+                </h3>
+                <p className="text-xs text-slate-500 mt-1">Quem deve visualizar e seguir este processo?</p>
+             </div>
+
+             <div className="space-y-3">
+               <label className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 cursor-pointer hover:bg-slate-50 transition-colors">
+                  <input 
+                    type="radio" 
+                    name="destination" 
+                    value="todos"
+                    checked={destinationType === 'todos'}
+                    onChange={() => setDestinationType('todos')}
+                    className="w-4 h-4 text-blue-600 focus:ring-blue-500"
+                  />
+                  <div>
+                    <p className="text-sm font-bold text-slate-800">Todos</p>
+                    <p className="text-[10px] text-slate-500">Visível para toda a empresa</p>
+                  </div>
+               </label>
+
+               <label className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 cursor-pointer hover:bg-slate-50 transition-colors">
+                  <input 
+                    type="radio" 
+                    name="destination" 
+                    value="unidade"
+                    checked={destinationType === 'unidade'}
+                    onChange={() => setDestinationType('unidade')}
+                    className="w-4 h-4 text-blue-600 focus:ring-blue-500"
+                  />
+                  <div className="w-full">
+                    <p className="text-sm font-bold text-slate-800">Por Unidade</p>
+                    {destinationType === 'unidade' && (
+                      <input 
+                        type="text" 
+                        placeholder="Ex: Loja Matriz" 
+                        value={destinationValue}
+                        onChange={(e) => setDestinationValue(e.target.value)}
+                        className="mt-2 w-full text-xs p-2 rounded-lg bg-slate-50 border border-slate-200 outline-none focus:border-blue-400"
+                      />
+                    )}
+                  </div>
+               </label>
+
+               <label className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 cursor-pointer hover:bg-slate-50 transition-colors">
+                  <input 
+                    type="radio" 
+                    name="destination" 
+                    value="departamento"
+                    checked={destinationType === 'departamento'}
+                    onChange={() => setDestinationType('departamento')}
+                    className="w-4 h-4 text-blue-600 focus:ring-blue-500"
+                  />
+                  <div className="w-full">
+                    <p className="text-sm font-bold text-slate-800">Por Departamento</p>
+                    {destinationType === 'departamento' && (
+                      <input 
+                        type="text" 
+                        placeholder="Ex: Financeiro" 
+                        value={destinationValue}
+                        onChange={(e) => setDestinationValue(e.target.value)}
+                        className="mt-2 w-full text-xs p-2 rounded-lg bg-slate-50 border border-slate-200 outline-none focus:border-blue-400"
+                      />
+                    )}
+                  </div>
+               </label>
+
+               <label className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 cursor-pointer hover:bg-slate-50 transition-colors">
+                  <input 
+                    type="radio" 
+                    name="destination" 
+                    value="funcionario"
+                    checked={destinationType === 'funcionario'}
+                    onChange={() => setDestinationType('funcionario')}
+                    className="w-4 h-4 text-blue-600 focus:ring-blue-500"
+                  />
+                  <div className="w-full">
+                    <p className="text-sm font-bold text-slate-800">Por Funcionário / Cargo</p>
+                    {destinationType === 'funcionario' && (
+                      <input 
+                        type="text" 
+                        placeholder="Ex: Operador de Caixa" 
+                        value={destinationValue}
+                        onChange={(e) => setDestinationValue(e.target.value)}
+                        className="mt-2 w-full text-xs p-2 rounded-lg bg-slate-50 border border-slate-200 outline-none focus:border-blue-400"
+                      />
+                    )}
+                  </div>
+               </label>
+             </div>
+          </div>
+
           <div className="bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-3xl md:rounded-[2rem] p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
             <div className="flex flex-col mb-5">
                <h3 className="text-lg font-extrabold text-slate-900">Treinamentos Recomendados</h3>
@@ -303,18 +440,6 @@ function ProcessEditor({ onBack, onSave, onDelete, initialData, isNew = false })
               </button>
             </div>
           </div>
-          
-          <div className="bg-blue-50/50 border border-blue-100 rounded-3xl p-5">
-             <div className="flex items-center gap-2 text-blue-600 font-bold text-sm mb-2">
-                <span className="material-symbols-outlined text-[18px]">lightbulb</span>
-                Dicas de Criação
-             </div>
-             <ul className="text-xs text-slate-600 space-y-2 list-disc pl-4 marker:text-blue-300">
-                <li>Seja claro e objetivo nos títulos das tarefas.</li>
-                <li>Descreva os detalhes de execução para evitar dúvidas.</li>
-                <li>Divida o processo em etapas lógicas e sequenciais.</li>
-             </ul>
-          </div>
         </div>
       </div>
     </div>
@@ -326,91 +451,40 @@ const initialProcesses = [
   {
     id: 'operador-caixa',
     category: 'Rotina de Setor',
-    type: 'loja',
     name: 'Operador de Caixa',
     desc: 'Procedimentos padrões para abertura, atendimento e fechamento de caixa.',
     icon: 'point_of_sale',
-    stages: [
-      {
-        id: 1,
-        title: "Preparação e Abertura do Caixa",
-        tasks: [
-          { id: 1, title: "Verificar Suprimentos", desc: "Garantir que há bobinas de papel suficientes, canetas, e itens de embalagem no checkout." },
-          { id: 2, title: "Conferência do Fundo de Troco", desc: "Contar e confirmar o valor inicial repassado pela tesouraria antes de abrir o PDV." },
-          { id: 3, title: "Login no Sistema PDV", desc: "Acessar o sistema com as próprias credenciais. Nunca usar login de outro colaborador." }
-        ]
-      },
-      {
-        id: 2,
-        title: "Atendimento ao Cliente e Registros",
-        tasks: [
-          { id: 4, title: "Cordialidade no Atendimento", desc: "Cumprimentar o cliente (\"Bom dia/Boa tarde\"), perguntar se encontrou tudo o que procurava." },
-          { id: 5, title: "Registro de Produtos", desc: "Escanear códigos de barras com atenção. Conferir peso de mercadorias pesáveis." },
-          { id: 6, title: "Recebimento e Emissão de Cupom", desc: "Anunciar o valor total. Conferir notas para evitar fraudes (dinheiro). Emitir e entregar a nota fiscal." }
-        ]
-      },
-      {
-        id: 3,
-        title: "Fechamento e Sangria",
-        tasks: [
-          { id: 7, title: "Realizar Sangria de Valores Altos", desc: "Durante o turno, se o valor em dinheiro exceder o limite seguro, solicitar sangria ao gerente." },
-          { id: 8, title: "Fechamento Final no PDV", desc: "Encerrar o caixa no sistema. Imprimir relatório de fechamento (Leitura X/Z)." },
-          { id: 9, title: "Entrega do Malote", desc: "Acondicionar dinheiro, comprovantes de cartão e vales. Entregar ao financeiro/cofre com protocolo." }
-        ]
-      }
-    ],
-    trainings: [
-      { id: 1, title: "Prevenção a Fraudes", duration: "Videoaula • 15 min" },
-      { id: 2, title: "Atendimento de Excelência", duration: "Videoaula • 20 min" }
-    ]
+    destination: { type: 'funcionario', value: 'Operadores de Caixa' },
+    stages: [],
+    trainings: []
   },
   {
     id: 'estoque',
-    category: 'Rotina de Setor',
-    type: 'loja',
+    category: 'Logística',
     name: 'Estoque e Reposição',
-    desc: 'Recebimento, organização e vitrine',
+    desc: 'Recebimento, organização e vitrine.',
     icon: 'inventory_2',
+    destination: { type: 'departamento', value: 'Estoque' },
     stages: [],
     trainings: []
   },
   {
-    id: 'vendas',
-    category: 'Rotina de Setor',
-    type: 'loja',
-    name: 'Vendas e Consultoria',
-    desc: 'Abordagem, negociação e fechamento',
-    icon: 'local_mall',
-    stages: [],
-    trainings: []
-  },
-  {
-    id: 'rh',
-    category: 'Rotina de Setor',
-    type: 'escritorio',
-    name: 'Recursos Humanos',
-    desc: 'Recrutamento, admissão e folha',
+    id: 'rh_admissao',
+    category: 'Recursos Humanos',
+    name: 'Processo de Admissão',
+    desc: 'Passo a passo para contratação e integração de novos talentos.',
     icon: 'groups',
+    destination: { type: 'departamento', value: 'RH' },
     stages: [],
     trainings: []
   },
   {
-    id: 'financeiro',
-    category: 'Rotina de Setor',
-    type: 'escritorio',
-    name: 'Financeiro',
-    desc: 'Contas a pagar, receber e conciliação',
-    icon: 'account_balance_wallet',
-    stages: [],
-    trainings: []
-  },
-  {
-    id: 'compras',
-    category: 'Rotina de Setor',
-    type: 'escritorio',
-    name: 'Compras e Suprimentos',
-    desc: 'Cotação, pedidos e negociação',
-    icon: 'shopping_cart',
+    id: 'seguranca',
+    category: 'Segurança',
+    name: 'Protocolos de Emergência',
+    desc: 'Diretrizes gerais para evacuação e primeiros socorros.',
+    icon: 'medical_services',
+    destination: { type: 'todos', value: '' },
     stages: [],
     trainings: []
   }
@@ -433,7 +507,6 @@ export default function ProcessCreation() {
   };
 
   const handleDeleteProcess = (id) => {
-    // Confirmação simples opcional
     if (window.confirm("Tem certeza que deseja excluir este processo?")) {
       setProcesses(processes.filter(p => p.id !== id));
       setActiveProcessId(null);
@@ -452,17 +525,26 @@ export default function ProcessCreation() {
     }
   }
 
-  const lojaProcesses = processes.filter(p => p.type === 'loja');
-  const escritorioProcesses = processes.filter(p => p.type === 'escritorio');
+  // Função auxiliar para exibir a destinação no card
+  const formatDestination = (dest) => {
+    if (!dest) return "Não atribuído";
+    switch(dest.type) {
+      case 'todos': return "Todos da Empresa";
+      case 'unidade': return `Unidade: ${dest.value || 'Não especificada'}`;
+      case 'departamento': return `Depto: ${dest.value || 'Não especificado'}`;
+      case 'funcionario': return `Cargo/Func: ${dest.value || 'Não especificado'}`;
+      default: return "Não atribuído";
+    }
+  };
 
   return (
-    <div className="max-w-7xl mx-auto w-full animate-in fade-in duration-500 px-4 md:px-0">
+    <div className="max-w-7xl mx-auto w-full animate-in fade-in duration-500 px-4 md:px-0 pb-12">
       {/* Header Hub */}
       <header className="mb-8 md:mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-4 px-4 md:px-0">
         <div>
           <span className="text-[12px] font-black uppercase tracking-widest text-blue-500 mb-1 block">Procedimentos Operacionais Padrão</span>
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900">Processos</h1>
-          <p className="text-slate-500 font-medium mt-2 text-sm md:text-lg leading-relaxed">Gerencie e acesse as rotinas padronizadas de cada setor da empresa.</p>
+          <p className="text-slate-500 font-medium mt-2 text-sm md:text-lg leading-relaxed">Gerencie as rotinas da empresa e defina para quem cada processo é direcionado.</p>
         </div>
         <button 
           onClick={() => setIsCreating(true)}
@@ -473,77 +555,40 @@ export default function ProcessCreation() {
         </button>
       </header>
 
-      {/* Grid Loja vs Escritório */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        
-        {/* COLUNA LOJA */}
-        <section>
-          <div className="flex items-center gap-3 mb-6">
-             <div className="h-10 w-10 bg-indigo-500/10 rounded-2xl flex items-center justify-center">
-                <span className="material-symbols-outlined text-indigo-600">storefront</span>
-             </div>
-             <h2 className="text-2xl font-extrabold text-slate-900">Loja</h2>
-          </div>
-
-          <div className="space-y-4">
-            {lojaProcesses.map(process => (
-              <div 
-                key={process.id}
-                onClick={() => setActiveProcessId(process.id)}
-                className="group cursor-pointer bg-white/60 backdrop-blur-2xl border border-white/80 rounded-3xl md:rounded-[2rem] p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)]"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="h-14 w-14 bg-indigo-500/10 rounded-[1.5rem] flex items-center justify-center transition-colors group-hover:bg-indigo-500 group-hover:text-white text-indigo-600">
-                    <span className="material-symbols-outlined text-2xl">{process.icon || 'edit_document'}</span>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-extrabold text-slate-900 group-hover:text-indigo-600 transition-colors">{process.name}</h3>
-                    <p className="text-xs text-slate-500 font-medium truncate max-w-[200px] md:max-w-[250px]">{process.desc || 'Sem descrição'}</p>
-                  </div>
+      {/* Grid Unificado de Processos */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {processes.map(process => (
+          <div 
+            key={process.id}
+            onClick={() => setActiveProcessId(process.id)}
+            className="group cursor-pointer bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] h-full"
+          >
+            <div>
+              <div className="flex justify-between items-start mb-4">
+                <div className="h-14 w-14 bg-blue-500/10 rounded-[1.5rem] flex items-center justify-center transition-colors group-hover:bg-blue-500 group-hover:text-white text-blue-600 shrink-0">
+                  <span className="material-symbols-outlined text-2xl">{process.icon || 'edit_document'}</span>
                 </div>
-                <span className="material-symbols-outlined text-slate-300 group-hover:text-indigo-500 transition-colors">chevron_right</span>
+                <span className="text-[10px] font-bold bg-slate-100 text-slate-500 py-1 px-3 rounded-full uppercase tracking-wider">{process.category}</span>
               </div>
-            ))}
-            {lojaProcesses.length === 0 && (
-              <p className="text-sm text-slate-400 font-medium text-center py-6 border-2 border-dashed border-slate-200 rounded-[2rem]">Nenhum processo criado para a loja.</p>
-            )}
+              <h3 className="text-xl font-extrabold text-slate-900 group-hover:text-blue-600 transition-colors mb-2 leading-tight">{process.name}</h3>
+              <p className="text-sm text-slate-500 font-medium line-clamp-2 mb-6">{process.desc || 'Sem descrição.'}</p>
+            </div>
+            
+            <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+               <div className="flex items-center gap-2 text-slate-400 group-hover:text-blue-500 transition-colors">
+                  <span className="material-symbols-outlined text-[16px]">share</span>
+                  <span className="text-xs font-bold truncate max-w-[150px]">{formatDestination(process.destination)}</span>
+               </div>
+               <span className="material-symbols-outlined text-slate-300 group-hover:text-blue-500 transition-colors">chevron_right</span>
+            </div>
           </div>
-        </section>
-
-        {/* COLUNA ESCRITÓRIO */}
-        <section>
-          <div className="flex items-center gap-3 mb-6">
-             <div className="h-10 w-10 bg-teal-500/10 rounded-2xl flex items-center justify-center">
-                <span className="material-symbols-outlined text-teal-600">business_center</span>
-             </div>
-             <h2 className="text-2xl font-extrabold text-slate-900">Escritório</h2>
+        ))}
+        {processes.length === 0 && (
+          <div className="col-span-full py-12 flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-[2rem]">
+             <span className="material-symbols-outlined text-4xl text-slate-300 mb-2">post_add</span>
+             <p className="text-slate-400 font-bold">Nenhum processo criado ainda.</p>
           </div>
-
-          <div className="space-y-4">
-            {escritorioProcesses.map(process => (
-              <div 
-                key={process.id}
-                onClick={() => setActiveProcessId(process.id)}
-                className="group cursor-pointer bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)]"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="h-14 w-14 bg-slate-100 rounded-[1.5rem] flex items-center justify-center text-slate-500 group-hover:bg-teal-500 group-hover:text-white transition-colors">
-                    <span className="material-symbols-outlined text-2xl">{process.icon || 'edit_document'}</span>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-extrabold text-slate-900 group-hover:text-teal-600 transition-colors">{process.name}</h3>
-                    <p className="text-xs text-slate-500 font-medium truncate max-w-[200px] md:max-w-[250px]">{process.desc || 'Sem descrição'}</p>
-                  </div>
-                </div>
-                <span className="material-symbols-outlined text-slate-300 group-hover:text-teal-500 transition-colors">chevron_right</span>
-              </div>
-            ))}
-            {escritorioProcesses.length === 0 && (
-              <p className="text-sm text-slate-400 font-medium text-center py-6 border-2 border-dashed border-slate-200 rounded-[2rem]">Nenhum processo criado para o escritório.</p>
-            )}
-          </div>
-        </section>
-
+        )}
       </div>
     </div>
   );
