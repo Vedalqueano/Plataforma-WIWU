@@ -51,7 +51,7 @@ const initialData = [
   }
 ];
 
-const unitOptions = [
+const defaultUnitOptions = [
   { icon: 'domain', colorClass: 'text-blue-600', bgClass: 'bg-blue-500/10', hoverClass: 'group-hover:text-blue-600' },
   { icon: 'storefront', colorClass: 'text-indigo-600', bgClass: 'bg-indigo-500/10', hoverClass: 'group-hover:text-indigo-600' },
   { icon: 'business_center', colorClass: 'text-teal-600', bgClass: 'bg-teal-500/10', hoverClass: 'group-hover:text-teal-600' },
@@ -61,6 +61,31 @@ const unitOptions = [
   { icon: 'school', colorClass: 'text-emerald-600', bgClass: 'bg-emerald-500/10', hoverClass: 'group-hover:text-emerald-600' },
   { icon: 'account_balance', colorClass: 'text-purple-600', bgClass: 'bg-purple-500/10', hoverClass: 'group-hover:text-purple-600' },
 ];
+
+const extendedUnitOptions = [
+  { icon: 'shopping_cart', colorClass: 'text-pink-600', bgClass: 'bg-pink-500/10', hoverClass: 'group-hover:text-pink-600' },
+  { icon: 'restaurant', colorClass: 'text-red-600', bgClass: 'bg-red-500/10', hoverClass: 'group-hover:text-red-600' },
+  { icon: 'local_cafe', colorClass: 'text-amber-700', bgClass: 'bg-amber-700/10', hoverClass: 'group-hover:text-amber-700' },
+  { icon: 'fitness_center', colorClass: 'text-slate-600', bgClass: 'bg-slate-500/10', hoverClass: 'group-hover:text-slate-600' },
+  { icon: 'local_shipping', colorClass: 'text-blue-500', bgClass: 'bg-blue-500/10', hoverClass: 'group-hover:text-blue-500' },
+  { icon: 'flight', colorClass: 'text-cyan-600', bgClass: 'bg-cyan-500/10', hoverClass: 'group-hover:text-cyan-600' },
+  { icon: 'directions_car', colorClass: 'text-emerald-700', bgClass: 'bg-emerald-700/10', hoverClass: 'group-hover:text-emerald-700' },
+  { icon: 'home_repair_service', colorClass: 'text-orange-700', bgClass: 'bg-orange-700/10', hoverClass: 'group-hover:text-orange-700' },
+  { icon: 'brush', colorClass: 'text-purple-500', bgClass: 'bg-purple-500/10', hoverClass: 'group-hover:text-purple-500' },
+  { icon: 'palette', colorClass: 'text-fuchsia-600', bgClass: 'bg-fuchsia-500/10', hoverClass: 'group-hover:text-fuchsia-600' },
+  { icon: 'camera_alt', colorClass: 'text-slate-700', bgClass: 'bg-slate-700/10', hoverClass: 'group-hover:text-slate-700' },
+  { icon: 'movie', colorClass: 'text-red-500', bgClass: 'bg-red-500/10', hoverClass: 'group-hover:text-red-500' },
+  { icon: 'headphones', colorClass: 'text-indigo-500', bgClass: 'bg-indigo-500/10', hoverClass: 'group-hover:text-indigo-500' },
+  { icon: 'sports_esports', colorClass: 'text-green-600', bgClass: 'bg-green-500/10', hoverClass: 'group-hover:text-green-600' },
+  { icon: 'science', colorClass: 'text-teal-500', bgClass: 'bg-teal-500/10', hoverClass: 'group-hover:text-teal-500' },
+  { icon: 'computer', colorClass: 'text-blue-700', bgClass: 'bg-blue-700/10', hoverClass: 'group-hover:text-blue-700' },
+  { icon: 'pets', colorClass: 'text-amber-800', bgClass: 'bg-amber-800/10', hoverClass: 'group-hover:text-amber-800' },
+  { icon: 'spa', colorClass: 'text-emerald-500', bgClass: 'bg-emerald-500/10', hoverClass: 'group-hover:text-emerald-500' },
+  { icon: 'local_florist', colorClass: 'text-rose-500', bgClass: 'bg-rose-500/10', hoverClass: 'group-hover:text-rose-500' },
+  { icon: 'public', colorClass: 'text-sky-600', bgClass: 'bg-sky-500/10', hoverClass: 'group-hover:text-sky-600' }
+];
+
+const allUnitOptions = [...defaultUnitOptions, ...extendedUnitOptions];
 
 export default function Departamentos() {
   const [data, setData] = useState(() => {
@@ -90,7 +115,16 @@ export default function Departamentos() {
   // Unit Modal states
   const [isUnitModalOpen, setIsUnitModalOpen] = useState(false);
   const [editingUnitId, setEditingUnitId] = useState(null);
-  const [unitFormData, setUnitFormData] = useState({ name: '', selectedOption: 0 });
+  const [unitFormData, setUnitFormData] = useState({ 
+    name: '', 
+    selectedOption: 0,
+    isCustomIcon: false,
+    customIconText: '',
+    customColor: 'text-slate-600',
+    customBg: 'bg-slate-500/10',
+    customHover: 'group-hover:text-slate-600'
+  });
+  const [showAllIcons, setShowAllIcons] = useState(false);
 
   // Dept Modal states
   const [isDeptModalOpen, setIsDeptModalOpen] = useState(false);
@@ -113,15 +147,47 @@ export default function Departamentos() {
 
   // Funções de Criação e Edição
   const openUnitModal = (unit = null) => {
+    setShowAllIcons(false);
     if (unit) {
       setEditingUnitId(unit.id);
-      const optionIndex = unitOptions.findIndex(o => o.icon === unit.icon) !== -1 
-        ? unitOptions.findIndex(o => o.icon === unit.icon) 
-        : 0;
-      setUnitFormData({ name: unit.name, selectedOption: optionIndex });
+      if (unit.isCustomIcon) {
+        setUnitFormData({ 
+          name: unit.name, 
+          selectedOption: 0, 
+          isCustomIcon: true, 
+          customIconText: unit.icon,
+          customColor: unit.colorClass,
+          customBg: unit.bgClass,
+          customHover: unit.hoverClass
+        });
+      } else {
+        const optionIndex = allUnitOptions.findIndex(o => o.icon === unit.icon) !== -1 
+          ? allUnitOptions.findIndex(o => o.icon === unit.icon) 
+          : 0;
+        setUnitFormData({ 
+          name: unit.name, 
+          selectedOption: optionIndex,
+          isCustomIcon: false,
+          customIconText: '',
+          customColor: 'text-slate-600',
+          customBg: 'bg-slate-500/10',
+          customHover: 'group-hover:text-slate-600'
+        });
+        if (optionIndex >= defaultUnitOptions.length) {
+          setShowAllIcons(true);
+        }
+      }
     } else {
       setEditingUnitId(null);
-      setUnitFormData({ name: '', selectedOption: 0 });
+      setUnitFormData({ 
+        name: '', 
+        selectedOption: 0,
+        isCustomIcon: false,
+        customIconText: '',
+        customColor: 'text-slate-600',
+        customBg: 'bg-slate-500/10',
+        customHover: 'group-hover:text-slate-600'
+      });
     }
     setIsUnitModalOpen(true);
   };
@@ -130,7 +196,23 @@ export default function Departamentos() {
     e.preventDefault();
     if (!unitFormData.name || unitFormData.name.trim() === '') return;
     
-    const selectedStyle = unitOptions[unitFormData.selectedOption];
+    let iconData = {};
+    if (unitFormData.isCustomIcon) {
+      const iconText = unitFormData.customIconText.trim() || '?';
+      iconData = {
+        icon: iconText,
+        isCustomIcon: true,
+        colorClass: unitFormData.customColor,
+        bgClass: unitFormData.customBg,
+        hoverClass: unitFormData.customHover
+      };
+    } else {
+      iconData = {
+        ...allUnitOptions[unitFormData.selectedOption],
+        isCustomIcon: false
+      };
+    }
+    
     const newData = [...data];
 
     if (editingUnitId) {
@@ -139,14 +221,14 @@ export default function Departamentos() {
         newData[unitIndex] = {
           ...newData[unitIndex],
           name: unitFormData.name.trim(),
-          ...selectedStyle
+          ...iconData
         };
       }
     } else {
       newData.push({
         id: `u${Date.now()}`,
         name: unitFormData.name.trim(),
-        ...selectedStyle,
+        ...iconData,
         departamentos: []
       });
     }
@@ -323,7 +405,11 @@ export default function Departamentos() {
                 >
                   <div className="flex items-center gap-3">
                     <div className={`h-12 w-12 rounded-[1rem] flex items-center justify-center transition-colors ${unit.bgClass} ${unit.colorClass}`}>
-                      <span className="material-symbols-outlined">{unit.icon}</span>
+                      {unit.isCustomIcon ? (
+                        <span className="text-xl font-bold leading-none">{unit.icon}</span>
+                      ) : (
+                        <span className="material-symbols-outlined">{unit.icon}</span>
+                      )}
                     </div>
                     <div>
                       <h3 className={`text-md font-extrabold transition-colors ${activeUnitId === unit.id ? 'text-blue-600' : 'text-slate-900 ' + unit.hoverClass}`}>{unit.name}</h3>
@@ -499,21 +585,94 @@ export default function Departamentos() {
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-3">Ícone e Cor</label>
-                <div className="grid grid-cols-4 gap-3">
-                  {unitOptions.map((opt, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => setUnitFormData({...unitFormData, selectedOption: idx})}
-                      className={`flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition-all duration-200 ${unitFormData.selectedOption === idx ? 'border-blue-500 bg-blue-50 scale-105 shadow-sm' : 'border-slate-100 bg-slate-50 hover:bg-slate-100 hover:border-slate-200'}`}
-                    >
-                      <div className={`h-10 w-10 rounded-xl flex items-center justify-center mb-1 ${opt.bgClass} ${opt.colorClass}`}>
-                        <span className="material-symbols-outlined text-[20px]">{opt.icon}</span>
-                      </div>
+                <div className="flex justify-between items-center mb-3">
+                  <label className="block text-sm font-bold text-slate-700">Ícone e Cor</label>
+                  {!showAllIcons && !unitFormData.isCustomIcon && (
+                    <button type="button" onClick={() => setShowAllIcons(true)} className="text-xs text-blue-600 hover:text-blue-800 font-bold transition-colors">
+                      Outros ícones...
                     </button>
-                  ))}
+                  )}
                 </div>
+                
+                {!unitFormData.isCustomIcon ? (
+                  <>
+                    <div className="grid grid-cols-4 gap-3 mb-3 max-h-[240px] overflow-y-auto custom-scrollbar p-1">
+                      {(showAllIcons ? allUnitOptions : defaultUnitOptions).map((opt, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => setUnitFormData({...unitFormData, selectedOption: idx, isCustomIcon: false})}
+                          className={`flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition-all duration-200 ${unitFormData.selectedOption === idx && !unitFormData.isCustomIcon ? 'border-blue-500 bg-blue-50 scale-105 shadow-sm' : 'border-slate-100 bg-slate-50 hover:bg-slate-100 hover:border-slate-200'}`}
+                        >
+                          <div className={`h-10 w-10 rounded-xl flex items-center justify-center mb-1 ${opt.bgClass} ${opt.colorClass}`}>
+                            <span className="material-symbols-outlined text-[20px]">{opt.icon}</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                    <div className="flex justify-between mt-2 px-1">
+                      {showAllIcons ? (
+                        <button type="button" onClick={() => setShowAllIcons(false)} className="text-xs text-slate-500 hover:text-slate-700 font-bold transition-colors">
+                          Ver menos
+                        </button>
+                      ) : (
+                        <div></div>
+                      )}
+                      <button type="button" onClick={() => { setUnitFormData({...unitFormData, isCustomIcon: true}); setShowAllIcons(true); }} className="text-xs text-purple-600 hover:text-purple-800 font-bold transition-colors flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[14px]">edit</span> Criar próprio ícone
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="p-4 border-2 border-purple-200 bg-purple-50 rounded-2xl space-y-4 animate-in fade-in zoom-in-95 duration-200">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-sm font-bold text-purple-900">Ícone Personalizado</h4>
+                      <button type="button" onClick={() => setUnitFormData({...unitFormData, isCustomIcon: false})} className="text-xs text-slate-500 hover:text-slate-700 font-bold transition-colors">
+                        Voltar aos ícones
+                      </button>
+                    </div>
+                    <div className="flex gap-4 items-center">
+                      <div className={`h-16 w-16 rounded-2xl flex items-center justify-center flex-shrink-0 ${unitFormData.customBg} ${unitFormData.customColor} shadow-sm border border-white transition-all duration-300`}>
+                        <span className="text-2xl font-bold leading-none">{unitFormData.customIconText || '?'}</span>
+                      </div>
+                      <div className="flex-1 space-y-3">
+                        <div>
+                          <label className="block text-[11px] uppercase tracking-wider font-bold text-slate-500 mb-1">Emoji ou Texto (Máx 2 carac.)</label>
+                          <input 
+                            type="text" 
+                            maxLength={2}
+                            value={unitFormData.customIconText}
+                            onChange={e => setUnitFormData({...unitFormData, customIconText: e.target.value})}
+                            className="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-200 font-bold"
+                            placeholder="Ex: 🚀 ou TI"
+                          />
+                        </div>
+                        <div>
+                           <label className="block text-[11px] uppercase tracking-wider font-bold text-slate-500 mb-1">Cor Base</label>
+                           <div className="flex gap-2">
+                             {[
+                               { c: 'text-slate-600', b: 'bg-slate-500/10', h: 'group-hover:text-slate-600' },
+                               { c: 'text-blue-600', b: 'bg-blue-500/10', h: 'group-hover:text-blue-600' },
+                               { c: 'text-purple-600', b: 'bg-purple-500/10', h: 'group-hover:text-purple-600' },
+                               { c: 'text-emerald-600', b: 'bg-emerald-500/10', h: 'group-hover:text-emerald-600' },
+                               { c: 'text-amber-600', b: 'bg-amber-500/10', h: 'group-hover:text-amber-600' },
+                               { c: 'text-rose-600', b: 'bg-rose-500/10', h: 'group-hover:text-rose-600' }
+                             ].map((color, idx) => (
+                               <button 
+                                 key={idx} 
+                                 type="button" 
+                                 onClick={() => setUnitFormData({...unitFormData, customColor: color.c, customBg: color.b, customHover: color.h})}
+                                 className={`h-6 w-6 rounded-full ${color.b} ${color.c} border-2 flex items-center justify-center transition-all ${unitFormData.customColor === color.c ? 'border-current scale-110 shadow-sm' : 'border-transparent hover:scale-105'}`}
+                               >
+                                 <div className="w-full h-full rounded-full bg-current opacity-20"></div>
+                               </button>
+                             ))}
+                           </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="mt-6 flex justify-end gap-3 pt-4 border-t border-slate-100">
