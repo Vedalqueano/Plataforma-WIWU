@@ -1,9 +1,119 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
-// --- COMPONENTE DETALHE DO PROCESSO ---
-function ProcessDetail({ onBack }) {
+// --- COMPONENTE EDITOR DE PROCESSO ---
+function ProcessEditor({ onBack, initialData, isNew = false }) {
+  const [processName, setProcessName] = useState(isNew ? "" : (initialData?.name || "Operador de Caixa"));
+  const [processDesc, setProcessDesc] = useState(isNew ? "" : (initialData?.desc || "Procedimentos padrões para abertura, atendimento e fechamento de caixa."));
+  const [processCategory, setProcessCategory] = useState("Rotina de Setor");
+  
+  const [stages, setStages] = useState(isNew ? [
+    {
+      id: Date.now(),
+      title: "",
+      tasks: [
+        { id: Date.now() + 1, title: "", desc: "" }
+      ]
+    }
+  ] : (initialData?.stages || [
+    {
+      id: 1,
+      title: "Preparação e Abertura do Caixa",
+      tasks: [
+        { id: 1, title: "Verificar Suprimentos", desc: "Garantir que há bobinas de papel suficientes, canetas, e itens de embalagem no checkout." },
+        { id: 2, title: "Conferência do Fundo de Troco", desc: "Contar e confirmar o valor inicial repassado pela tesouraria antes de abrir o PDV." },
+        { id: 3, title: "Login no Sistema PDV", desc: "Acessar o sistema com as próprias credenciais. Nunca usar login de outro colaborador." }
+      ]
+    },
+    {
+      id: 2,
+      title: "Atendimento ao Cliente e Registros",
+      tasks: [
+        { id: 4, title: "Cordialidade no Atendimento", desc: "Cumprimentar o cliente (\"Bom dia/Boa tarde\"), perguntar se encontrou tudo o que procurava." },
+        { id: 5, title: "Registro de Produtos", desc: "Escanear códigos de barras com atenção. Conferir peso de mercadorias pesáveis." },
+        { id: 6, title: "Recebimento e Emissão de Cupom", desc: "Anunciar o valor total. Conferir notas para evitar fraudes (dinheiro). Emitir e entregar a nota fiscal." }
+      ]
+    },
+    {
+      id: 3,
+      title: "Fechamento e Sangria",
+      tasks: [
+        { id: 7, title: "Realizar Sangria de Valores Altos", desc: "Durante o turno, se o valor em dinheiro exceder o limite seguro, solicitar sangria ao gerente." },
+        { id: 8, title: "Fechamento Final no PDV", desc: "Encerrar o caixa no sistema. Imprimir relatório de fechamento (Leitura X/Z)." },
+        { id: 9, title: "Entrega do Malote", desc: "Acondicionar dinheiro, comprovantes de cartão e vales. Entregar ao financeiro/cofre com protocolo." }
+      ]
+    }
+  ]));
+
+  const [trainings, setTrainings] = useState(isNew ? [] : (initialData?.trainings || [
+    { id: 1, title: "Prevenção a Fraudes", duration: "Videoaula • 15 min" },
+    { id: 2, title: "Atendimento de Excelência", duration: "Videoaula • 20 min" }
+  ]));
+
+  const descRef = useRef(null);
+  
+  useEffect(() => {
+    if (descRef.current) {
+      descRef.current.style.height = "auto";
+      descRef.current.style.height = descRef.current.scrollHeight + "px";
+    }
+  }, [processDesc]);
+
+  const addStage = () => {
+    setStages([...stages, { id: Date.now(), title: "", tasks: [{ id: Date.now() + 1, title: "", desc: "" }] }]);
+  };
+
+  const removeStage = (id) => {
+    setStages(stages.filter(s => s.id !== id));
+  };
+
+  const updateStageTitle = (id, title) => {
+    setStages(stages.map(s => s.id === id ? { ...s, title } : s));
+  };
+
+  const addTask = (stageId) => {
+    setStages(stages.map(s => {
+      if (s.id === stageId) {
+        return { ...s, tasks: [...s.tasks, { id: Date.now(), title: "", desc: "" }] };
+      }
+      return s;
+    }));
+  };
+
+  const removeTask = (stageId, taskId) => {
+    setStages(stages.map(s => {
+      if (s.id === stageId) {
+        return { ...s, tasks: s.tasks.filter(t => t.id !== taskId) };
+      }
+      return s;
+    }));
+  };
+
+  const updateTask = (stageId, taskId, field, value) => {
+    setStages(stages.map(s => {
+      if (s.id === stageId) {
+        return {
+          ...s,
+          tasks: s.tasks.map(t => t.id === taskId ? { ...t, [field]: value } : t)
+        };
+      }
+      return s;
+    }));
+  };
+
+  const addTraining = () => {
+    setTrainings([...trainings, { id: Date.now(), title: "", duration: "" }]);
+  };
+
+  const removeTraining = (id) => {
+    setTrainings(trainings.filter(t => t.id !== id));
+  };
+
+  const updateTraining = (id, field, value) => {
+    setTrainings(trainings.map(t => t.id === id ? { ...t, [field]: value } : t));
+  };
+
   return (
-    <div className="max-w-7xl mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-500 px-4 md:px-0">
+    <div className="max-w-7xl mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-500 px-4 md:px-0 pb-20">
       {/* Header & Breadcrumbs */}
       <header className="mb-10">
         <nav className="flex items-center gap-2 text-sm text-slate-500 mb-4 font-medium">
@@ -12,12 +122,16 @@ function ProcessDetail({ onBack }) {
             Processos
           </button>
           <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-          <span>Loja</span>
-          <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-          <span className="text-slate-800 font-bold">Operador de Caixa</span>
+          <span>{isNew ? "Novo Processo" : "Loja"}</span>
+          {!isNew && (
+            <>
+              <span className="material-symbols-outlined text-[16px]">chevron_right</span>
+              <span className="text-slate-800 font-bold">{processName || "Processo"}</span>
+            </>
+          )}
         </nav>
         
-        <div className="flex items-center justify-between flex-wrap gap-6 bg-white/60 backdrop-blur-2xl border border-white/80 p-6 md:p-8 rounded-3xl md:rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden">
+        <div className="flex items-center justify-between flex-wrap gap-6 bg-white/60 backdrop-blur-2xl border border-blue-100 p-6 md:p-8 rounded-3xl md:rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group">
           {/* Background decoration */}
           <div className="absolute right-0 top-0 h-full w-1/2 opacity-30 pointer-events-none">
             <svg viewBox="0 0 400 100" preserveAspectRatio="none" className="w-full h-full">
@@ -32,24 +146,39 @@ function ProcessDetail({ onBack }) {
             </svg>
           </div>
 
-          <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 w-full lg:w-auto">
-            <div className="h-20 w-20 bg-blue-500/10 rounded-[2rem] flex items-center justify-center border border-white">
-              <span className="material-symbols-outlined text-blue-600 text-4xl">point_of_sale</span>
+          <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 w-full lg:w-3/4">
+            <div className="h-20 w-20 bg-blue-500/10 rounded-[2rem] flex items-center justify-center border border-white cursor-pointer hover:bg-blue-500/20 transition-colors flex-shrink-0">
+              <span className="material-symbols-outlined text-blue-600 text-4xl">edit_document</span>
             </div>
-            <div>
-              <span className="text-[12px] font-black uppercase tracking-widest text-blue-500 mb-1 block">Rotina de Setor</span>
-              <h1 className="text-4xl font-extrabold tracking-tight text-slate-900">Operador de Caixa</h1>
-              <p className="text-slate-500 font-medium mt-1">Procedimentos padrões para abertura, atendimento e fechamento de caixa.</p>
+            <div className="w-full">
+              <input
+                 type="text"
+                 value={processCategory}
+                 onChange={(e) => setProcessCategory(e.target.value)}
+                 className="text-[12px] font-black uppercase tracking-widest text-blue-500 mb-1 block bg-transparent border-none outline-none placeholder:text-blue-300 w-full"
+                 placeholder="CATEGORIA (Ex: Rotina de Setor)"
+              />
+              <input
+                 type="text"
+                 value={processName}
+                 onChange={(e) => setProcessName(e.target.value)}
+                 placeholder="Nome do Processo"
+                 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 bg-transparent border-none outline-none placeholder:text-slate-300 w-full focus:ring-2 focus:ring-blue-100 rounded-lg -ml-2 px-2 py-1 transition-all"
+              />
+              <textarea
+                 ref={descRef}
+                 value={processDesc}
+                 onChange={(e) => setProcessDesc(e.target.value)}
+                 placeholder="Descreva o objetivo geral deste processo..."
+                 className="text-slate-500 font-medium mt-1 bg-transparent border-none outline-none placeholder:text-slate-300 w-full resize-none overflow-hidden focus:ring-2 focus:ring-blue-100 rounded-lg -ml-2 px-2 py-1 transition-all"
+                 rows={1}
+              />
             </div>
           </div>
           <div className="flex flex-col sm:flex-row gap-3 relative z-10 w-full lg:w-auto mt-4 lg:mt-0">
-            <button className="w-full sm:w-auto justify-center px-6 py-3.5 md:py-3 rounded-full text-sm font-bold bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 transition-colors shadow-sm flex items-center gap-2">
-              <span className="material-symbols-outlined text-[18px]">picture_as_pdf</span>
-              Baixar PDF
-            </button>
             <button className="w-full sm:w-auto justify-center px-6 py-3.5 md:py-3 rounded-full text-sm font-bold bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-md shadow-blue-500/20 flex items-center gap-2">
-              <span className="material-symbols-outlined text-[18px]">edit</span>
-              Editar Processo
+              <span className="material-symbols-outlined text-[18px]">save</span>
+              Salvar Processo
             </button>
           </div>
         </div>
@@ -58,165 +187,135 @@ function ProcessDetail({ onBack }) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Etapas do Processo */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-2xl font-extrabold text-slate-900">Etapas Diárias</h2>
-            <span className="text-xs font-bold bg-blue-100 text-blue-600 py-1.5 px-4 rounded-full">3 Fases Principais</span>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-extrabold text-slate-900">Etapas do Processo</h2>
+            <span className="text-xs font-bold bg-blue-100 text-blue-600 py-1.5 px-4 rounded-full">{stages.length} Fase{stages.length !== 1 && 's'}</span>
           </div>
 
-          {/* Fase 1 */}
-          <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-3xl md:rounded-[2rem] p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative mt-8 md:mt-0">
-             <div className="absolute -top-5 left-6 md:-left-3 md:top-8 h-12 w-12 md:h-10 md:w-10 bg-blue-600 text-white rounded-xl md:rounded-xl flex items-center justify-center font-black text-xl md:text-lg shadow-lg shadow-blue-500/30 border-[3px] border-white">1</div>
-             <div className="pt-4 md:pt-0 md:pl-6">
-                <h3 className="text-xl font-extrabold text-slate-900 mb-4">Preparação e Abertura do Caixa</h3>
-                <div className="space-y-4">
-                  <label className="flex items-start gap-3 cursor-pointer group">
-                    <input type="checkbox" className="mt-1 w-5 h-5 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500" />
-                    <div>
-                      <p className="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors">Verificar Suprimentos</p>
-                      <p className="text-xs text-slate-500 font-medium">Garantir que há bobinas de papel suficientes, canetas, e itens de embalagem no checkout.</p>
-                    </div>
-                  </label>
-                  <label className="flex items-start gap-3 cursor-pointer group">
-                    <input type="checkbox" className="mt-1 w-5 h-5 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500" />
-                    <div>
-                      <p className="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors">Conferência do Fundo de Troco</p>
-                      <p className="text-xs text-slate-500 font-medium">Contar e confirmar o valor inicial repassado pela tesouraria antes de abrir o PDV.</p>
-                    </div>
-                  </label>
-                  <label className="flex items-start gap-3 cursor-pointer group">
-                    <input type="checkbox" className="mt-1 w-5 h-5 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500" />
-                    <div>
-                      <p className="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors">Login no Sistema PDV</p>
-                      <p className="text-xs text-slate-500 font-medium">Acessar o sistema com as próprias credenciais. Nunca usar login de outro colaborador.</p>
-                    </div>
-                  </label>
-                </div>
-             </div>
-          </div>
+          {stages.map((stage, index) => (
+            <div key={stage.id} className="bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-3xl md:rounded-[2rem] p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative mt-8 md:mt-0 transition-all focus-within:border-blue-300 focus-within:shadow-[0_8px_30px_rgba(59,130,246,0.1)] group/stage">
+               <div className="absolute -top-5 left-6 md:-left-3 md:top-8 h-12 w-12 md:h-10 md:w-10 bg-slate-100 text-slate-500 rounded-xl md:rounded-xl flex items-center justify-center font-black text-xl md:text-lg shadow-sm border-[3px] border-white group-focus-within/stage:bg-blue-600 group-focus-within/stage:text-white group-focus-within/stage:shadow-blue-500/30 transition-colors">
+                  {index + 1}
+               </div>
+               
+               <div className="pt-4 md:pt-0 md:pl-6">
+                  <div className="flex justify-between items-start mb-6 gap-4">
+                     <input 
+                        type="text"
+                        value={stage.title}
+                        onChange={(e) => updateStageTitle(stage.id, e.target.value)}
+                        placeholder="Título da Etapa (Ex: Preparação do Caixa)"
+                        className="text-xl font-extrabold text-slate-900 bg-transparent border-none outline-none placeholder:text-slate-300 w-full focus:bg-slate-50 p-2 -ml-2 rounded-xl transition-colors"
+                     />
+                     <button onClick={() => removeStage(stage.id)} className="text-red-400 hover:text-red-600 p-2 rounded-full hover:bg-red-50 transition-colors opacity-0 group-hover/stage:opacity-100 focus:opacity-100 shrink-0">
+                        <span className="material-symbols-outlined text-[20px]">delete</span>
+                     </button>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    {stage.tasks.map((task, taskIndex) => (
+                      <div key={task.id} className="flex items-start gap-3 group/task relative bg-slate-50/50 p-3 rounded-2xl hover:bg-slate-50 transition-colors border border-transparent focus-within:border-blue-100">
+                        <div className="mt-2 flex-shrink-0">
+                           <div className="w-5 h-5 rounded-md border-2 border-slate-300 bg-white flex items-center justify-center text-[10px] text-slate-400 font-bold">{taskIndex + 1}</div>
+                        </div>
+                        <div className="flex-grow pr-8">
+                           <input 
+                              type="text"
+                              value={task.title}
+                              onChange={(e) => updateTask(stage.id, task.id, 'title', e.target.value)}
+                              placeholder="Título do subtítulo/tarefa"
+                              className="text-sm font-bold text-slate-800 bg-transparent border-none outline-none placeholder:text-slate-400 w-full focus:text-blue-700 transition-colors"
+                           />
+                           <textarea
+                              value={task.desc}
+                              onChange={(e) => {
+                                updateTask(stage.id, task.id, 'desc', e.target.value);
+                                e.target.style.height = 'auto';
+                                e.target.style.height = e.target.scrollHeight + 'px';
+                              }}
+                              placeholder="Descreva os detalhes e passos desta tarefa..."
+                              className="text-xs text-slate-500 font-medium bg-transparent border-none outline-none placeholder:text-slate-400 w-full mt-1 resize-none overflow-hidden"
+                              rows={1}
+                              onFocus={(e) => {
+                                e.target.style.height = 'auto';
+                                e.target.style.height = e.target.scrollHeight + 'px';
+                              }}
+                           />
+                        </div>
+                        <button onClick={() => removeTask(stage.id, task.id)} className="opacity-0 group-hover/task:opacity-100 focus:opacity-100 text-red-400 hover:text-red-600 transition-opacity p-2 rounded-full hover:bg-red-50 absolute right-2 top-2">
+                           <span className="material-symbols-outlined text-[16px]">close</span>
+                        </button>
+                      </div>
+                    ))}
+                    
+                    <button onClick={() => addTask(stage.id)} className="text-sm font-bold text-blue-600 hover:text-blue-700 flex items-center gap-2 mt-4 py-2 px-4 hover:bg-blue-50 rounded-xl transition-colors border border-dashed border-blue-200 w-full justify-center">
+                       <span className="material-symbols-outlined text-[18px]">add</span>
+                       Adicionar Subtítulo/Tarefa
+                    </button>
+                  </div>
+               </div>
+            </div>
+          ))}
 
-          {/* Fase 2 */}
-          <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-3xl md:rounded-[2rem] p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative mt-8 md:mt-0">
-             <div className="absolute -top-5 left-6 md:-left-3 md:top-8 h-12 w-12 md:h-10 md:w-10 bg-slate-200 text-slate-600 rounded-xl flex items-center justify-center font-black text-xl md:text-lg border-[3px] border-white shadow-sm">2</div>
-             <div className="pt-4 md:pt-0 md:pl-6">
-                <h3 className="text-xl font-extrabold text-slate-900 mb-4">Atendimento ao Cliente e Registros</h3>
-                <div className="space-y-4">
-                  <label className="flex items-start gap-3 cursor-pointer group">
-                    <input type="checkbox" className="mt-1 w-5 h-5 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500" />
-                    <div>
-                      <p className="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors">Cordialidade no Atendimento</p>
-                      <p className="text-xs text-slate-500 font-medium">Cumprimentar o cliente ("Bom dia/Boa tarde"), perguntar se encontrou tudo o que procurava.</p>
-                    </div>
-                  </label>
-                  <label className="flex items-start gap-3 cursor-pointer group">
-                    <input type="checkbox" className="mt-1 w-5 h-5 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500" />
-                    <div>
-                      <p className="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors">Registro de Produtos</p>
-                      <p className="text-xs text-slate-500 font-medium">Escanear códigos de barras com atenção. Conferir peso de mercadorias pesáveis.</p>
-                    </div>
-                  </label>
-                  <label className="flex items-start gap-3 cursor-pointer group">
-                    <input type="checkbox" className="mt-1 w-5 h-5 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500" />
-                    <div>
-                      <p className="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors">Recebimento e Emissão de Cupom</p>
-                      <p className="text-xs text-slate-500 font-medium">Anunciar o valor total. Conferir notas para evitar fraudes (dinheiro). Emitir e entregar a nota fiscal.</p>
-                    </div>
-                  </label>
-                </div>
-             </div>
-          </div>
-
-          {/* Fase 3 */}
-          <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-3xl md:rounded-[2rem] p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative mt-8 md:mt-0">
-             <div className="absolute -top-5 left-6 md:-left-3 md:top-8 h-12 w-12 md:h-10 md:w-10 bg-slate-200 text-slate-600 rounded-xl flex items-center justify-center font-black text-xl md:text-lg border-[3px] border-white shadow-sm">3</div>
-             <div className="pt-4 md:pt-0 md:pl-6">
-                <h3 className="text-xl font-extrabold text-slate-900 mb-4">Fechamento e Sangria</h3>
-                <div className="space-y-4">
-                  <label className="flex items-start gap-3 cursor-pointer group">
-                    <input type="checkbox" className="mt-1 w-5 h-5 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500" />
-                    <div>
-                      <p className="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors">Realizar Sangria de Valores Altos</p>
-                      <p className="text-xs text-slate-500 font-medium">Durante o turno, se o valor em dinheiro exceder o limite seguro, solicitar sangria ao gerente.</p>
-                    </div>
-                  </label>
-                  <label className="flex items-start gap-3 cursor-pointer group">
-                    <input type="checkbox" className="mt-1 w-5 h-5 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500" />
-                    <div>
-                      <p className="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors">Fechamento Final no PDV</p>
-                      <p className="text-xs text-slate-500 font-medium">Encerrar o caixa no sistema. Imprimir relatório de fechamento (Leitura X/Z).</p>
-                    </div>
-                  </label>
-                  <label className="flex items-start gap-3 cursor-pointer group">
-                    <input type="checkbox" className="mt-1 w-5 h-5 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500" />
-                    <div>
-                      <p className="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors">Entrega do Malote</p>
-                      <p className="text-xs text-slate-500 font-medium">Acondicionar dinheiro, comprovantes de cartão e vales. Entregar ao financeiro/cofre com protocolo.</p>
-                    </div>
-                  </label>
-                </div>
-             </div>
-          </div>
+          <button onClick={addStage} className="w-full border-2 border-dashed border-slate-200 text-slate-500 font-bold py-6 rounded-[2rem] hover:bg-slate-50 hover:border-blue-300 hover:text-blue-600 transition-all flex items-center justify-center gap-2 mt-6">
+            <span className="material-symbols-outlined">add_circle</span>
+            Criar Nova Etapa
+          </button>
         </div>
 
-        {/* Right Column: Informações e KPIs */}
+        {/* Right Column: Treinamentos */}
         <div className="space-y-6">
-          <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-3xl md:rounded-[2rem] p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-            <h3 className="text-lg font-extrabold text-slate-900 mb-6">Métricas de Sucesso</h3>
-            <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <div className="h-10 w-10 bg-emerald-500/10 rounded-xl flex items-center justify-center">
-                  <span className="material-symbols-outlined text-emerald-600">timer</span>
+          <div className="bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-3xl md:rounded-[2rem] p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+            <div className="flex flex-col mb-5">
+               <h3 className="text-lg font-extrabold text-slate-900">Treinamentos Recomendados</h3>
+               <p className="text-xs text-slate-500 mt-1">Adicione vídeos ou materiais de apoio para este processo.</p>
+            </div>
+            
+            <div className="space-y-3">
+              {trainings.map(training => (
+                <div key={training.id} className="p-3 bg-white rounded-2xl border border-slate-100 flex items-center gap-3 relative group focus-within:border-blue-200 focus-within:ring-2 focus-within:ring-blue-50 transition-all shadow-sm">
+                   <div className="h-10 w-10 bg-purple-500/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                     <span className="material-symbols-outlined text-purple-600">play_arrow</span>
+                   </div>
+                   <div className="flex-grow pr-6">
+                     <input
+                       type="text"
+                       value={training.title}
+                       onChange={(e) => updateTraining(training.id, 'title', e.target.value)}
+                       placeholder="Título do vídeo"
+                       className="text-xs font-bold text-slate-800 bg-transparent border-none outline-none placeholder:text-slate-300 w-full"
+                     />
+                     <input
+                       type="text"
+                       value={training.duration}
+                       onChange={(e) => updateTraining(training.id, 'duration', e.target.value)}
+                       placeholder="Duração (ex: 15 min)"
+                       className="text-[10px] text-slate-500 font-medium bg-transparent border-none outline-none placeholder:text-slate-300 w-full mt-0.5"
+                     />
+                   </div>
+                   <button onClick={() => removeTraining(training.id)} className="opacity-0 group-hover:opacity-100 focus:opacity-100 text-red-400 hover:text-red-600 transition-opacity absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:bg-red-50 rounded-full">
+                       <span className="material-symbols-outlined text-[16px]">close</span>
+                   </button>
                 </div>
-                <div>
-                  <p className="text-sm font-bold text-slate-800">TMA</p>
-                  <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Tempo Médio Atendimento</p>
-                </div>
-                <div className="ml-auto text-sm font-extrabold text-emerald-600">&lt; 2 min</div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="h-10 w-10 bg-blue-500/10 rounded-xl flex items-center justify-center">
-                  <span className="material-symbols-outlined text-blue-600">sentiment_very_satisfied</span>
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-slate-800">NPS Cliente</p>
-                  <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Nível de Satisfação</p>
-                </div>
-                <div className="ml-auto text-sm font-extrabold text-blue-600">&gt; 90%</div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="h-10 w-10 bg-red-500/10 rounded-xl flex items-center justify-center">
-                  <span className="material-symbols-outlined text-red-600">money_off</span>
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-slate-800">Quebra de Caixa</p>
-                  <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Diferença de Valores</p>
-                </div>
-                <div className="ml-auto text-sm font-extrabold text-slate-800">R$ 0,00</div>
-              </div>
+              ))}
+              
+              <button onClick={addTraining} className="w-full text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center justify-center gap-2 mt-4 py-3 hover:bg-blue-50 rounded-2xl transition-colors border-2 border-dashed border-blue-100">
+                 <span className="material-symbols-outlined text-[18px]">add</span>
+                 Adicionar Vídeo
+              </button>
             </div>
           </div>
-
-          <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-3xl md:rounded-[2rem] p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-            <h3 className="text-lg font-extrabold text-slate-900 mb-4">Treinamentos Recomendados</h3>
-            <div className="space-y-3">
-              <div className="p-3 bg-white/50 rounded-xl border border-slate-100 flex items-center gap-3 cursor-pointer hover:bg-white transition-colors">
-                 <div className="h-8 w-8 bg-purple-500/10 rounded-lg flex items-center justify-center">
-                   <span className="material-symbols-outlined text-purple-600 text-sm">play_arrow</span>
-                 </div>
-                 <div>
-                   <p className="text-xs font-bold text-slate-800">Prevenção a Fraudes</p>
-                   <p className="text-[10px] text-slate-500 font-medium">Videoaula • 15 min</p>
-                 </div>
-              </div>
-              <div className="p-3 bg-white/50 rounded-xl border border-slate-100 flex items-center gap-3 cursor-pointer hover:bg-white transition-colors">
-                 <div className="h-8 w-8 bg-orange-500/10 rounded-lg flex items-center justify-center">
-                   <span className="material-symbols-outlined text-orange-600 text-sm">play_arrow</span>
-                 </div>
-                 <div>
-                   <p className="text-xs font-bold text-slate-800">Atendimento de Excelência</p>
-                   <p className="text-[10px] text-slate-500 font-medium">Videoaula • 20 min</p>
-                 </div>
-              </div>
-            </div>
+          
+          <div className="bg-blue-50/50 border border-blue-100 rounded-3xl p-5">
+             <div className="flex items-center gap-2 text-blue-600 font-bold text-sm mb-2">
+                <span className="material-symbols-outlined text-[18px]">lightbulb</span>
+                Dicas de Criação
+             </div>
+             <ul className="text-xs text-slate-600 space-y-2 list-disc pl-4 marker:text-blue-300">
+                <li>Seja claro e objetivo nos títulos das tarefas.</li>
+                <li>Descreva os detalhes de execução para evitar dúvidas.</li>
+                <li>Divida o processo em etapas lógicas e sequenciais.</li>
+             </ul>
           </div>
         </div>
       </div>
@@ -227,9 +326,14 @@ function ProcessDetail({ onBack }) {
 // --- COMPONENTE PRINCIPAL (HUB) ---
 export default function ProcessCreation() {
   const [activeProcess, setActiveProcess] = useState(null);
+  const [isCreating, setIsCreating] = useState(false);
+
+  if (isCreating) {
+    return <ProcessEditor onBack={() => setIsCreating(false)} isNew={true} />;
+  }
 
   if (activeProcess === 'operador-caixa') {
-    return <ProcessDetail onBack={() => setActiveProcess(null)} />;
+    return <ProcessEditor onBack={() => setActiveProcess(null)} isNew={false} />;
   }
 
   return (
@@ -241,7 +345,10 @@ export default function ProcessCreation() {
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900">Processos</h1>
           <p className="text-slate-500 font-medium mt-2 text-sm md:text-lg leading-relaxed">Gerencie e acesse as rotinas padronizadas de cada setor da empresa.</p>
         </div>
-        <button className="w-full md:w-auto px-6 py-3 rounded-full text-sm font-bold bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-md shadow-blue-500/20 flex items-center justify-center gap-2">
+        <button 
+          onClick={() => setIsCreating(true)}
+          className="w-full md:w-auto px-6 py-3 rounded-full text-sm font-bold bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-md shadow-blue-500/20 flex items-center justify-center gap-2"
+        >
           <span className="material-symbols-outlined text-[18px]">add</span>
           Novo Processo
         </button>
