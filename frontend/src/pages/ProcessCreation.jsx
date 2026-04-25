@@ -1,23 +1,65 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-// Lista de ícones disponíveis para escolha
+// Lista de ícones disponíveis com cores predefinidas
 const AVAILABLE_ICONS = [
-  'edit_document', 'point_of_sale', 'inventory_2', 'local_mall', 
-  'groups', 'account_balance_wallet', 'shopping_cart', 'precision_manufacturing',
-  'support_agent', 'campaign', 'construction', 'local_shipping',
-  'storefront', 'business_center', 'star', 'rocket_launch',
-  'laptop_mac', 'assignment', 'build', 'event_note'
+  { name: 'edit_document', color: 'text-blue-500', bg: 'bg-blue-50' },
+  { name: 'point_of_sale', color: 'text-emerald-500', bg: 'bg-emerald-50' },
+  { name: 'inventory_2', color: 'text-amber-500', bg: 'bg-amber-50' },
+  { name: 'local_mall', color: 'text-purple-500', bg: 'bg-purple-50' },
+  { name: 'groups', color: 'text-indigo-500', bg: 'bg-indigo-50' },
+  { name: 'account_balance_wallet', color: 'text-teal-500', bg: 'bg-teal-50' },
+  { name: 'shopping_cart', color: 'text-orange-500', bg: 'bg-orange-50' },
+  { name: 'precision_manufacturing', color: 'text-cyan-500', bg: 'bg-cyan-50' },
+  { name: 'support_agent', color: 'text-rose-500', bg: 'bg-rose-50' },
+  { name: 'campaign', color: 'text-yellow-500', bg: 'bg-yellow-50' },
+  { name: 'construction', color: 'text-slate-500', bg: 'bg-slate-100' },
+  { name: 'local_shipping', color: 'text-sky-500', bg: 'bg-sky-50' },
+  { name: 'storefront', color: 'text-fuchsia-500', bg: 'bg-fuchsia-50' },
+  { name: 'business_center', color: 'text-violet-500', bg: 'bg-violet-50' },
+  { name: 'star', color: 'text-yellow-400', bg: 'bg-yellow-50' },
+  { name: 'rocket_launch', color: 'text-red-500', bg: 'bg-red-50' },
+  { name: 'laptop_mac', color: 'text-slate-800', bg: 'bg-slate-100' },
+  { name: 'assignment', color: 'text-lime-600', bg: 'bg-lime-50' },
+  { name: 'build', color: 'text-zinc-600', bg: 'bg-zinc-100' },
+  { name: 'event_note', color: 'text-pink-500', bg: 'bg-pink-50' }
 ];
+
+// Mock de dados para a destinação
+const MOCK_DATA = {
+  unidade: [
+    { id: 'u1', name: 'Matriz (São Paulo)', icon: 'domain' },
+    { id: 'u2', name: 'Filial (Rio de Janeiro)', icon: 'store' },
+    { id: 'u3', name: 'Centro de Distribuição', icon: 'warehouse' }
+  ],
+  departamento: [
+    { id: 'd1', name: 'Financeiro', icon: 'account_balance' },
+    { id: 'd2', name: 'Recursos Humanos', icon: 'groups' },
+    { id: 'd3', name: 'Vendas', icon: 'trending_up' },
+    { id: 'd4', name: 'Marketing', icon: 'campaign' },
+    { id: 'd5', name: 'Tecnologia (TI)', icon: 'computer' },
+    { id: 'd6', name: 'Logística', icon: 'local_shipping' }
+  ],
+  funcionario: [
+    { id: 'f1', name: 'Gerente Geral', icon: 'badge' },
+    { id: 'f2', name: 'Operador de Caixa', icon: 'point_of_sale' },
+    { id: 'f3', name: 'Vendedor Externo', icon: 'directions_walk' },
+    { id: 'f4', name: 'Atendente de Suporte', icon: 'headset_mic' },
+    { id: 'f5', name: 'Analista de Sistemas', icon: 'code' }
+  ]
+};
 
 // --- COMPONENTE EDITOR DE PROCESSO ---
 function ProcessEditor({ onBack, onSave, onDelete, initialData, isNew = false }) {
   const [processName, setProcessName] = useState(isNew ? "" : (initialData?.name || ""));
   const [processDesc, setProcessDesc] = useState(isNew ? "" : (initialData?.desc || ""));
   const [processCategory, setProcessCategory] = useState(isNew ? "Rotina de Setor" : (initialData?.category || "Rotina de Setor"));
-  const [icon, setIcon] = useState(initialData?.icon || 'edit_document');
+  
+  // Icon State
+  const initialIconObj = AVAILABLE_ICONS.find(i => i.name === initialData?.icon) || AVAILABLE_ICONS[0];
+  const [selectedIcon, setSelectedIcon] = useState(initialIconObj);
   const [showIconPicker, setShowIconPicker] = useState(false);
   
-  // Destinação
+  // Destinação State
   const [destinationType, setDestinationType] = useState(initialData?.destination?.type || 'todos');
   const [destinationValue, setDestinationValue] = useState(initialData?.destination?.value || '');
 
@@ -102,10 +144,10 @@ function ProcessEditor({ onBack, onSave, onDelete, initialData, isNew = false })
       name: processName || "Novo Processo",
       desc: processDesc,
       category: processCategory,
-      icon: icon,
+      icon: selectedIcon.name,
       destination: {
         type: destinationType,
-        value: destinationValue
+        value: destinationType === 'todos' ? '' : destinationValue
       },
       stages,
       trainings
@@ -131,92 +173,99 @@ function ProcessEditor({ onBack, onSave, onDelete, initialData, isNew = false })
           )}
         </nav>
         
-        <div className="flex items-center justify-between flex-wrap gap-6 bg-white/60 backdrop-blur-2xl border border-blue-100 p-6 md:p-8 rounded-3xl md:rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group">
-          {/* Background decoration */}
-          <div className="absolute right-0 top-0 h-full w-1/2 opacity-30 pointer-events-none">
-            <svg viewBox="0 0 400 100" preserveAspectRatio="none" className="w-full h-full">
-              <path d="M0 100 L0 80 Q 50 20, 100 60 T 200 40 T 300 10 T 400 30 L400 100 Z" fill="url(#grad2)" />
-              <path d="M0 80 Q 50 20, 100 60 T 200 40 T 300 10 T 400 30" fill="none" stroke="#3B82F6" strokeWidth="4" />
-              <defs>
-                <linearGradient id="grad2" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.2" />
-                  <stop offset="100%" stopColor="#3B82F6" stopOpacity="0" />
-                </linearGradient>
-              </defs>
-            </svg>
+        <div className="relative bg-white/60 backdrop-blur-2xl border border-blue-100 rounded-3xl md:rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] group">
+          {/* Background decoration container (overflow hidden isolado para não cortar o ícone) */}
+          <div className="absolute inset-0 rounded-[2rem] overflow-hidden pointer-events-none">
+            <div className="absolute right-0 top-0 h-full w-1/2 opacity-30">
+              <svg viewBox="0 0 400 100" preserveAspectRatio="none" className="w-full h-full">
+                <path d="M0 100 L0 80 Q 50 20, 100 60 T 200 40 T 300 10 T 400 30 L400 100 Z" fill="url(#grad2)" />
+                <path d="M0 80 Q 50 20, 100 60 T 200 40 T 300 10 T 400 30" fill="none" stroke="#3B82F6" strokeWidth="4" />
+                <defs>
+                  <linearGradient id="grad2" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.2" />
+                    <stop offset="100%" stopColor="#3B82F6" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
           </div>
 
-          <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 w-full lg:w-3/4">
-            
-            {/* Ícone com Selector */}
-            <div className="relative">
-              <div 
-                onClick={() => setShowIconPicker(!showIconPicker)}
-                className="h-20 w-20 bg-blue-500/10 rounded-[2rem] flex items-center justify-center border border-white cursor-pointer hover:bg-blue-500/20 transition-colors flex-shrink-0 group/icon"
-                title="Alterar Ícone"
-              >
-                <span className="material-symbols-outlined text-blue-600 text-4xl group-hover/icon:scale-110 transition-transform">{icon}</span>
-                <div className="absolute -bottom-2 -right-2 bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center border-2 border-white shadow-sm opacity-0 group-hover/icon:opacity-100 transition-opacity">
-                   <span className="material-symbols-outlined text-[14px]">edit</span>
+          <div className="relative p-6 md:p-8 flex items-center justify-between flex-wrap gap-6 z-10">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 w-full lg:w-3/4">
+              
+              {/* Ícone com Selector */}
+              <div className="relative">
+                <div 
+                  onClick={() => setShowIconPicker(!showIconPicker)}
+                  className={`h-20 w-20 ${selectedIcon.bg} rounded-[2rem] flex items-center justify-center border-2 border-white cursor-pointer shadow-sm hover:shadow-md transition-all flex-shrink-0 group/icon`}
+                  title="Alterar Ícone"
+                >
+                  <span className={`material-symbols-outlined ${selectedIcon.color} text-4xl group-hover/icon:scale-110 transition-transform`}>
+                    {selectedIcon.name}
+                  </span>
+                  <div className="absolute -bottom-2 -right-2 bg-blue-600 text-white rounded-full w-7 h-7 flex items-center justify-center border-2 border-white shadow-md opacity-0 group-hover/icon:opacity-100 transition-opacity">
+                     <span className="material-symbols-outlined text-[14px]">edit</span>
+                  </div>
                 </div>
+
+                {/* Popover de Ícones (Agora fora do overflow hidden) */}
+                {showIconPicker && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setShowIconPicker(false)}></div>
+                    <div className="absolute top-24 left-0 bg-white/95 backdrop-blur-3xl border border-slate-100 shadow-[0_20px_60px_rgb(0,0,0,0.15)] rounded-2xl p-4 w-[320px] z-50 grid grid-cols-5 gap-3 animate-in fade-in zoom-in-95 duration-200">
+                       {AVAILABLE_ICONS.map(ic => (
+                         <button
+                           key={ic.name}
+                           onClick={() => { setSelectedIcon(ic); setShowIconPicker(false); }}
+                           className={`h-12 w-12 flex items-center justify-center rounded-[1rem] transition-all hover:scale-110 ${selectedIcon.name === ic.name ? `${ic.bg} border-2 border-blue-200 shadow-inner` : 'bg-transparent hover:bg-slate-50'}`}
+                         >
+                           <span className={`material-symbols-outlined text-2xl ${ic.color}`}>{ic.name}</span>
+                         </button>
+                       ))}
+                    </div>
+                  </>
+                )}
               </div>
 
-              {/* Popover de Ícones */}
-              {showIconPicker && (
-                <>
-                  <div className="fixed inset-0 z-40" onClick={() => setShowIconPicker(false)}></div>
-                  <div className="absolute top-24 left-0 bg-white border border-slate-100 shadow-[0_20px_40px_rgb(0,0,0,0.1)] rounded-2xl p-4 w-64 z-50 grid grid-cols-5 gap-2 animate-in fade-in zoom-in-95 duration-200">
-                     {AVAILABLE_ICONS.map(ic => (
-                       <button
-                         key={ic}
-                         onClick={() => { setIcon(ic); setShowIconPicker(false); }}
-                         className={`h-10 w-10 flex items-center justify-center rounded-xl transition-colors ${icon === ic ? 'bg-blue-600 text-white' : 'text-slate-500 hover:bg-slate-100'}`}
-                       >
-                         <span className="material-symbols-outlined text-xl">{ic}</span>
-                       </button>
-                     ))}
-                  </div>
-                </>
-              )}
-            </div>
-
-            <div className="w-full">
-              <div className="flex items-center gap-2 mb-1">
+              <div className="w-full">
+                <div className="flex items-center gap-2 mb-1">
+                  <input
+                     type="text"
+                     value={processCategory}
+                     onChange={(e) => setProcessCategory(e.target.value)}
+                     className="text-[12px] font-black uppercase tracking-widest text-blue-500 bg-transparent border-none outline-none placeholder:text-blue-300 w-full"
+                     placeholder="CATEGORIA (Ex: Rotina de Setor)"
+                  />
+                </div>
                 <input
                    type="text"
-                   value={processCategory}
-                   onChange={(e) => setProcessCategory(e.target.value)}
-                   className="text-[12px] font-black uppercase tracking-widest text-blue-500 bg-transparent border-none outline-none placeholder:text-blue-300 w-full"
-                   placeholder="CATEGORIA (Ex: Rotina de Setor)"
+                   value={processName}
+                   onChange={(e) => setProcessName(e.target.value)}
+                   placeholder="Nome do Processo"
+                   className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 bg-transparent border-none outline-none placeholder:text-slate-300 w-full focus:ring-2 focus:ring-blue-100 rounded-lg -ml-2 px-2 py-1 transition-all"
+                />
+                <textarea
+                   ref={descRef}
+                   value={processDesc}
+                   onChange={(e) => setProcessDesc(e.target.value)}
+                   placeholder="Descreva o objetivo geral deste processo..."
+                   className="text-slate-500 font-medium mt-1 bg-transparent border-none outline-none placeholder:text-slate-300 w-full resize-none overflow-hidden focus:ring-2 focus:ring-blue-100 rounded-lg -ml-2 px-2 py-1 transition-all"
+                   rows={1}
                 />
               </div>
-              <input
-                 type="text"
-                 value={processName}
-                 onChange={(e) => setProcessName(e.target.value)}
-                 placeholder="Nome do Processo"
-                 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 bg-transparent border-none outline-none placeholder:text-slate-300 w-full focus:ring-2 focus:ring-blue-100 rounded-lg -ml-2 px-2 py-1 transition-all"
-              />
-              <textarea
-                 ref={descRef}
-                 value={processDesc}
-                 onChange={(e) => setProcessDesc(e.target.value)}
-                 placeholder="Descreva o objetivo geral deste processo..."
-                 className="text-slate-500 font-medium mt-1 bg-transparent border-none outline-none placeholder:text-slate-300 w-full resize-none overflow-hidden focus:ring-2 focus:ring-blue-100 rounded-lg -ml-2 px-2 py-1 transition-all"
-                 rows={1}
-              />
             </div>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-3 relative z-10 w-full lg:w-auto mt-4 lg:mt-0">
-            {!isNew && (
-              <button onClick={() => onDelete(initialData.id)} className="w-full sm:w-auto justify-center px-4 py-3.5 md:py-3 rounded-full text-sm font-bold bg-white text-red-500 hover:bg-red-50 border border-red-100 transition-colors shadow-sm flex items-center gap-2">
-                <span className="material-symbols-outlined text-[18px]">delete</span>
+            
+            <div className="flex flex-col sm:flex-row gap-3 relative z-10 w-full lg:w-auto mt-4 lg:mt-0">
+              {!isNew && (
+                <button onClick={() => onDelete(initialData.id)} className="w-full sm:w-auto justify-center px-4 py-3.5 md:py-3 rounded-full text-sm font-bold bg-white text-red-500 hover:bg-red-50 border border-red-100 transition-colors shadow-sm flex items-center gap-2">
+                  <span className="material-symbols-outlined text-[18px]">delete</span>
+                </button>
+              )}
+              <button onClick={handleSave} className="w-full sm:w-auto justify-center px-6 py-3.5 md:py-3 rounded-full text-sm font-bold bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-md shadow-blue-500/20 flex items-center gap-2">
+                <span className="material-symbols-outlined text-[18px]">save</span>
+                Salvar Processo
               </button>
-            )}
-            <button onClick={handleSave} className="w-full sm:w-auto justify-center px-6 py-3.5 md:py-3 rounded-full text-sm font-bold bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-md shadow-blue-500/20 flex items-center gap-2">
-              <span className="material-symbols-outlined text-[18px]">save</span>
-              Salvar Processo
-            </button>
+            </div>
           </div>
         </div>
       </header>
@@ -304,7 +353,7 @@ function ProcessEditor({ onBack, onSave, onDelete, initialData, isNew = false })
         <div className="space-y-6">
           
           {/* Card: Destinação do Processo */}
-          <div className="bg-white/80 backdrop-blur-2xl border border-blue-100/50 rounded-3xl md:rounded-[2rem] p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+          <div className="bg-white/80 backdrop-blur-2xl border border-blue-100/50 rounded-3xl md:rounded-[2rem] p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all">
              <div className="flex flex-col mb-4">
                 <h3 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
                   <span className="material-symbols-outlined text-blue-500">share</span>
@@ -314,89 +363,107 @@ function ProcessEditor({ onBack, onSave, onDelete, initialData, isNew = false })
              </div>
 
              <div className="space-y-3">
-               <label className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 cursor-pointer hover:bg-slate-50 transition-colors">
-                  <input 
-                    type="radio" 
-                    name="destination" 
-                    value="todos"
-                    checked={destinationType === 'todos'}
-                    onChange={() => setDestinationType('todos')}
-                    className="w-4 h-4 text-blue-600 focus:ring-blue-500"
-                  />
+               {/* Opção: Todos */}
+               <div 
+                  onClick={() => { setDestinationType('todos'); setDestinationValue(''); }}
+                  className={`p-4 rounded-2xl border-2 cursor-pointer transition-all flex items-center gap-3 ${destinationType === 'todos' ? 'border-blue-500 bg-blue-50/50' : 'border-slate-100 hover:border-slate-200 bg-white'}`}
+                >
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${destinationType === 'todos' ? 'border-blue-500' : 'border-slate-300'}`}>
+                    {destinationType === 'todos' && <div className="w-2.5 h-2.5 bg-blue-500 rounded-full" />}
+                  </div>
                   <div>
-                    <p className="text-sm font-bold text-slate-800">Todos</p>
-                    <p className="text-[10px] text-slate-500">Visível para toda a empresa</p>
+                    <p className={`text-sm font-bold ${destinationType === 'todos' ? 'text-blue-900' : 'text-slate-700'}`}>Todos da Empresa</p>
+                    <p className="text-[10px] text-slate-500">Processo global visível para todos.</p>
                   </div>
-               </label>
+               </div>
 
-               <label className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 cursor-pointer hover:bg-slate-50 transition-colors">
-                  <input 
-                    type="radio" 
-                    name="destination" 
-                    value="unidade"
-                    checked={destinationType === 'unidade'}
-                    onChange={() => setDestinationType('unidade')}
-                    className="w-4 h-4 text-blue-600 focus:ring-blue-500"
-                  />
-                  <div className="w-full">
-                    <p className="text-sm font-bold text-slate-800">Por Unidade</p>
-                    {destinationType === 'unidade' && (
-                      <input 
-                        type="text" 
-                        placeholder="Ex: Loja Matriz" 
-                        value={destinationValue}
-                        onChange={(e) => setDestinationValue(e.target.value)}
-                        className="mt-2 w-full text-xs p-2 rounded-lg bg-slate-50 border border-slate-200 outline-none focus:border-blue-400"
-                      />
-                    )}
+               {/* Opção: Unidade */}
+               <div 
+                  onClick={() => setDestinationType('unidade')}
+                  className={`p-4 rounded-2xl border-2 cursor-pointer transition-all ${destinationType === 'unidade' ? 'border-blue-500 bg-blue-50/50' : 'border-slate-100 hover:border-slate-200 bg-white'}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${destinationType === 'unidade' ? 'border-blue-500' : 'border-slate-300'}`}>
+                      {destinationType === 'unidade' && <div className="w-2.5 h-2.5 bg-blue-500 rounded-full" />}
+                    </div>
+                    <div>
+                      <p className={`text-sm font-bold ${destinationType === 'unidade' ? 'text-blue-900' : 'text-slate-700'}`}>Por Unidade</p>
+                    </div>
                   </div>
-               </label>
+                  {destinationType === 'unidade' && (
+                    <div className="mt-4 grid grid-cols-1 gap-2 pl-8 animate-in fade-in slide-in-from-top-2">
+                      {MOCK_DATA.unidade.map(item => (
+                        <div 
+                          key={item.id} 
+                          onClick={(e) => { e.stopPropagation(); setDestinationValue(item.name); }}
+                          className={`flex items-center gap-2 p-2 rounded-xl text-xs font-bold transition-colors ${destinationValue === item.name ? 'bg-blue-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+                        >
+                          <span className="material-symbols-outlined text-[16px]">{item.icon}</span>
+                          {item.name}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+               </div>
 
-               <label className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 cursor-pointer hover:bg-slate-50 transition-colors">
-                  <input 
-                    type="radio" 
-                    name="destination" 
-                    value="departamento"
-                    checked={destinationType === 'departamento'}
-                    onChange={() => setDestinationType('departamento')}
-                    className="w-4 h-4 text-blue-600 focus:ring-blue-500"
-                  />
-                  <div className="w-full">
-                    <p className="text-sm font-bold text-slate-800">Por Departamento</p>
-                    {destinationType === 'departamento' && (
-                      <input 
-                        type="text" 
-                        placeholder="Ex: Financeiro" 
-                        value={destinationValue}
-                        onChange={(e) => setDestinationValue(e.target.value)}
-                        className="mt-2 w-full text-xs p-2 rounded-lg bg-slate-50 border border-slate-200 outline-none focus:border-blue-400"
-                      />
-                    )}
+               {/* Opção: Departamento */}
+               <div 
+                  onClick={() => setDestinationType('departamento')}
+                  className={`p-4 rounded-2xl border-2 cursor-pointer transition-all ${destinationType === 'departamento' ? 'border-blue-500 bg-blue-50/50' : 'border-slate-100 hover:border-slate-200 bg-white'}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${destinationType === 'departamento' ? 'border-blue-500' : 'border-slate-300'}`}>
+                      {destinationType === 'departamento' && <div className="w-2.5 h-2.5 bg-blue-500 rounded-full" />}
+                    </div>
+                    <div>
+                      <p className={`text-sm font-bold ${destinationType === 'departamento' ? 'text-blue-900' : 'text-slate-700'}`}>Por Departamento</p>
+                    </div>
                   </div>
-               </label>
+                  {destinationType === 'departamento' && (
+                    <div className="mt-4 grid grid-cols-2 gap-2 pl-8 animate-in fade-in slide-in-from-top-2">
+                      {MOCK_DATA.departamento.map(item => (
+                        <div 
+                          key={item.id} 
+                          onClick={(e) => { e.stopPropagation(); setDestinationValue(item.name); }}
+                          className={`flex flex-col items-center justify-center text-center gap-1 p-3 rounded-xl text-[10px] font-bold transition-colors ${destinationValue === item.name ? 'bg-blue-600 text-white shadow-md' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+                        >
+                          <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
+                          {item.name}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+               </div>
 
-               <label className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 cursor-pointer hover:bg-slate-50 transition-colors">
-                  <input 
-                    type="radio" 
-                    name="destination" 
-                    value="funcionario"
-                    checked={destinationType === 'funcionario'}
-                    onChange={() => setDestinationType('funcionario')}
-                    className="w-4 h-4 text-blue-600 focus:ring-blue-500"
-                  />
-                  <div className="w-full">
-                    <p className="text-sm font-bold text-slate-800">Por Funcionário / Cargo</p>
-                    {destinationType === 'funcionario' && (
-                      <input 
-                        type="text" 
-                        placeholder="Ex: Operador de Caixa" 
-                        value={destinationValue}
-                        onChange={(e) => setDestinationValue(e.target.value)}
-                        className="mt-2 w-full text-xs p-2 rounded-lg bg-slate-50 border border-slate-200 outline-none focus:border-blue-400"
-                      />
-                    )}
+               {/* Opção: Funcionário / Cargo */}
+               <div 
+                  onClick={() => setDestinationType('funcionario')}
+                  className={`p-4 rounded-2xl border-2 cursor-pointer transition-all ${destinationType === 'funcionario' ? 'border-blue-500 bg-blue-50/50' : 'border-slate-100 hover:border-slate-200 bg-white'}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${destinationType === 'funcionario' ? 'border-blue-500' : 'border-slate-300'}`}>
+                      {destinationType === 'funcionario' && <div className="w-2.5 h-2.5 bg-blue-500 rounded-full" />}
+                    </div>
+                    <div>
+                      <p className={`text-sm font-bold ${destinationType === 'funcionario' ? 'text-blue-900' : 'text-slate-700'}`}>Por Cargo / Perfil</p>
+                    </div>
                   </div>
-               </label>
+                  {destinationType === 'funcionario' && (
+                    <div className="mt-4 flex flex-wrap gap-2 pl-8 animate-in fade-in slide-in-from-top-2">
+                      {MOCK_DATA.funcionario.map(item => (
+                        <div 
+                          key={item.id} 
+                          onClick={(e) => { e.stopPropagation(); setDestinationValue(item.name); }}
+                          className={`flex items-center gap-1 px-3 py-2 rounded-full text-xs font-bold transition-colors ${destinationValue === item.name ? 'bg-blue-600 text-white shadow-md' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+                        >
+                          <span className="material-symbols-outlined text-[14px]">{item.icon}</span>
+                          {item.name}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+               </div>
+
              </div>
           </div>
 
@@ -454,7 +521,7 @@ const initialProcesses = [
     name: 'Operador de Caixa',
     desc: 'Procedimentos padrões para abertura, atendimento e fechamento de caixa.',
     icon: 'point_of_sale',
-    destination: { type: 'funcionario', value: 'Operadores de Caixa' },
+    destination: { type: 'funcionario', value: 'Operador de Caixa' },
     stages: [],
     trainings: []
   },
@@ -464,7 +531,7 @@ const initialProcesses = [
     name: 'Estoque e Reposição',
     desc: 'Recebimento, organização e vitrine.',
     icon: 'inventory_2',
-    destination: { type: 'departamento', value: 'Estoque' },
+    destination: { type: 'departamento', value: 'Logística' },
     stages: [],
     trainings: []
   },
@@ -474,7 +541,7 @@ const initialProcesses = [
     name: 'Processo de Admissão',
     desc: 'Passo a passo para contratação e integração de novos talentos.',
     icon: 'groups',
-    destination: { type: 'departamento', value: 'RH' },
+    destination: { type: 'departamento', value: 'Recursos Humanos' },
     stages: [],
     trainings: []
   },
@@ -530,11 +597,17 @@ export default function ProcessCreation() {
     if (!dest) return "Não atribuído";
     switch(dest.type) {
       case 'todos': return "Todos da Empresa";
-      case 'unidade': return `Unidade: ${dest.value || 'Não especificada'}`;
-      case 'departamento': return `Depto: ${dest.value || 'Não especificado'}`;
-      case 'funcionario': return `Cargo/Func: ${dest.value || 'Não especificado'}`;
+      case 'unidade': return `Unidade: ${dest.value || 'Não selecionada'}`;
+      case 'departamento': return `Depto: ${dest.value || 'Não selecionado'}`;
+      case 'funcionario': return `Cargo: ${dest.value || 'Não selecionado'}`;
       default: return "Não atribuído";
     }
+  };
+
+  // Encontra cor do ícone
+  const getIconTheme = (iconName) => {
+    const found = AVAILABLE_ICONS.find(i => i.name === iconName);
+    return found || { color: 'text-blue-500', bg: 'bg-blue-50' };
   };
 
   return (
@@ -557,32 +630,36 @@ export default function ProcessCreation() {
 
       {/* Grid Unificado de Processos */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {processes.map(process => (
-          <div 
-            key={process.id}
-            onClick={() => setActiveProcessId(process.id)}
-            className="group cursor-pointer bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] h-full"
-          >
-            <div>
-              <div className="flex justify-between items-start mb-4">
-                <div className="h-14 w-14 bg-blue-500/10 rounded-[1.5rem] flex items-center justify-center transition-colors group-hover:bg-blue-500 group-hover:text-white text-blue-600 shrink-0">
-                  <span className="material-symbols-outlined text-2xl">{process.icon || 'edit_document'}</span>
+        {processes.map(process => {
+          const theme = getIconTheme(process.icon);
+          
+          return (
+            <div 
+              key={process.id}
+              onClick={() => setActiveProcessId(process.id)}
+              className="group cursor-pointer bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] h-full"
+            >
+              <div>
+                <div className="flex justify-between items-start mb-4">
+                  <div className={`h-14 w-14 ${theme.bg} rounded-[1.5rem] flex items-center justify-center transition-all group-hover:scale-110 ${theme.color} shrink-0`}>
+                    <span className="material-symbols-outlined text-2xl">{process.icon || 'edit_document'}</span>
+                  </div>
+                  <span className="text-[10px] font-bold bg-slate-100 text-slate-500 py-1 px-3 rounded-full uppercase tracking-wider">{process.category}</span>
                 </div>
-                <span className="text-[10px] font-bold bg-slate-100 text-slate-500 py-1 px-3 rounded-full uppercase tracking-wider">{process.category}</span>
+                <h3 className="text-xl font-extrabold text-slate-900 group-hover:text-blue-600 transition-colors mb-2 leading-tight">{process.name}</h3>
+                <p className="text-sm text-slate-500 font-medium line-clamp-2 mb-6">{process.desc || 'Sem descrição.'}</p>
               </div>
-              <h3 className="text-xl font-extrabold text-slate-900 group-hover:text-blue-600 transition-colors mb-2 leading-tight">{process.name}</h3>
-              <p className="text-sm text-slate-500 font-medium line-clamp-2 mb-6">{process.desc || 'Sem descrição.'}</p>
+              
+              <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+                 <div className="flex items-center gap-2 text-slate-400 group-hover:text-blue-500 transition-colors">
+                    <span className="material-symbols-outlined text-[16px]">share</span>
+                    <span className="text-xs font-bold truncate max-w-[150px]">{formatDestination(process.destination)}</span>
+                 </div>
+                 <span className="material-symbols-outlined text-slate-300 group-hover:text-blue-500 transition-colors">chevron_right</span>
+              </div>
             </div>
-            
-            <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-               <div className="flex items-center gap-2 text-slate-400 group-hover:text-blue-500 transition-colors">
-                  <span className="material-symbols-outlined text-[16px]">share</span>
-                  <span className="text-xs font-bold truncate max-w-[150px]">{formatDestination(process.destination)}</span>
-               </div>
-               <span className="material-symbols-outlined text-slate-300 group-hover:text-blue-500 transition-colors">chevron_right</span>
-            </div>
-          </div>
-        ))}
+          );
+        })}
         {processes.length === 0 && (
           <div className="col-span-full py-12 flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-[2rem]">
              <span className="material-symbols-outlined text-4xl text-slate-300 mb-2">post_add</span>
