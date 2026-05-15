@@ -120,61 +120,65 @@ export default function Tarefas() {
       </div>
 
       {/* KANBAN BOARD */}
-      <div className="flex-1 flex flex-col md:flex-row gap-6 min-h-[500px]">
+      <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4 min-h-[400px]">
         {STATUS_COLUMNS.map(column => (
           <div 
             key={column.id}
-            className={`flex-1 rounded-[2rem] p-4 flex flex-col border border-white/50 shadow-inner ${column.color}`}
+            className={`rounded-2xl p-3 flex flex-col border border-white/50 shadow-inner ${column.color}`}
             onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, column.id)}
           >
-            <div className={`border-b-2 ${column.headerColor} pb-3 mb-4 flex items-center justify-between px-2`}>
-              <h2 className="font-bold text-slate-800">{column.title}</h2>
-              <span className="bg-white text-slate-600 text-xs font-bold px-2 py-1 rounded-lg shadow-sm">
+            <div className={`border-b ${column.headerColor} pb-2 mb-3 flex items-center justify-between px-1`}>
+              <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wide">{column.title}</h2>
+              <span className="bg-white/80 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded-md shadow-sm">
                 {tasks.filter(t => t.status === column.id).length}
               </span>
             </div>
 
-            <div className="flex-1 space-y-4 overflow-y-auto pr-2 pb-10 custom-scrollbar">
+            <div className="flex-1 space-y-3 overflow-y-auto pr-1 pb-4 custom-scrollbar">
               {tasks.filter(t => t.status === column.id).map(task => (
                 <div 
                   key={task.id}
                   draggable
                   onDragStart={(e) => handleDragStart(e, task)}
                   onDragEnd={handleDragEnd}
-                  className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 cursor-grab active:cursor-grabbing hover:shadow-md hover:border-[#4f46e5]/30 transition-all"
+                  className="bg-white rounded-xl p-3 shadow-[0_2px_8px_rgb(0,0,0,0.04)] border border-slate-100 cursor-grab active:cursor-grabbing hover:shadow-md hover:border-[#4f46e5]/30 transition-all group"
                 >
-                  <div className="flex justify-between items-start mb-2">
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border uppercase tracking-wider ${PRIORITY_COLORS[task.priority]}`}>
+                  <div className="flex justify-between items-start mb-1.5">
+                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border uppercase tracking-wider ${PRIORITY_COLORS[task.priority]}`}>
                       {task.priority}
                     </span>
-                    <button className="text-slate-400 hover:text-slate-600">
-                      <span className="material-symbols-outlined text-sm">more_horiz</span>
+                    <button className="text-slate-300 hover:text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span className="material-symbols-outlined text-[16px]">more_horiz</span>
                     </button>
                   </div>
                   
-                  <h3 className="font-bold text-slate-800 mb-1">{task.title}</h3>
-                  <p className="text-xs text-slate-500 mb-4 line-clamp-2">{task.description}</p>
+                  <h3 className="text-[13px] font-bold text-slate-800 mb-1 leading-tight">{task.title}</h3>
+                  {task.description && (
+                    <p className="text-[11px] text-slate-500 mb-3 line-clamp-2 leading-snug">{task.description}</p>
+                  )}
                   
-                  <div className="flex justify-between items-center mt-auto border-t border-slate-50 pt-3">
-                    <div className="flex items-center gap-2">
-                      <div className="h-6 w-6 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 text-white flex items-center justify-center text-[10px] font-bold shadow-sm">
-                        {task.assignee.charAt(0)}
+                  <div className="flex justify-between items-center mt-auto pt-2">
+                    <div className="flex items-center gap-1.5">
+                      <div className="h-5 w-5 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 text-white flex items-center justify-center text-[9px] font-bold shadow-sm">
+                        {task.assignee ? task.assignee.charAt(0).toUpperCase() : '?'}
                       </div>
-                      <span className="text-xs font-semibold text-slate-600">{task.assignee}</span>
+                      <span className="text-[10px] font-semibold text-slate-600 truncate max-w-[60px]">{task.assignee || 'Não atr.'}</span>
                     </div>
-                    <div className="flex items-center gap-1 text-slate-400">
-                      <span className="material-symbols-outlined text-[14px]">calendar_today</span>
-                      <span className="text-[10px] font-semibold">{task.date || 'Sem data'}</span>
-                    </div>
+                    {task.date && (
+                      <div className="flex items-center gap-1 text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded-md border border-slate-100">
+                        <span className="material-symbols-outlined text-[11px]">calendar_today</span>
+                        <span className="text-[9px] font-semibold">{task.date}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
               
               {/* Drop Zone Placeholder for empty columns */}
               {tasks.filter(t => t.status === column.id).length === 0 && (
-                <div className="h-24 rounded-2xl border-2 border-dashed border-slate-300/50 flex items-center justify-center text-slate-400 text-sm font-medium">
-                  Solte a tarefa aqui
+                <div className="h-20 rounded-xl border-2 border-dashed border-slate-300/40 flex items-center justify-center text-slate-400 text-[11px] font-medium bg-slate-50/30">
+                  Arraste uma tarefa aqui
                 </div>
               )}
             </div>
