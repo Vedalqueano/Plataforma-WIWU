@@ -24,12 +24,16 @@ export default function Tarefas() {
   const [draggedTask, setDraggedTask] = useState(null);
   
   // Modal Form State
-  const [newTask, setNewTask] = useState({ title: '', description: '', priority: 'media', date: '', assignee: '' });
+  const [newTask, setNewTask] = useState({ title: '', description: '', priority: 'media', date: '', assignee: '', color: 'bg-white' });
 
   // KPIs
   const todoCount = tasks.filter(t => t.status === 'todo').length;
   const inProgressCount = tasks.filter(t => t.status === 'inProgress').length;
   const doneCount = tasks.filter(t => t.status === 'done').length;
+
+  const handleDeleteTask = (id) => {
+    setTasks(tasks.filter(t => t.id !== id));
+  };
 
   // --- Drag and Drop Logic ---
   const handleDragStart = (e, task) => {
@@ -67,7 +71,7 @@ export default function Tarefas() {
     };
     setTasks([...tasks, taskToAdd]);
     setIsModalOpen(false);
-    setNewTask({ title: '', description: '', priority: 'media', date: '', assignee: '' });
+    setNewTask({ title: '', description: '', priority: 'media', date: '', assignee: '', color: 'bg-white' });
   };
 
   return (
@@ -124,7 +128,7 @@ export default function Tarefas() {
         {STATUS_COLUMNS.map(column => (
           <div 
             key={column.id}
-            className={`rounded-2xl p-3 flex flex-col border border-white/50 shadow-inner ${column.color}`}
+            className={`rounded-xl p-3 flex flex-col border border-white/50 shadow-inner ${column.color}`}
             onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, column.id)}
           >
@@ -142,14 +146,18 @@ export default function Tarefas() {
                   draggable
                   onDragStart={(e) => handleDragStart(e, task)}
                   onDragEnd={handleDragEnd}
-                  className="bg-white rounded-xl p-3 shadow-[0_2px_8px_rgb(0,0,0,0.04)] border border-slate-100 cursor-grab active:cursor-grabbing hover:shadow-md hover:border-[#4f46e5]/30 transition-all group"
+                  className={`${task.color || 'bg-white'} rounded-lg p-3 shadow-[0_2px_8px_rgb(0,0,0,0.04)] border border-slate-100 cursor-grab active:cursor-grabbing hover:shadow-md hover:border-[#4f46e5]/30 transition-all group`}
                 >
                   <div className="flex justify-between items-start mb-1.5">
                     <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border uppercase tracking-wider ${PRIORITY_COLORS[task.priority]}`}>
                       {task.priority}
                     </span>
-                    <button className="text-slate-300 hover:text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <span className="material-symbols-outlined text-[16px]">more_horiz</span>
+                    <button 
+                      onClick={() => handleDeleteTask(task.id)}
+                      className="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                      title="Excluir tarefa"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">delete</span>
                     </button>
                   </div>
                   
@@ -254,16 +262,31 @@ export default function Tarefas() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1">Responsável</label>
-                <input 
-                  type="text" 
-                  required
-                  value={newTask.assignee}
-                  onChange={e => setNewTask({...newTask, assignee: e.target.value})}
-                  className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-[#4f46e5] focus:border-[#4f46e5] block px-4 py-3 outline-none transition-colors"
-                  placeholder="Nome do responsável"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-1">Responsável</label>
+                  <input 
+                    type="text" 
+                    required
+                    value={newTask.assignee}
+                    onChange={e => setNewTask({...newTask, assignee: e.target.value})}
+                    className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-[#4f46e5] focus:border-[#4f46e5] block px-4 py-3 outline-none transition-colors"
+                    placeholder="Nome do responsável"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-1">Cor do Card</label>
+                  <div className="flex gap-2 items-center h-full pb-2">
+                    {['bg-white', 'bg-blue-50', 'bg-emerald-50', 'bg-amber-50', 'bg-purple-50', 'bg-rose-50'].map(colorClass => (
+                      <button
+                        key={colorClass}
+                        type="button"
+                        onClick={() => setNewTask({...newTask, color: colorClass})}
+                        className={`h-6 w-6 rounded-full border-2 ${colorClass} ${newTask.color === colorClass ? 'border-slate-500 scale-110 shadow-sm' : 'border-slate-200 hover:scale-110'} transition-transform`}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
 
               <div className="pt-4 flex justify-end gap-3">
