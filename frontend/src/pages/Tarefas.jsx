@@ -35,11 +35,14 @@ export default function Tarefas() {
     setTasks(tasks.filter(t => t.id !== id));
   };
 
+  const moveTask = (taskId, newStatus) => {
+    setTasks(tasks.map(t => t.id === taskId ? { ...t, status: newStatus } : t));
+  };
+
   // --- Drag and Drop Logic ---
   const handleDragStart = (e, task) => {
     setDraggedTask(task);
     e.dataTransfer.effectAllowed = 'move';
-    // Removemos a imagem padrão de drag para um visual mais limpo (opcional)
     e.currentTarget.style.opacity = '0.4';
   };
 
@@ -49,14 +52,14 @@ export default function Tarefas() {
   };
 
   const handleDragOver = (e) => {
-    e.preventDefault(); // Necessário para permitir o drop
+    e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
   };
 
   const handleDrop = (e, status) => {
     e.preventDefault();
     if (draggedTask && draggedTask.status !== status) {
-      setTasks(tasks.map(t => t.id === draggedTask.id ? { ...t, status } : t));
+      moveTask(draggedTask.id, status);
     }
     setDraggedTask(null);
   };
@@ -75,60 +78,69 @@ export default function Tarefas() {
   };
 
   return (
-    <div className="px-4 md:px-6 pb-20 md:pb-12 font-sans animate-[fadeIn_0.5s_ease-out] w-full h-full flex flex-col">
+    <div className="px-4 md:px-6 pb-20 md:pb-12 font-sans animate-[fadeIn_0.5s_ease-out] w-full h-full flex flex-col overflow-hidden">
       
       {/* HEADER & KPIs */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-        <div>
-          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Tarefas</h1>
-          <p className="text-sm text-slate-500 font-medium mt-1">Gestão de atividades e produtividade da equipe.</p>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 md:mb-8 gap-4">
+        <div className="flex-1 w-full flex justify-between items-center md:block">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">Tarefas</h1>
+            <p className="text-xs md:text-sm text-slate-500 font-medium mt-1 hidden md:block">Gestão de atividades e produtividade da equipe.</p>
+          </div>
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="md:hidden bg-[#4f46e5] text-white h-10 w-10 rounded-xl font-bold shadow-md flex items-center justify-center"
+          >
+            <span className="material-symbols-outlined text-xl">add</span>
+          </button>
         </div>
 
         <button 
           onClick={() => setIsModalOpen(true)}
-          className="bg-[#4f46e5] hover:bg-[#4338ca] text-white px-6 py-3 rounded-xl font-bold shadow-[0_8px_20px_rgba(79,70,229,0.3)] transition-all hover:-translate-y-1 flex items-center gap-2"
+          className="hidden md:flex bg-[#4f46e5] hover:bg-[#4338ca] text-white px-6 py-3 rounded-xl font-bold shadow-[0_8px_20px_rgba(79,70,229,0.3)] transition-all hover:-translate-y-1 items-center gap-2"
         >
           <span className="material-symbols-outlined text-xl">add</span>
           Nova Tarefa
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center gap-4">
-          <div className="h-12 w-12 bg-slate-100 rounded-2xl flex items-center justify-center">
-            <span className="material-symbols-outlined text-slate-600">inbox</span>
+      <div className="grid grid-cols-3 gap-2 md:gap-6 mb-6 md:mb-8">
+        <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-xl md:rounded-[2rem] p-3 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col md:flex-row items-center gap-2 md:gap-4 text-center md:text-left">
+          <div className="h-8 w-8 md:h-12 md:w-12 bg-slate-100 rounded-lg md:rounded-2xl flex items-center justify-center">
+            <span className="material-symbols-outlined text-slate-600 text-[16px] md:text-[24px]">inbox</span>
           </div>
           <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">A Fazer</p>
-            <h3 className="text-2xl font-extrabold text-slate-900">{todoCount}</h3>
+            <h3 className="text-lg md:text-2xl font-extrabold text-slate-900 leading-none">{todoCount}</h3>
+            <p className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-slate-500 mt-1 md:mt-0">A Fazer</p>
           </div>
         </div>
-        <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center gap-4">
-          <div className="h-12 w-12 bg-blue-100 rounded-2xl flex items-center justify-center">
-            <span className="material-symbols-outlined text-blue-600">clock_loader_40</span>
+        <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-xl md:rounded-[2rem] p-3 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col md:flex-row items-center gap-2 md:gap-4 text-center md:text-left">
+          <div className="h-8 w-8 md:h-12 md:w-12 bg-blue-100 rounded-lg md:rounded-2xl flex items-center justify-center">
+            <span className="material-symbols-outlined text-blue-600 text-[16px] md:text-[24px]">clock_loader_40</span>
           </div>
           <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-blue-600">Em Andamento</p>
-            <h3 className="text-2xl font-extrabold text-slate-900">{inProgressCount}</h3>
+            <h3 className="text-lg md:text-2xl font-extrabold text-slate-900 leading-none">{inProgressCount}</h3>
+            <p className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-blue-600 mt-1 md:mt-0">Andamento</p>
           </div>
         </div>
-        <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center gap-4">
-          <div className="h-12 w-12 bg-emerald-100 rounded-2xl flex items-center justify-center">
-            <span className="material-symbols-outlined text-emerald-600">check_circle</span>
+        <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-xl md:rounded-[2rem] p-3 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col md:flex-row items-center gap-2 md:gap-4 text-center md:text-left">
+          <div className="h-8 w-8 md:h-12 md:w-12 bg-emerald-100 rounded-lg md:rounded-2xl flex items-center justify-center">
+            <span className="material-symbols-outlined text-emerald-600 text-[16px] md:text-[24px]">check_circle</span>
           </div>
           <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Concluídas</p>
-            <h3 className="text-2xl font-extrabold text-slate-900">{doneCount}</h3>
+            <h3 className="text-lg md:text-2xl font-extrabold text-slate-900 leading-none">{doneCount}</h3>
+            <p className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-emerald-600 mt-1 md:mt-0">Concluído</p>
           </div>
         </div>
       </div>
 
       {/* KANBAN BOARD */}
-      <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4 min-h-[400px]">
+      {/* Mobile: horizontal scroll with snap. Desktop: grid 3 cols */}
+      <div className="flex-1 flex overflow-x-auto md:grid md:grid-cols-3 snap-x snap-mandatory gap-4 pb-4 min-h-[400px] custom-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
         {STATUS_COLUMNS.map(column => (
           <div 
             key={column.id}
-            className={`rounded-xl p-3 flex flex-col border border-white/50 shadow-inner ${column.color}`}
+            className={`min-w-[85vw] md:min-w-0 flex-1 snap-center rounded-xl p-3 flex flex-col border border-white/50 shadow-inner ${column.color}`}
             onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, column.id)}
           >
@@ -154,7 +166,7 @@ export default function Tarefas() {
                     </span>
                     <button 
                       onClick={() => handleDeleteTask(task.id)}
-                      className="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="text-slate-300 hover:text-red-500 md:opacity-0 group-hover:opacity-100 transition-opacity"
                       title="Excluir tarefa"
                     >
                       <span className="material-symbols-outlined text-[16px]">delete</span>
@@ -174,12 +186,26 @@ export default function Tarefas() {
                       <span className="text-[10px] font-semibold text-slate-600 truncate max-w-[60px]">{task.assignee || 'Não atr.'}</span>
                     </div>
                     {task.date && (
-                      <div className="flex items-center gap-1 text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded-md border border-slate-100">
+                      <div className="flex items-center gap-1 text-slate-400 bg-white px-1.5 py-0.5 rounded-md border border-slate-100">
                         <span className="material-symbols-outlined text-[11px]">calendar_today</span>
                         <span className="text-[9px] font-semibold">{task.date}</span>
                       </div>
                     )}
                   </div>
+
+                  {/* Mobile Select Status Dropdown */}
+                  <div className="md:hidden mt-3 pt-3 border-t border-slate-200/50">
+                    <select 
+                      value={task.status}
+                      onChange={(e) => moveTask(task.id, e.target.value)}
+                      className="w-full bg-white/50 border border-slate-200 text-slate-600 text-[10px] font-bold rounded-lg px-2 py-1.5 outline-none appearance-none text-center shadow-sm"
+                    >
+                      <option value="todo">Mover: A Fazer</option>
+                      <option value="inProgress">Mover: Em Andamento</option>
+                      <option value="done">Mover: Concluído</option>
+                    </select>
+                  </div>
+
                 </div>
               ))}
               
@@ -197,7 +223,6 @@ export default function Tarefas() {
       {/* NEW TASK MODAL */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-          {/* Overlay com blur Liquid Glass */}
           <div 
             className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"
             onClick={() => setIsModalOpen(false)}
@@ -214,7 +239,7 @@ export default function Tarefas() {
               </button>
             </div>
             
-            <form onSubmit={handleCreateTask} className="p-6 space-y-4">
+            <form onSubmit={handleCreateTask} className="p-4 md:p-6 space-y-4 max-h-[80vh] overflow-y-auto">
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-1">Título da Tarefa *</label>
                 <input 
@@ -262,7 +287,7 @@ export default function Tarefas() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-1">Responsável</label>
                   <input 
@@ -312,7 +337,8 @@ export default function Tarefas() {
       {/* Adicionando um estilo global para a barra de rolagem da área Kanban */}
       <style dangerouslySetInnerHTML={{__html: `
         .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
+          height: 4px;
+          width: 4px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
           background: transparent;
