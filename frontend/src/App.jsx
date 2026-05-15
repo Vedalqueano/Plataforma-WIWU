@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import ProcessCreation from './pages/ProcessCreation';
 import Departamentos from './pages/Departamentos';
+import Tarefas from './pages/Tarefas';
 import PlaceholderPage from './pages/PlaceholderPage';
 import Login from './pages/Login';
 import { AuthProvider } from './context/AuthContext';
@@ -21,7 +22,7 @@ function App() {
               <Route index element={<Dashboard />} />
               <Route path="departamentos" element={<Departamentos />} />
               <Route path="processos" element={<ProcessCreation />} />
-              <Route path="tarefas" element={<PlaceholderPage title="Tarefas" />} />
+              <Route path="tarefas" element={<Tarefas />} />
               <Route path="presenca" element={<PlaceholderPage title="Presença" />} />
               <Route path="treinamentos" element={<PlaceholderPage title="Treinamentos" />} />
               <Route path="eventos" element={<PlaceholderPage title="Eventos" />} />
